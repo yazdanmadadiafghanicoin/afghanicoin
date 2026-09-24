@@ -41,7 +41,7 @@ keyboard = {
             {
                 "text": "⛏️ استخراج Afghani Coin",
                 "web_app": {
-                    "url": "لینک سایتت را اینجا بگذار"
+                    "url": "https://yazdanmadadiafghanicoin.github.io/afghanicoin/"
                 }
             }
         ],
