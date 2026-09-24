@@ -37,7 +37,7 @@ def send_message(chat_id, text, keyboard=None):
 
 keyboard = {
     "keyboard": [
-        [{"text": "⛏️ استخراج Afghani Coin"}],
+        [{"text": "⛏️ ماین کردن"}],
         [{"text": "💰 موجودی من"}]
     ],
     "resize_keyboard": True
@@ -72,8 +72,7 @@ def main():
 
                 if chat_id not in users:
                     users[chat_id] = {
-                        "balance": 0,
-                        "last_mine": 0
+                        "balance": 0
                     }
 
                 user = users[chat_id]
@@ -82,18 +81,44 @@ def main():
                     send_message(
                         chat_id,
                         "🪙 خوش آمدید به Afghani Coin!\n\n"
-                        "برای شروع روی «⛏️ استخراج Afghani Coin» بزنید.",
+                        "👆 روی «⛏️ ماین کردن» بزنید.\n"
+                        "هر کلیک = +1 AFC",
                         keyboard
                     )
 
-                elif text == "⛏️ استخراج Afghani Coin":
-                    now = time.time()
+                elif text == "⛏️ ماین کردن":
+                    user["balance"] += 1
 
-                    if now - user["last_mine"] < 60:
-                        remaining = int(
-                            60 - (now - user["last_mine"])
-                        )
+                    send_message(
+                        chat_id,
+                        "⛏️ ماین موفق!\n\n"
+                        "🪙 +1 AFC\n"
+                        f"💰 موجودی: {user['balance']} AFC",
+                        keyboard
+                    )
 
+                elif text == "💰 موجودی من":
+                    send_message(
+                        chat_id,
+                        "💰 موجودی شما:\n\n"
+                        f"🪙 {user['balance']} AFC",
+                        keyboard
+                    )
+
+                else:
+                    send_message(
+                        chat_id,
+                        "برای شروع /start را بزنید.",
+                        keyboard
+                    )
+
+        except Exception as error:
+            print("Error:", error)
+            time.sleep(5)
+
+
+if __name__ == "__main__":
+    main()
                         send_message(
                             chat_id,
                             f"⏳ لطفاً {remaining} ثانیه صبر کنید."
