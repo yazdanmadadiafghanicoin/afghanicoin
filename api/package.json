@@ -1,1 +1,9 @@
 
+{
+  "name": "afghanicoin-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.0"
+  }
+}
