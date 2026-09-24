@@ -1,90 +1,74 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 
 <title>Afghani Coin</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-
 *{
   box-sizing:border-box;
   -webkit-tap-highlight-color:transparent;
 }
 
-html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  min-height:100%;
-}
-
 body{
+  margin:0;
   background:#10151c;
   color:white;
   font-family:Arial,sans-serif;
-  user-select:none;
-  -webkit-user-select:none;
 }
 
-.wrap{
-  width:100%;
+.container{
   max-width:430px;
   margin:auto;
-  padding:22px 18px 40px;
+  padding:20px;
 }
 
-.top{
+.header{
   text-align:center;
 }
 
 .logo{
-  width:86px;
-  height:86px;
+  width:80px;
+  height:80px;
   margin:auto;
   border-radius:50%;
-  background:linear-gradient(145deg,#9af078,#42a83e);
+  background:#65c84a;
+  color:#102014;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:30px;
-  font-weight:800;
-  color:#102014;
+  font-size:28px;
+  font-weight:bold;
 }
 
 h1{
-  margin:12px 0 4px;
-  font-size:27px;
+  margin:10px 0 3px;
 }
 
-.sub{
+.gray{
   color:#91a0b0;
-  font-size:14px;
 }
 
 .card{
-  background:#1a222c;
-  border-radius:22px;
+  margin-top:18px;
   padding:20px;
-  margin-top:20px;
+  background:#1a222c;
+  border-radius:20px;
   text-align:center;
 }
 
 .balance{
-  font-size:42px;
-  font-weight:800;
+  font-size:40px;
+  font-weight:bold;
   margin:10px;
 }
 
-.rate{
+.green{
   color:#79d85a;
-  font-weight:bold;
 }
 
 .energy{
@@ -92,122 +76,22 @@ h1{
   text-align:left;
 }
 
-.energy-head{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:8px;
-}
-
-.energy-bar{
-  width:100%;
+.energybar{
   height:14px;
   background:#303b47;
   border-radius:20px;
   overflow:hidden;
+  margin-top:7px;
 }
 
-.energy-fill{
+.energyfill{
   height:100%;
   width:100%;
   background:#79d85a;
-  border-radius:20px;
-  transition:width .15s;
 }
 
 .mine{
-  width:190px;
-  height:190px;
-  margin:25px auto;
-  border:0;
-  border-radius:50%;
-  background:linear-gradient(145deg,#8be667,#3a9e39);
-  color:#071307;
-  font-size:25px;
-  font-weight:800;
   display:block;
-  cursor:pointer;
-  touch-action:manipulation;
-  -webkit-touch-callout:none;
-}
-
-.mine:active{
-  transform:scale(.93);
-}
-
-.mine.disabled{
-  opacity:.4;
-}
-
-.status{
-  min-height:25px;
-}
-
-.box{
-  margin-top:18px;
-  padding:17px;
-  background:#202b36;
-  border-radius:18px;
-  text-align:left;
-}
-
-.box-title{
-  font-size:19px;
-  font-weight:bold;
-  margin-bottom:8px;
-}
-
-.box-info{
-  color:#9eabb8;
-  font-size:13px;
-  line-height:1.5;
-  margin-bottom:12px;
-}
-
-button{
-  font-family:Arial,sans-serif;
-}
-
-.upgrade-btn,
-.action-btn,
-.reward-btn{
-  width:100%;
-  padding:14px;
-  border:0;
-  border-radius:13px;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-  touch-action:manipulation;
-}
-
-.upgrade-btn,
-.action-btn{
-  background:#4caf50;
-}
-
-.reward-btn{
-  background:#e8a928;
-  color:#171100;
-}
-
-button:disabled{
-  opacity:.45;
-}
-
-.leaderboard{
-  margin-top:10px;
-}
-
-.player{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:11px 0;
-  border-bottom:1px solid #34404b;
-}
-
-.player:last-child{
-  border-bottom:0;
-}
-
-.rank
+  width:180px;
+  height:180px;
+ 
