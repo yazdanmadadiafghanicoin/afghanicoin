@@ -36,11 +36,22 @@ def send_message(chat_id, text, keyboard=None):
 
 
 keyboard = {
-    "keyboard": [
-        [{"text": "⛏️ استخراج Afghani Coin"}],
-        [{"text": "💰 موجودی من"}]
-    ],
-    "resize_keyboard": True
+    "inline_keyboard": [
+        [
+            {
+                "text": "⛏️ استخراج Afghani Coin",
+                "web_app": {
+                    "url": "لینک سایتت را اینجا بگذار"
+                }
+            }
+        ],
+        [
+            {
+                "text": "💰 موجودی من",
+                "callback_data": "balance"
+            }
+        ]
+    ]
 }
 
 
