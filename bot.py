@@ -14,12 +14,12 @@ def telegram(method, data=None):
     url = f"{API}/{method}"
 
     if data:
-        data = urllib.parse.urlencode(data).encode()
-        req = urllib.request.Request(url, data=data)
+        encoded = urllib.parse.urlencode(data).encode()
+        request = urllib.request.Request(url, data=encoded)
     else:
-        req = urllib.request.Request(url)
+        request = urllib.request.Request(url)
 
-    with urllib.request.urlopen(req, timeout=30) as response:
+    with urllib.request.urlopen(request, timeout=30) as response:
         return json.loads(response.read().decode())
 
 
@@ -32,7 +32,7 @@ def send_message(chat_id, text, keyboard=None):
     if keyboard:
         data["reply_markup"] = json.dumps(keyboard)
 
-    return telegram("sendMessage", data)
+    telegram("sendMessage", data)
 
 
 keyboard = {
@@ -51,15 +51,19 @@ def main():
 
     while True:
         try:
-            result = telegram("getUpdates", {
-                "offset": offset,
-                "timeout": 25
-            })
+            result = telegram(
+                "getUpdates",
+                {
+                    "offset": offset,
+                    "timeout": 25
+                }
+            )
 
             for update in result.get("result", []):
                 offset = update["update_id"] + 1
 
                 message = update.get("message")
+
                 if not message:
                     continue
 
@@ -86,12 +90,15 @@ def main():
                     now = time.time()
 
                     if now - user["last_mine"] < 60:
-                        remaining = int(60 - (now - user["last_mine"]))
+                        remaining = int(
+                            60 - (now - user["last_mine"])
+                        )
+
                         send_message(
                             chat_id,
-                            f"⏳ هنوز آماده نیست.\n"
-                            f"لطفاً {remaining} ثانیه صبر کنید."
+                            f"⏳ لطفاً {remaining} ثانیه صبر کنید."
                         )
+
                     else:
                         user["balance"] += 1
                         user["last_mine"] = now
@@ -111,4 +118,16 @@ def main():
                     )
 
                 else:
-                   
+                    send_message(
+                        chat_id,
+                        "برای شروع /start را بزنید.",
+                        keyboard
+                    )
+
+        except Exception as error:
+            print("Error:", error)
+            time.sleep(5)
+
+
+if __name__ == "__main__":
+    main()
