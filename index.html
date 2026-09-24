@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
 <title>Afghani Coin</title>
 
@@ -117,7 +117,6 @@ h1{
   display:block;
   cursor:pointer;
   touch-action:manipulation;
-  -webkit-user-select:none;
 }
 
 .mine:active{
@@ -132,6 +131,42 @@ h1{
   min-height:25px;
 }
 
+.upgrade-box{
+  margin-top:20px;
+  padding:16px;
+  background:#202b36;
+  border-radius:18px;
+  text-align:left;
+}
+
+.upgrade-title{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+.upgrade-info{
+  color:#9eabb8;
+  font-size:13px;
+  margin-bottom:12px;
+}
+
+.upgrade-btn{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:13px;
+  background:#4caf50;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  touch-action:manipulation;
+}
+
+.upgrade-btn:disabled{
+  opacity:.45;
+}
+
 .reset{
   margin-top:15px;
   padding:12px 25px;
@@ -140,7 +175,6 @@ h1{
   background:#273442;
   color:white;
   font-weight:bold;
-  touch-action:manipulation;
 }
 </style>
 </head>
@@ -171,9 +205,12 @@ h1{
       0 AFC
     </div>
 
-    <div class="rate">
+    <div class="rate" id="rate">
       👆 1 CLICK = +1 AFC
     </div>
+
+
+    <!-- ENERGY -->
 
     <div class="energy">
 
@@ -198,6 +235,9 @@ h1{
 
     </div>
 
+
+    <!-- MINE -->
+
     <button
       type="button"
       class="mine"
@@ -207,6 +247,7 @@ h1{
 
     </button>
 
+
     <div
       class="sub status"
       id="status">
@@ -214,6 +255,33 @@ h1{
       Tap MINE to earn AFC
 
     </div>
+
+
+    <!-- UPGRADE -->
+
+    <div class="upgrade-box">
+
+      <div class="upgrade-title">
+        🚀 Mining Upgrade
+      </div>
+
+      <div class="upgrade-info" id="upgradeInfo">
+        Level 1 • +1 AFC per click
+      </div>
+
+      <button
+        type="button"
+        class="upgrade-btn"
+        id="upgradeBtn">
+
+        🚀 Upgrade — 100 AFC
+
+      </button>
+
+    </div>
+
+
+    <!-- RESET -->
 
     <button
       type="button"
@@ -228,12 +296,14 @@ h1{
 
 </div>
 
+
 <script>
 
-/* Telegram Web App */
+/* Telegram */
 
-const tg = window.Telegram &&
-           window.Telegram.WebApp;
+const tg =
+  window.Telegram &&
+  window.Telegram.WebApp;
 
 if(tg){
 
@@ -251,49 +321,34 @@ const MAX_ENERGY = 100;
 const REGEN_SECONDS = 3;
 
 
-/* Storage */
-
-function getNumber(key, defaultValue){
-
-  try{
-
-    const value =
-      localStorage.getItem(key);
-
-    if(value === null){
-      return defaultValue;
-    }
-
-    const number =
-      Number(value);
-
-    return Number.isFinite(number)
-      ? number
-      : defaultValue;
-
-  }catch(error){
-
-    return defaultValue;
-
-  }
-
-}
-
+/* Saved data */
 
 let balance =
-  getNumber("afc_balance",0);
+  Number(localStorage.getItem("afc_balance") || 0);
 
 let energy =
-  getNumber("afc_energy",100);
+  Number(localStorage.getItem("afc_energy") || 100);
+
+let level =
+  Number(localStorage.getItem("afc_level") || 1);
 
 
-/* Limit energy */
+/* Safety */
+
+if(!Number.isFinite(balance))
+  balance = 0;
+
+if(!Number.isFinite(energy))
+  energy = 100;
+
+if(!Number.isFinite(level))
+  level = 1;
 
 energy =
-  Math.max(
-    0,
-    Math.min(MAX_ENERGY,energy)
-  );
+  Math.max(0,Math.min(MAX_ENERGY,energy));
+
+level =
+  Math.max(1,level);
 
 
 /* Elements */
@@ -314,181 +369,4 @@ const status =
   document.getElementById("status");
 
 const reset =
-  document.getElementById("reset");
-
-
-/* Save */
-
-function save(){
-
-  try{
-
-    localStorage.setItem(
-      "afc_balance",
-      String(balance)
-    );
-
-    localStorage.setItem(
-      "afc_energy",
-      String(energy)
-    );
-
-  }catch(error){
-
-    console.log(error);
-
-  }
-
-}
-
-
-/* Display */
-
-function render(){
-
-  balanceEl.textContent =
-    balance.toLocaleString() + " AFC";
-
-  energyText.textContent =
-    energy + " / " + MAX_ENERGY;
-
-  energyFill.style.width =
-    ((energy / MAX_ENERGY) * 100) + "%";
-
-  if(energy <= 0){
-
-    mine.classList.add("disabled");
-
-  }else{
-
-    mine.classList.remove("disabled");
-
-  }
-
-}
-
-
-/* Mining */
-
-let clicking = false;
-
-function mineAFC(){
-
-  if(clicking){
-    return;
-  }
-
-  clicking = true;
-
-  if(energy <= 0){
-
-    status.textContent =
-      "⚡ Energy is empty";
-
-    clicking = false;
-
-    return;
-
-  }
-
-
-  balance += 1;
-
-  energy -= 1;
-
-
-  save();
-
-  render();
-
-
-  status.textContent =
-    "+1 AFC 🪙   ⚡ -1 Energy";
-
-
-  setTimeout(function(){
-
-    clicking = false;
-
-  },80);
-
-}
-
-
-/* Touch */
-
-mine.addEventListener(
-  "touchstart",
-  function(event){
-
-    event.preventDefault();
-
-    mineAFC();
-
-  },
-  {passive:false}
-);
-
-
-/* Normal click */
-
-mine.addEventListener(
-  "click",
-  function(event){
-
-    event.preventDefault();
-
-    mineAFC();
-
-  }
-);
-
-
-/* Energy regeneration */
-
-setInterval(function(){
-
-  if(energy < MAX_ENERGY){
-
-    energy += 1;
-
-    save();
-
-    render();
-
-  }
-
-},REGEN_SECONDS * 1000);
-
-
-/* Reset */
-
-reset.addEventListener(
-  "click",
-  function(){
-
-    balance = 0;
-
-    energy = MAX_ENERGY;
-
-    save();
-
-    render();
-
-    status.textContent =
-      "Balance and Energy reset";
-
-  }
-);
-
-
-/* Start */
-
-save();
-
-render();
-
-</script>
-
-</body>
-</html>
+  document.getElement
