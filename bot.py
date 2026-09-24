@@ -1,13 +1,13 @@
 import os
-import time
 import json
 import urllib.request
 import urllib.parse
+import time
 
 TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 API = f"https://api.telegram.org/bot{TOKEN}"
 
-users = {}
+WEB_APP_URL = "https://yazdanmadadiafghanicoin.github.io/afghanicoin/"
 
 
 def telegram(method, data=None):
@@ -35,20 +35,15 @@ def send_message(chat_id, text, keyboard=None):
     telegram("sendMessage", data)
 
 
+# فقط دکمه ورود به صفحه ماینینگ
 keyboard = {
     "inline_keyboard": [
         [
             {
                 "text": "⛏️ استخراج Afghani Coin",
                 "web_app": {
-                    "url": "https://yazdanmadadiafghanicoin.github.io/afghanicoin/"
+                    "url": WEB_APP_URL
                 }
-            }
-        ],
-        [
-            {
-                "text": "💰 موجودی من",
-                "callback_data": "balance"
             }
         ]
     ]
@@ -81,57 +76,18 @@ def main():
                 chat_id = message["chat"]["id"]
                 text = message.get("text", "")
 
-                if chat_id not in users:
-                    users[chat_id] = {
-                        "balance": 0,
-                        "last_mine": 0
-                    }
-
-                user = users[chat_id]
-
                 if text == "/start":
                     send_message(
                         chat_id,
                         "🪙 خوش آمدید به Afghani Coin!\n\n"
-                        "برای شروع روی «⛏️ استخراج Afghani Coin» بزنید.",
+                        "برای شروع استخراج روی دکمه زیر بزنید:",
                         keyboard
-                    )
-
-                elif text == "⛏️ استخراج Afghani Coin":
-                    now = time.time()
-
-                    if now - user["last_mine"] < 60:
-                        remaining = int(
-                            60 - (now - user["last_mine"])
-                        )
-
-                        send_message(
-                            chat_id,
-                            f"⏳ لطفاً {remaining} ثانیه صبر کنید."
-                        )
-
-                    else:
-                        user["balance"] += 1
-                        user["last_mine"] = now
-
-                        send_message(
-                            chat_id,
-                            "⛏️ استخراج موفق!\n\n"
-                            "🪙 +1 Afghani Coin\n"
-                            f"💰 موجودی: {user['balance']} AFC"
-                        )
-
-                elif text == "💰 موجودی من":
-                    send_message(
-                        chat_id,
-                        f"💰 موجودی شما:\n\n"
-                        f"🪙 {user['balance']} AFC"
                     )
 
                 else:
                     send_message(
                         chat_id,
-                        "برای شروع /start را بزنید.",
+                        "برای شروع استخراج، /start را بزنید.",
                         keyboard
                     )
 
