@@ -115,95 +115,70 @@ h1{
   transform:scale(.93);
 }
 
-.box{
+.box,
+.reward,
+.invite,
+.leaderboard{
   margin-top:20px;
-  padding:16px;
+  padding:18px;
   background:#202b36;
   border-radius:18px;
+}
+
+.box{
   text-align:left;
 }
 
-.box-title{
+.box-title,
+.reward-title,
+.invite-title,
+.leader-title{
   font-size:20px;
   font-weight:bold;
   margin-bottom:8px;
 }
 
-.box-info{
-  color:#9eabb8;
-  font-size:13px;
-  margin-bottom:12px;
-}
-
-.upgrade{
-  width:100%;
-  padding:14px;
-  border:0;
-  border-radius:13px;
-  background:#4caf50;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-}
-
-.upgrade:disabled{
-  opacity:.45;
-}
-
-.reward{
-  margin-top:20px;
-  padding:18px;
-  background:#202b36;
-  border-radius:18px;
-  text-align:center;
-}
-
-.reward-title{
-  font-size:21px;
-  font-weight:bold;
-  margin-bottom:8px;
-}
-
-.reward-info{
-  color:#9eabb8;
-  font-size:13px;
-  margin-bottom:14px;
-}
-
-.reward-btn{
-  width:100%;
-  padding:14px;
-  border:0;
-  border-radius:13px;
-  background:#f0b429;
-  color:#17120a;
-  font-size:16px;
-  font-weight:bold;
-}
-
-.reward-btn:disabled{
-  opacity:.45;
-}
-
-.invite{
-  margin-top:20px;
-  padding:18px;
-  background:#202b36;
-  border-radius:18px;
-  text-align:center;
-}
-
-.invite-title{
-  font-size:21px;
-  font-weight:bold;
-  margin-bottom:8px;
-}
-
+.box-info,
+.reward-info,
 .invite-info{
   color:#9eabb8;
   font-size:13px;
   line-height:1.5;
   margin-bottom:12px;
+}
+
+.upgrade,
+.reward-btn,
+.invite-btn{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:13px;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.upgrade{
+  background:#4caf50;
+}
+
+.upgrade:disabled,
+.reward-btn:disabled{
+  opacity:.45;
+}
+
+.reward{
+  text-align:center;
+}
+
+.reward-btn{
+  background:#f0b429;
+  color:#17120a;
+}
+
+.invite{
+  text-align:center;
 }
 
 .invite-link{
@@ -219,19 +194,59 @@ h1{
 }
 
 .invite-btn{
-  width:100%;
-  padding:14px;
-  border:0;
-  border-radius:13px;
   background:#3b82f6;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
   margin-top:8px;
 }
 
 .share-btn{
   background:#5865f2;
+}
+
+.leaderboard{
+  text-align:left;
+}
+
+.leader-title{
+  text-align:center;
+}
+
+.rank{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 8px;
+  margin-top:7px;
+  background:#18212a;
+  border-radius:12px;
+}
+
+.rank-left{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.rank-number{
+  width:30px;
+  font-weight:bold;
+}
+
+.rank-name{
+  font-weight:bold;
+}
+
+.rank-coins{
+  color:#79d85a;
+  font-weight:bold;
+}
+
+.my-rank{
+  margin-top:12px;
+  padding:13px;
+  background:#263746;
+  border-radius:12px;
+  text-align:center;
+  color:#dce5ed;
 }
 
 .reset{
@@ -247,6 +262,7 @@ h1{
 .status{
   min-height:25px;
   margin-top:8px;
+  text-align:center;
 }
 </style>
 </head>
@@ -374,8 +390,7 @@ type="button">
 </div>
 
 <div class="invite-info">
-Invite your friends to Afghani Coin.<br>
-Get 100 AFC for each invite in this demo version.
+Invite your friends to Afghani Coin.
 </div>
 
 <input
@@ -406,6 +421,21 @@ type="button">
 </div>
 
 
+<div class="leaderboard">
+
+<div class="leader-title">
+🏆 Leaderboard
+</div>
+
+<div id="leaderList"></div>
+
+<div class="my-rank" id="myRank">
+Your Rank: —
+</div>
+
+</div>
+
+
 <button
 class="reset"
 id="reset"
@@ -424,7 +454,6 @@ type="button">
 
 var MAX_ENERGY = 100;
 var DAILY_REWARD = 100;
-var INVITE_REWARD = 100;
 
 var balance =
 Number(localStorage.getItem("afc_balance") || 0);
@@ -475,11 +504,11 @@ document.getElementById("rewardBtn");
 var inviteLink =
 document.getElementById("inviteLink");
 
-var copyBtn =
-document.getElementById("copyBtn");
+var leaderList =
+document.getElementById("leaderList");
 
-var shareBtn =
-document.getElementById("shareBtn");
+var myRank =
+document.getElementById("myRank");
 
 
 function save(){
@@ -590,6 +619,8 @@ minutes +
 
 }
 
+renderLeaderboard();
+
 }
 
 
@@ -683,6 +714,8 @@ status.textContent =
 
 var userId = "";
 
+var firstName = "You";
+
 try{
 
 if(
@@ -692,10 +725,18 @@ window.Telegram.WebApp.initDataUnsafe &&
 window.Telegram.WebApp.initDataUnsafe.user
 ){
 
+var tgUser =
+window.Telegram.WebApp.initDataUnsafe.user;
+
 userId =
-String(
-window.Telegram.WebApp.initDataUnsafe.user.id
-);
+String(tgUser.id);
+
+if(tgUser.first_name){
+
+firstName =
+tgUser.first_name;
+
+}
 
 }
 
@@ -723,36 +764,30 @@ inviteLink.value =
 }
 
 
-/* Copy invite link */
+/* Copy */
 
-copyBtn.addEventListener(
+document.getElementById("copyBtn")
+.addEventListener(
 "click",
 async function(){
 
-var link =
-inviteLink.value;
-
 try{
 
-if(navigator.clipboard){
-
-await navigator.clipboard.writeText(link);
-
-}else{
-
-inviteLink.select();
-
-document.execCommand("copy");
-
-}
+await navigator.clipboard.writeText(
+inviteLink.value
+);
 
 status.textContent =
 "📋 Invite link copied!";
 
 }catch(e){
 
+inviteLink.select();
+
+document.execCommand("copy");
+
 status.textContent =
-"❌ Copy failed";
+"📋 Invite link copied!";
 
 }
 
@@ -762,7 +797,8 @@ status.textContent =
 
 /* Share */
 
-shareBtn.addEventListener(
+document.getElementById("shareBtn")
+.addEventListener(
 "click",
 function(){
 
@@ -802,7 +838,128 @@ shareUrl,
 );
 
 
-/* Energy regeneration */
+/* Simple local leaderboard */
+
+function renderLeaderboard(){
+
+var players = [
+
+{
+name:"🥇 Afghan Miner",
+coins:12500
+},
+
+{
+name:"🥈 Kabul Miner",
+coins:9800
+},
+
+{
+name:"🥉 Mazar Miner",
+coins:7600
+},
+
+{
+name:"Herat Miner",
+coins:5200
+},
+
+{
+name:"Kandahar Miner",
+coins:3100
+},
+
+{
+name:firstName,
+coins:balance
+}
+
+];
+
+
+players.sort(
+function(a,b){
+return b.coins - a.coins;
+}
+);
+
+
+leaderList.innerHTML = "";
+
+
+for(
+var i = 0;
+i < players.length;
+i++
+){
+
+var row =
+document.createElement("div");
+
+row.className =
+"rank";
+
+var left =
+document.createElement("div");
+
+left.className =
+"rank-left";
+
+var number =
+document.createElement("div");
+
+number.className =
+"rank-number";
+
+number.textContent =
+"#" + (i + 1);
+
+var name =
+document.createElement("div");
+
+name.className =
+"rank-name";
+
+name.textContent =
+players[i].name;
+
+left.appendChild(number);
+left.appendChild(name);
+
+
+var coins =
+document.createElement("div");
+
+coins.className =
+"rank-coins";
+
+coins.textContent =
+players[i].coins.toLocaleString() +
+" AFC";
+
+row.appendChild(left);
+row.appendChild(coins);
+
+leaderList.appendChild(row);
+
+
+if(
+players[i].name === firstName &&
+players[i].coins === balance
+){
+
+myRank.textContent =
+"🏆 Your Rank: #" +
+(i + 1);
+
+}
+
+}
+
+}
+
+
+/* Energy */
 
 setInterval(
 function(){
@@ -855,7 +1012,7 @@ status.textContent =
 );
 
 
-/* Telegram WebApp */
+/* Telegram */
 
 try{
 
@@ -878,4 +1035,4 @@ render();
 </script>
 
 </body>
-</html>
+  </html>
