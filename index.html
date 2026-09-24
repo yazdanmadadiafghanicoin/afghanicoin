@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
 <meta name="viewport"
 content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
@@ -10,21 +11,29 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
+
 *{
   box-sizing:border-box;
   -webkit-tap-highlight-color:transparent;
 }
 
-body{
+html,body{
   margin:0;
-  min-height:100vh;
+  padding:0;
+  width:100%;
+  min-height:100%;
+}
+
+body{
   background:#10151c;
-  color:white;
+  color:#fff;
   font-family:Arial,sans-serif;
   user-select:none;
+  -webkit-user-select:none;
 }
 
 .wrap{
+  width:100%;
   max-width:430px;
   margin:auto;
   padding:22px 18px 35px;
@@ -115,8 +124,11 @@ h1{
   font-size:25px;
   font-weight:800;
   display:block;
+
   cursor:pointer;
+
   touch-action:manipulation;
+  -webkit-touch-callout:none;
 }
 
 .mine:active{
@@ -176,6 +188,7 @@ h1{
   color:white;
   font-weight:bold;
 }
+
 </style>
 </head>
 
@@ -195,6 +208,7 @@ h1{
 
   </div>
 
+
   <div class="card">
 
     <div class="sub">
@@ -205,9 +219,11 @@ h1{
       0 AFC
     </div>
 
+
     <div class="rate" id="rate">
       👆 1 CLICK = +1 AFC
     </div>
+
 
     <div class="energy">
 
@@ -221,6 +237,7 @@ h1{
 
       </div>
 
+
       <div class="energy-bar">
 
         <div
@@ -232,6 +249,7 @@ h1{
 
     </div>
 
+
     <button
       type="button"
       class="mine"
@@ -241,6 +259,7 @@ h1{
 
     </button>
 
+
     <div
       class="sub status"
       id="status">
@@ -249,15 +268,21 @@ h1{
 
     </div>
 
+
     <div class="upgrade-box">
 
       <div class="upgrade-title">
         🚀 Mining Upgrade
       </div>
 
-      <div class="upgrade-info" id="upgradeInfo">
+      <div
+        class="upgrade-info"
+        id="upgradeInfo">
+
         Level 1 • +1 AFC per click
+
       </div>
+
 
       <button
         type="button"
@@ -269,6 +294,7 @@ h1{
       </button>
 
     </div>
+
 
     <button
       type="button"
@@ -283,19 +309,39 @@ h1{
 
 </div>
 
+
 <script>
+
+/* =========================
+   TELEGRAM
+========================= */
 
 const tg =
   window.Telegram &&
   window.Telegram.WebApp;
 
 if(tg){
-  tg.ready();
-  tg.expand();
+
+  try{
+    tg.ready();
+    tg.expand();
+  }catch(e){}
+
 }
 
+
+/* =========================
+   SETTINGS
+========================= */
+
 const MAX_ENERGY = 100;
+
 const REGEN_SECONDS = 3;
+
+
+/* =========================
+   LOAD DATA
+========================= */
 
 let balance =
   Number(localStorage.getItem("afc_balance") || 0);
@@ -306,20 +352,38 @@ let energy =
 let level =
   Number(localStorage.getItem("afc_level") || 1);
 
-if(!Number.isFinite(balance))
+
+/* =========================
+   CHECK DATA
+========================= */
+
+if(!Number.isFinite(balance)){
   balance = 0;
+}
 
-if(!Number.isFinite(energy))
+if(!Number.isFinite(energy)){
   energy = 100;
+}
 
-if(!Number.isFinite(level))
+if(!Number.isFinite(level)){
   level = 1;
+}
+
 
 energy =
-  Math.max(0,Math.min(MAX_ENERGY,energy));
+  Math.max(
+    0,
+    Math.min(MAX_ENERGY,energy)
+  );
+
 
 level =
   Math.max(1,level);
+
+
+/* =========================
+   ELEMENTS
+========================= */
 
 const balanceEl =
   document.getElementById("balance");
@@ -346,4 +410,307 @@ const upgradeInfo =
   document.getElementById("upgradeInfo");
 
 const rate =
-  document.getElementById("rate
+  document.getElementById("rate");
+
+
+/* =========================
+   UPGRADE PRICE
+========================= */
+
+function upgradePrice(){
+
+  return 100 * Math.pow(5,level - 1);
+
+}
+
+
+/* =========================
+   SAVE
+========================= */
+
+function save(){
+
+  localStorage.setItem(
+    "afc_balance",
+    String(balance)
+  );
+
+  localStorage.setItem(
+    "afc_energy",
+    String(energy)
+  );
+
+  localStorage.setItem(
+    "afc_level",
+    String(level)
+  );
+
+}
+
+
+/* =========================
+   DISPLAY
+========================= */
+
+function render(){
+
+  balanceEl.textContent =
+    balance.toLocaleString() + " AFC";
+
+
+  energyText.textContent =
+    energy + " / " + MAX_ENERGY;
+
+
+  energyFill.style.width =
+    (energy / MAX_ENERGY * 100) + "%";
+
+
+  rate.textContent =
+    "👆 1 CLICK = +" +
+    level +
+    " AFC";
+
+
+  upgradeInfo.textContent =
+    "Level " +
+    level +
+    " • +" +
+    level +
+    " AFC per click";
+
+
+  upgradeBtn.textContent =
+    "🚀 Upgrade — " +
+    upgradePrice().toLocaleString() +
+    " AFC";
+
+
+  upgradeBtn.disabled =
+    balance < upgradePrice();
+
+
+  if(energy <= 0){
+
+    mine.classList.add("disabled");
+
+  }else{
+
+    mine.classList.remove("disabled");
+
+  }
+
+}
+
+
+/* =========================
+   MINING
+========================= */
+
+function mineAFC(){
+
+  if(energy <= 0){
+
+    status.textContent =
+      "⚡ Energy is empty";
+
+    return;
+
+  }
+
+
+  balance =
+    balance + level;
+
+
+  energy =
+    energy - 1;
+
+
+  save();
+
+  render();
+
+
+  status.textContent =
+    "+" +
+    level +
+    " AFC 🪙";
+
+}
+
+
+/* =========================
+   TELEGRAM / MOBILE CLICK
+========================= */
+
+let miningLock = false;
+
+
+function minePressed(event){
+
+  if(event){
+
+    event.preventDefault();
+
+  }
+
+
+  if(miningLock){
+
+    return;
+
+  }
+
+
+  miningLock = true;
+
+
+  mineAFC();
+
+
+  setTimeout(
+    function(){
+
+      miningLock = false;
+
+    },
+    80
+  );
+
+}
+
+
+/* =========================
+   POINTER EVENT
+========================= */
+
+mine.addEventListener(
+  "pointerdown",
+  minePressed,
+  {
+    passive:false
+  }
+);
+
+
+/* =========================
+   NORMAL CLICK FALLBACK
+========================= */
+
+mine.addEventListener(
+  "click",
+  function(event){
+
+    event.preventDefault();
+
+  }
+);
+
+
+/* =========================
+   UPGRADE
+========================= */
+
+upgradeBtn.addEventListener(
+  "click",
+  function(){
+
+    const price =
+      upgradePrice();
+
+
+    if(balance < price){
+
+      status.textContent =
+        "❌ Not enough AFC";
+
+      return;
+
+    }
+
+
+    balance =
+      balance - price;
+
+
+    level =
+      level + 1;
+
+
+    save();
+
+    render();
+
+
+    status.textContent =
+      "🚀 Upgrade purchased! Level " +
+      level;
+
+  }
+);
+
+
+/* =========================
+   ENERGY REGENERATION
+========================= */
+
+setInterval(
+  function(){
+
+    if(energy < MAX_ENERGY){
+
+      energy =
+        energy + 1;
+
+
+      save();
+
+      render();
+
+    }
+
+  },
+  REGEN_SECONDS * 1000
+);
+
+
+/* =========================
+   RESET
+========================= */
+
+reset.addEventListener(
+  "click",
+  function(){
+
+    balance = 0;
+
+    energy = MAX_ENERGY;
+
+    level = 1;
+
+
+    save();
+
+    render();
+
+
+    status.textContent =
+      "Balance, Energy and Upgrade reset";
+
+  }
+);
+
+
+/* =========================
+   START
+========================= */
+
+save();
+
+render();
+
+</script>
+
+</body>
+</html>
