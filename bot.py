@@ -7,7 +7,7 @@ import time
 TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 API = f"https://api.telegram.org/bot{TOKEN}"
 
-WEB_APP_URL = "https://yazdanmadadiafghanicoin.github.io/afghanicoin/"
+WEB_APP_URL = "https://yazdanmadadiafghanicoin.github.io/afghanicoin/?v=3""
 
 
 def telegram(method, data=None):
