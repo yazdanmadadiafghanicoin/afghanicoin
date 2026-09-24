@@ -1,205 +1,175 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Afghani Coin</title>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 *{
   box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
 }
 
 body{
   margin:0;
-  background:#10151c;
-  color:#fff;
   font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#07111f,#102b45,#07111f);
+  color:white;
+  text-align:center;
+  min-height:100vh;
 }
 
-.wrap{
+.container{
   max-width:430px;
   margin:auto;
-  padding:22px 18px 35px;
-}
-
-.top{
-  text-align:center;
-}
-
-.logo{
-  width:86px;
-  height:86px;
-  margin:auto;
-  border-radius:50%;
-  background:#79d85a;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
-  font-weight:bold;
-  color:#102014;
+  padding:20px 15px 40px;
 }
 
 h1{
-  margin:12px 0 4px;
-  font-size:27px;
+  margin:10px 0 5px;
+  font-size:32px;
 }
 
-.sub{
-  color:#91a0b0;
-  font-size:14px;
+.subtitle{
+  color:#aebdcc;
+  margin-bottom:20px;
 }
 
-.card{
-  background:#1a222c;
-  border-radius:22px;
+.balance-box{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;
   padding:20px;
-  margin-top:20px;
-  text-align:center;
+  margin-bottom:15px;
 }
 
 .balance{
-  font-size:42px;
+  font-size:38px;
   font-weight:bold;
-  margin:10px;
+  margin:8px 0;
 }
 
-.rate{
-  color:#79d85a;
-  font-weight:bold;
+.coin{
+  color:#ffd54a;
 }
 
-.energy{
-  margin-top:20px;
-  text-align:left;
-}
-
-.energy-head{
+.stats{
   display:flex;
-  justify-content:space-between;
-  margin-bottom:8px;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.stat{
+  flex:1;
+  background:rgba(255,255,255,.08);
+  padding:13px 5px;
+  border-radius:15px;
+}
+
+.stat-title{
+  font-size:12px;
+  color:#9eb0c3;
+}
+
+.stat-value{
+  font-size:19px;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+.mine-button{
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  border:none;
+  background:linear-gradient(145deg,#ffd84d,#ff9d00);
+  box-shadow:0 10px 35px rgba(255,170,0,.35);
+  font-size:30px;
+  font-weight:bold;
+  color:#202020;
+  cursor:pointer;
+  margin:15px 0;
+}
+
+.mine-button:active{
+  transform:scale(.94);
 }
 
 .energy-bar{
-  height:14px;
-  background:#303b47;
+  height:15px;
+  background:#26384b;
   border-radius:20px;
   overflow:hidden;
+  margin:8px 0 20px;
 }
 
 .energy-fill{
   height:100%;
-  background:#79d85a;
-}
-
-.mine{
-  width:190px;
-  height:190px;
-  margin:25px auto;
-  border:0;
-  border-radius:50%;
-  background:#55b844;
-  color:#071307;
-  font-size:25px;
-  font-weight:bold;
-  display:block;
-  touch-action:manipulation;
-}
-
-.mine:active{
-  transform:scale(.93);
-}
-
-.box,
-.reward,
-.invite,
-.leaderboard{
-  margin-top:20px;
-  padding:18px;
-  background:#202b36;
-  border-radius:18px;
-}
-
-.box{
-  text-align:left;
-}
-
-.box-title,
-.reward-title,
-.invite-title,
-.leader-title{
-  font-size:20px;
-  font-weight:bold;
-  margin-bottom:8px;
-}
-
-.box-info,
-.reward-info,
-.invite-info{
-  color:#9eabb8;
-  font-size:13px;
-  line-height:1.5;
-  margin-bottom:12px;
-}
-
-.upgrade,
-.reward-btn,
-.invite-btn{
   width:100%;
-  padding:14px;
+  background:#36d67a;
+  transition:.3s;
+}
+
+.buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+button.action{
   border:0;
-  border-radius:13px;
-  color:white;
-  font-size:16px;
+  padding:15px 8px;
+  border-radius:14px;
+  font-size:15px;
   font-weight:bold;
+  color:white;
+  cursor:pointer;
+  background:#17466c;
+}
+
+button.action:active{
+  transform:scale(.97);
 }
 
 .upgrade{
-  background:#4caf50;
+  background:#6b45a8 !important;
 }
 
-.upgrade:disabled,
-.reward-btn:disabled{
-  opacity:.45;
-}
-
-.reward{
-  text-align:center;
-}
-
-.reward-btn{
-  background:#f0b429;
-  color:#17120a;
+.daily{
+  background:#16804e !important;
 }
 
 .invite{
-  text-align:center;
+  background:#1478b8 !important;
+}
+
+.reset{
+  background:#8d3030 !important;
+}
+
+.section{
+  margin-top:18px;
+  background:rgba(255,255,255,.07);
+  border-radius:18px;
+  padding:16px;
+}
+
+.section-title{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:12px;
 }
 
 .invite-link{
   width:100%;
   padding:12px;
-  border:0;
+  border:none;
   border-radius:10px;
-  background:#121820;
-  color:#dce5ed;
-  font-size:12px;
+  background:#0c1724;
+  color:white;
   text-align:center;
   margin-bottom:10px;
-}
-
-.invite-btn{
-  background:#3b82f6;
-  margin-top:8px;
-}
-
-.share-btn{
-  background:#5865f2;
 }
 
 .leaderboard{
@@ -208,26 +178,29 @@ h1{
 
 .leader-title{
   text-align:center;
+  font-size:21px;
+  font-weight:bold;
+  margin-bottom:12px;
 }
 
 .rank{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:12px 8px;
-  margin-top:7px;
-  background:#18212a;
+  background:rgba(255,255,255,.07);
+  padding:11px;
   border-radius:12px;
+  margin-bottom:7px;
 }
 
 .rank-left{
   display:flex;
-  gap:10px;
   align-items:center;
+  gap:9px;
 }
 
 .rank-number{
-  width:30px;
+  width:28px;
   font-weight:bold;
 }
 
@@ -236,803 +209,55 @@ h1{
 }
 
 .rank-coins{
-  color:#79d85a;
+  color:#ffd54a;
   font-weight:bold;
 }
 
 .my-rank{
   margin-top:12px;
-  padding:13px;
-  background:#263746;
-  border-radius:12px;
   text-align:center;
-  color:#dce5ed;
-}
-
-.reset{
-  margin-top:15px;
-  padding:12px 25px;
-  border:0;
-  border-radius:12px;
-  background:#273442;
-  color:white;
+  color:#9ed8ff;
   font-weight:bold;
 }
 
-.status{
-  min-height:25px;
-  margin-top:8px;
-  text-align:center;
+.message{
+  min-height:24px;
+  color:#ffd54a;
+  font-weight:bold;
+  margin:10px 0;
+}
+
+.footer{
+  margin-top:25px;
+  color:#667b90;
+  font-size:12px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="wrap">
+<div class="container">
 
-<div class="top">
+<h1>🪙 Afghani Coin</h1>
+<div class="subtitle">Mine • Upgrade • Earn</div>
 
-<div class="logo">AC</div>
-
-<h1>Afghani Coin</h1>
-
-<div class="sub">AFC Mining</div>
-
+<div class="balance-box">
+  <div>YOUR BALANCE</div>
+  <div class="balance">
+    <span id="balance">0</span>
+    <span class="coin"> AFC</span>
+  </div>
+  <div>⛏️ Mining Power: <span id="power">1</span></div>
 </div>
 
-
-<div class="card">
-
-<div class="sub">
-YOUR BALANCE
-</div>
-
-<div class="balance" id="balance">
-0 AFC
-</div>
-
-<div class="rate" id="rate">
-👆 1 CLICK = +1 AFC
-</div>
-
-
-<div class="energy">
-
-<div class="energy-head">
-<span>⚡ ENERGY</span>
-<span id="energyText">100 / 100</span>
-</div>
-
-<div class="energy-bar">
-
-<div
-class="energy-fill"
-id="energyFill">
-</div>
-
-</div>
-
-</div>
-
-
-<button
-class="mine"
-id="mine"
-type="button">
-
-⛏️ MINE
-
-</button>
-
-
-<div
-class="sub status"
-id="status">
-
-Tap MINE to earn AFC
-
-</div>
-
-
-<div class="box">
-
-<div class="box-title">
-🚀 Mining Upgrade
-</div>
-
-<div
-class="box-info"
-id="upgradeInfo">
-
-Level 1 • +1 AFC per click
-
-</div>
-
-<button
-class="upgrade"
-id="upgradeBtn"
-type="button">
-
-🚀 Upgrade — 100 AFC
-
-</button>
-
-</div>
-
-
-<div class="reward">
-
-<div class="reward-title">
-🎁 Daily Reward
-</div>
-
-<div class="reward-info">
-Claim 100 AFC once every 24 hours.
-</div>
-
-<button
-class="reward-btn"
-id="rewardBtn"
-type="button">
-
-🎁 Claim 100 AFC
-
-</button>
-
-</div>
-
-
-<div class="invite">
-
-<div class="invite-title">
-👥 Invite Friends
-</div>
-
-<div class="invite-info">
-Invite your friends to Afghani Coin.
-</div>
-
-<input
-class="invite-link"
-id="inviteLink"
-readonly
-value="Creating link..."
->
-
-<button
-class="invite-btn"
-id="copyBtn"
-type="button">
-
-📋 Copy Invite Link
-
-</button>
-
-<button
-class="invite-btn share-btn"
-id="shareBtn"
-type="button">
-
-📤 Share With Friends
-
-</button>
-
-</div>
-
-
-<div class="leaderboard">
-
-<div class="leader-title">
-🏆 Leaderboard
-</div>
-
-<div id="leaderList"></div>
-
-<div class="my-rank" id="myRank">
-Your Rank: —
-</div>
-
-</div>
-
-
-<button
-class="reset"
-id="reset"
-type="button">
-
-🔄 Reset
-
-</button>
-
-</div>
-
-</div>
-
-
-<script>
-
-var MAX_ENERGY = 100;
-var DAILY_REWARD = 100;
-
-var balance =
-Number(localStorage.getItem("afc_balance") || 0);
-
-var energy =
-Number(localStorage.getItem("afc_energy") || 100);
-
-var level =
-Number(localStorage.getItem("afc_level") || 1);
-
-var lastReward =
-Number(localStorage.getItem("afc_last_reward") || 0);
-
-
-if(!isFinite(balance)) balance = 0;
-if(!isFinite(energy)) energy = 100;
-if(!isFinite(level)) level = 1;
-if(!isFinite(lastReward)) lastReward = 0;
-
-
-var balanceEl =
-document.getElementById("balance");
-
-var energyText =
-document.getElementById("energyText");
-
-var energyFill =
-document.getElementById("energyFill");
-
-var mine =
-document.getElementById("mine");
-
-var status =
-document.getElementById("status");
-
-var upgradeBtn =
-document.getElementById("upgradeBtn");
-
-var upgradeInfo =
-document.getElementById("upgradeInfo");
-
-var rate =
-document.getElementById("rate");
-
-var rewardBtn =
-document.getElementById("rewardBtn");
-
-var inviteLink =
-document.getElementById("inviteLink");
-
-var leaderList =
-document.getElementById("leaderList");
-
-var myRank =
-document.getElementById("myRank");
-
-
-function save(){
-
-localStorage.setItem(
-"afc_balance",
-String(balance)
-);
-
-localStorage.setItem(
-"afc_energy",
-String(energy)
-);
-
-localStorage.setItem(
-"afc_level",
-String(level)
-);
-
-localStorage.setItem(
-"afc_last_reward",
-String(lastReward)
-);
-
-}
-
-
-function price(){
-
-return 100 * Math.pow(5,level - 1);
-
-}
-
-
-function rewardAvailable(){
-
-return (
-lastReward === 0 ||
-Date.now() - lastReward >= 86400000
-);
-
-}
-
-
-function render(){
-
-balanceEl.textContent =
-balance.toLocaleString() + " AFC";
-
-energyText.textContent =
-energy + " / 100";
-
-energyFill.style.width =
-energy + "%";
-
-rate.textContent =
-"👆 1 CLICK = +" +
-level +
-" AFC";
-
-upgradeInfo.textContent =
-"Level " +
-level +
-" • +" +
-level +
-" AFC per click";
-
-upgradeBtn.textContent =
-"🚀 Upgrade — " +
-price().toLocaleString() +
-" AFC";
-
-upgradeBtn.disabled =
-balance < price();
-
-
-if(rewardAvailable()){
-
-rewardBtn.disabled = false;
-
-rewardBtn.textContent =
-"🎁 Claim 100 AFC";
-
-}else{
-
-rewardBtn.disabled = true;
-
-var remaining =
-86400000 -
-(Date.now() - lastReward);
-
-var hours =
-Math.floor(
-remaining / 3600000
-);
-
-var minutes =
-Math.floor(
-(remaining % 3600000) / 60000
-);
-
-rewardBtn.textContent =
-"⏳ " +
-hours +
-"h " +
-minutes +
-"m";
-
-}
-
-renderLeaderboard();
-
-}
-
-
-function mineCoin(){
-
-if(energy <= 0){
-
-status.textContent =
-"⚡ Energy is empty";
-
-return;
-
-}
-
-balance += level;
-
-energy -= 1;
-
-save();
-render();
-
-status.textContent =
-"+" +
-level +
-" AFC 🪙";
-
-}
-
-
-mine.addEventListener(
-"click",
-mineCoin
-);
-
-
-upgradeBtn.addEventListener(
-"click",
-function(){
-
-var cost = price();
-
-if(balance < cost){
-
-status.textContent =
-"❌ Not enough AFC";
-
-return;
-
-}
-
-balance -= cost;
-level += 1;
-
-save();
-render();
-
-status.textContent =
-"🚀 Upgrade successful!";
-
-}
-);
-
-
-rewardBtn.addEventListener(
-"click",
-function(){
-
-if(!rewardAvailable()){
-
-status.textContent =
-"⏳ Daily reward is not ready yet";
-
-return;
-
-}
-
-balance += DAILY_REWARD;
-lastReward = Date.now();
-
-save();
-render();
-
-status.textContent =
-"🎁 +100 AFC Daily Reward!";
-
-}
-);
-
-
-/* Telegram user */
-
-var userId = "";
-
-var firstName = "You";
-
-try{
-
-if(
-window.Telegram &&
-window.Telegram.WebApp &&
-window.Telegram.WebApp.initDataUnsafe &&
-window.Telegram.WebApp.initDataUnsafe.user
-){
-
-var tgUser =
-window.Telegram.WebApp.initDataUnsafe.user;
-
-userId =
-String(tgUser.id);
-
-if(tgUser.first_name){
-
-firstName =
-tgUser.first_name;
-
-}
-
-}
-
-}catch(e){}
-
-
-/* Invite link */
-
-var botUsername =
-"afghani_coin_bot";
-
-if(userId){
-
-inviteLink.value =
-"https://t.me/" +
-botUsername +
-"?start=ref_" +
-userId;
-
-}else{
-
-inviteLink.value =
-"Open inside Telegram to get your invite link";
-
-}
-
-
-/* Copy */
-
-document.getElementById("copyBtn")
-.addEventListener(
-"click",
-async function(){
-
-try{
-
-await navigator.clipboard.writeText(
-inviteLink.value
-);
-
-status.textContent =
-"📋 Invite link copied!";
-
-}catch(e){
-
-inviteLink.select();
-
-document.execCommand("copy");
-
-status.textContent =
-"📋 Invite link copied!";
-
-}
-
-}
-);
-
-
-/* Share */
-
-document.getElementById("shareBtn")
-.addEventListener(
-"click",
-function(){
-
-var url =
-inviteLink.value;
-
-var text =
-"🪙 Join me on Afghani Coin and start mining AFC!";
-
-var shareUrl =
-"https://t.me/share/url?url=" +
-encodeURIComponent(url) +
-"&text=" +
-encodeURIComponent(text);
-
-
-if(
-window.Telegram &&
-window.Telegram.WebApp &&
-window.Telegram.WebApp.openTelegramLink
-){
-
-window.Telegram.WebApp.openTelegramLink(
-shareUrl
-);
-
-}else{
-
-window.open(
-shareUrl,
-"_blank"
-);
-
-}
-
-}
-);
-
-
-/* Simple local leaderboard */
-
-function renderLeaderboard(){
-
-var players = [
-
-{
-name:"🥇 Afghan Miner",
-coins:12500
-},
-
-{
-name:"🥈 Kabul Miner",
-coins:9800
-},
-
-{
-name:"🥉 Mazar Miner",
-coins:7600
-},
-
-{
-name:"Herat Miner",
-coins:5200
-},
-
-{
-name:"Kandahar Miner",
-coins:3100
-},
-
-{
-name:firstName,
-coins:balance
-}
-
-];
-
-
-players.sort(
-function(a,b){
-return b.coins - a.coins;
-}
-);
-
-
-leaderList.innerHTML = "";
-
-
-for(
-var i = 0;
-i < players.length;
-i++
-){
-
-var row =
-document.createElement("div");
-
-row.className =
-"rank";
-
-var left =
-document.createElement("div");
-
-left.className =
-"rank-left";
-
-var number =
-document.createElement("div");
-
-number.className =
-"rank-number";
-
-number.textContent =
-"#" + (i + 1);
-
-var name =
-document.createElement("div");
-
-name.className =
-"rank-name";
-
-name.textContent =
-players[i].name;
-
-left.appendChild(number);
-left.appendChild(name);
-
-
-var coins =
-document.createElement("div");
-
-coins.className =
-"rank-coins";
-
-coins.textContent =
-players[i].coins.toLocaleString() +
-" AFC";
-
-row.appendChild(left);
-row.appendChild(coins);
-
-leaderList.appendChild(row);
-
-
-if(
-players[i].name === firstName &&
-players[i].coins === balance
-){
-
-myRank.textContent =
-"🏆 Your Rank: #" +
-(i + 1);
-
-}
-
-}
-
-}
-
-
-/* Energy */
-
-setInterval(
-function(){
-
-if(energy < MAX_ENERGY){
-
-energy += 1;
-
-save();
-render();
-
-}
-
-},
-3000
-);
-
-
-/* Reward timer */
-
-setInterval(
-function(){
-
-render();
-
-},
-30000
-);
-
-
-/* Reset */
-
-document.getElementById("reset")
-.addEventListener(
-"click",
-function(){
-
-balance = 0;
-energy = 100;
-level = 1;
-lastReward = 0;
-
-save();
-render();
-
-status.textContent =
-"Reset complete";
-
-}
-);
-
-
-/* Telegram */
-
-try{
-
-if(
-window.Telegram &&
-window.Telegram.WebApp
-){
-
-window.Telegram.WebApp.ready();
-window.Telegram.WebApp.expand();
-
-}
-
-}catch(e){}
-
-
-save();
-render();
-
-</script>
-
-</body>
-  </html>
+<div class="stats">
+
+  <div class="stat">
+    <div class="stat-title">⚡ ENERGY</div>
+    <div class="stat-value">
+      <span id="energy">100</span>/100
+    </div>
+  </div>
+
+ 
