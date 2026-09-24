@@ -1,8 +1,8 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
 <title>Afghani Coin</title>
 
@@ -17,58 +17,61 @@
 body{
   margin:0;
   background:#10151c;
-  color:white;
+  color:#fff;
   font-family:Arial,sans-serif;
 }
 
-.container{
+.wrap{
   max-width:430px;
   margin:auto;
-  padding:20px;
+  padding:22px 18px 35px;
 }
 
-.header{
+.top{
   text-align:center;
 }
 
 .logo{
-  width:80px;
-  height:80px;
+  width:86px;
+  height:86px;
   margin:auto;
   border-radius:50%;
-  background:#65c84a;
-  color:#102014;
+  background:#79d85a;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:28px;
+  font-size:30px;
   font-weight:bold;
+  color:#102014;
 }
 
 h1{
-  margin:10px 0 3px;
+  margin:12px 0 4px;
+  font-size:27px;
 }
 
-.gray{
+.sub{
   color:#91a0b0;
+  font-size:14px;
 }
 
 .card{
-  margin-top:18px;
-  padding:20px;
   background:#1a222c;
-  border-radius:20px;
+  border-radius:22px;
+  padding:20px;
+  margin-top:20px;
   text-align:center;
 }
 
 .balance{
-  font-size:40px;
+  font-size:42px;
   font-weight:bold;
   margin:10px;
 }
 
-.green{
+.rate{
   color:#79d85a;
+  font-weight:bold;
 }
 
 .energy{
@@ -76,22 +79,445 @@ h1{
   text-align:left;
 }
 
-.energybar{
+.energy-head{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+
+.energy-bar{
   height:14px;
   background:#303b47;
   border-radius:20px;
   overflow:hidden;
-  margin-top:7px;
 }
 
-.energyfill{
+.energy-fill{
   height:100%;
-  width:100%;
   background:#79d85a;
 }
 
 .mine{
+  width:190px;
+  height:190px;
+  margin:25px auto;
+  border:0;
+  border-radius:50%;
+  background:#55b844;
+  color:#071307;
+  font-size:25px;
+  font-weight:bold;
   display:block;
-  width:180px;
-  height:180px;
- 
+  touch-action:manipulation;
+}
+
+.mine:active{
+  transform:scale(.93);
+}
+
+.box{
+  margin-top:20px;
+  padding:16px;
+  background:#202b36;
+  border-radius:18px;
+  text-align:left;
+}
+
+.box-title{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.box-info{
+  color:#9eabb8;
+  font-size:13px;
+  margin-bottom:12px;
+}
+
+.upgrade{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:13px;
+  background:#4caf50;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.upgrade:disabled{
+  opacity:.45;
+}
+
+.reset{
+  margin-top:15px;
+  padding:12px 25px;
+  border:0;
+  border-radius:12px;
+  background:#273442;
+  color:white;
+  font-weight:bold;
+}
+
+.status{
+  min-height:25px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="top">
+
+<div class="logo">AC</div>
+
+<h1>Afghani Coin</h1>
+
+<div class="sub">AFC Mining</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="sub">
+YOUR BALANCE
+</div>
+
+<div class="balance" id="balance">
+0 AFC
+</div>
+
+<div class="rate" id="rate">
+👆 1 CLICK = +1 AFC
+</div>
+
+
+<div class="energy">
+
+<div class="energy-head">
+
+<span>⚡ ENERGY</span>
+
+<span id="energyText">
+100 / 100
+</span>
+
+</div>
+
+<div class="energy-bar">
+
+<div
+class="energy-fill"
+id="energyFill">
+</div>
+
+</div>
+
+</div>
+
+
+<button
+class="mine"
+id="mine"
+type="button">
+
+⛏️ MINE
+
+</button>
+
+
+<div
+class="sub status"
+id="status">
+
+Tap MINE to earn AFC
+
+</div>
+
+
+<div class="box">
+
+<div class="box-title">
+🚀 Mining Upgrade
+</div>
+
+<div
+class="box-info"
+id="upgradeInfo">
+
+Level 1 • +1 AFC per click
+
+</div>
+
+<button
+class="upgrade"
+id="upgradeBtn"
+type="button">
+
+🚀 Upgrade — 100 AFC
+
+</button>
+
+</div>
+
+
+<button
+class="reset"
+id="reset"
+type="button">
+
+🔄 Reset
+
+</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+var MAX_ENERGY = 100;
+
+var balance =
+Number(localStorage.getItem("afc_balance") || 0);
+
+var energy =
+Number(localStorage.getItem("afc_energy") || 100);
+
+var level =
+Number(localStorage.getItem("afc_level") || 1);
+
+
+if(!isFinite(balance)){
+  balance = 0;
+}
+
+if(!isFinite(energy)){
+  energy = 100;
+}
+
+if(!isFinite(level)){
+  level = 1;
+}
+
+
+var balanceEl =
+document.getElementById("balance");
+
+var energyText =
+document.getElementById("energyText");
+
+var energyFill =
+document.getElementById("energyFill");
+
+var mine =
+document.getElementById("mine");
+
+var status =
+document.getElementById("status");
+
+var upgradeBtn =
+document.getElementById("upgradeBtn");
+
+var upgradeInfo =
+document.getElementById("upgradeInfo");
+
+var rate =
+document.getElementById("rate");
+
+
+function save(){
+
+localStorage.setItem(
+"afc_balance",
+String(balance)
+);
+
+localStorage.setItem(
+"afc_energy",
+String(energy)
+);
+
+localStorage.setItem(
+"afc_level",
+String(level)
+);
+
+}
+
+
+function price(){
+
+return 100 * Math.pow(5,level - 1);
+
+}
+
+
+function render(){
+
+balanceEl.textContent =
+balance.toLocaleString() + " AFC";
+
+energyText.textContent =
+energy + " / 100";
+
+energyFill.style.width =
+energy + "%";
+
+rate.textContent =
+"👆 1 CLICK = +" +
+level +
+" AFC";
+
+upgradeInfo.textContent =
+"Level " +
+level +
+" • +" +
+level +
+" AFC per click";
+
+upgradeBtn.textContent =
+"🚀 Upgrade — " +
+price().toLocaleString() +
+" AFC";
+
+upgradeBtn.disabled =
+balance < price();
+
+}
+
+
+function mineCoin(){
+
+if(energy <= 0){
+
+status.textContent =
+"⚡ Energy is empty";
+
+return;
+
+}
+
+balance += level;
+
+energy -= 1;
+
+save();
+
+render();
+
+status.textContent =
+"+" + level + " AFC 🪙";
+
+}
+
+
+mine.addEventListener(
+"click",
+function(){
+
+mineCoin();
+
+}
+);
+
+
+upgradeBtn.addEventListener(
+"click",
+function(){
+
+var cost = price();
+
+if(balance < cost){
+
+status.textContent =
+"❌ Not enough AFC";
+
+return;
+
+}
+
+balance -= cost;
+
+level += 1;
+
+save();
+
+render();
+
+status.textContent =
+"🚀 Upgrade successful!";
+
+}
+);
+
+
+setInterval(
+function(){
+
+if(energy < MAX_ENERGY){
+
+energy += 1;
+
+save();
+
+render();
+
+}
+
+},
+3000
+);
+
+
+document.getElementById("reset")
+.addEventListener(
+"click",
+function(){
+
+balance = 0;
+
+energy = 100;
+
+level = 1;
+
+save();
+
+render();
+
+status.textContent =
+"Reset complete";
+
+}
+);
+
+
+try{
+
+if(
+window.Telegram &&
+window.Telegram.WebApp
+){
+
+window.Telegram.WebApp.ready();
+
+window.Telegram.WebApp.expand();
+
+}
+
+}catch(e){}
+
+
+save();
+
+render();
+
+</script>
+
+</body>
+  </html>
