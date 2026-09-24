@@ -185,6 +185,55 @@ h1{
   opacity:.45;
 }
 
+.invite{
+  margin-top:20px;
+  padding:18px;
+  background:#202b36;
+  border-radius:18px;
+  text-align:center;
+}
+
+.invite-title{
+  font-size:21px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.invite-info{
+  color:#9eabb8;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:12px;
+}
+
+.invite-link{
+  width:100%;
+  padding:12px;
+  border:0;
+  border-radius:10px;
+  background:#121820;
+  color:#dce5ed;
+  font-size:12px;
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.invite-btn{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:13px;
+  background:#3b82f6;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  margin-top:8px;
+}
+
+.share-btn{
+  background:#5865f2;
+}
+
 .reset{
   margin-top:15px;
   padding:12px 25px;
@@ -235,13 +284,8 @@ YOUR BALANCE
 <div class="energy">
 
 <div class="energy-head">
-
 <span>⚡ ENERGY</span>
-
-<span id="energyText">
-100 / 100
-</span>
-
+<span id="energyText">100 / 100</span>
 </div>
 
 <div class="energy-bar">
@@ -323,6 +367,45 @@ type="button">
 </div>
 
 
+<div class="invite">
+
+<div class="invite-title">
+👥 Invite Friends
+</div>
+
+<div class="invite-info">
+Invite your friends to Afghani Coin.<br>
+Your invitation link is ready below.
+</div>
+
+<input
+class="invite-link"
+id="inviteLink"
+readonly
+value="Creating link..."
+>
+
+<button
+class="invite-btn"
+id="copyBtn"
+type="button">
+
+📋 Copy Invite Link
+
+</button>
+
+<button
+class="invite-btn share-btn"
+id="shareBtn"
+type="button">
+
+📤 Share With Friends
+
+</button>
+
+</div>
+
+
 <button
 class="reset"
 id="reset"
@@ -340,7 +423,6 @@ type="button">
 <script>
 
 var MAX_ENERGY = 100;
-
 var DAILY_REWARD = 100;
 
 var balance =
@@ -356,21 +438,10 @@ var lastReward =
 Number(localStorage.getItem("afc_last_reward") || 0);
 
 
-if(!isFinite(balance)){
-  balance = 0;
-}
-
-if(!isFinite(energy)){
-  energy = 100;
-}
-
-if(!isFinite(level)){
-  level = 1;
-}
-
-if(!isFinite(lastReward)){
-  lastReward = 0;
-}
+if(!isFinite(balance)) balance = 0;
+if(!isFinite(energy)) energy = 100;
+if(!isFinite(level)) level = 1;
+if(!isFinite(lastReward)) lastReward = 0;
 
 
 var balanceEl =
@@ -399,6 +470,15 @@ document.getElementById("rate");
 
 var rewardBtn =
 document.getElementById("rewardBtn");
+
+var inviteLink =
+document.getElementById("inviteLink");
+
+var copyBtn =
+document.getElementById("copyBtn");
+
+var shareBtn =
+document.getElementById("shareBtn");
 
 
 function save(){
@@ -435,11 +515,9 @@ return 100 * Math.pow(5,level - 1);
 
 function rewardAvailable(){
 
-var now = Date.now();
-
 return (
 lastReward === 0 ||
-now - lastReward >= 24 * 60 * 60 * 1000
+Date.now() - lastReward >= 86400000
 );
 
 }
@@ -457,15 +535,11 @@ energyFill.style.width =
 energy + "%";
 
 rate.textContent =
-"👆 1 CLICK = +" +
-level +
-" AFC";
+"👆 1 CLICK = +" + level + " AFC";
 
 upgradeInfo.textContent =
-"Level " +
-level +
-" • +" +
-level +
+"Level " + level +
+" • +" + level +
 " AFC per click";
 
 upgradeBtn.textContent =
@@ -489,26 +563,21 @@ rewardBtn.textContent =
 rewardBtn.disabled = true;
 
 var remaining =
-(24 * 60 * 60 * 1000) -
+86400000 -
 (Date.now() - lastReward);
 
 var hours =
 Math.floor(
-remaining / (60 * 60 * 1000)
+remaining / 3600000
 );
 
 var minutes =
 Math.floor(
-(remaining % (60 * 60 * 1000)) /
-(60 * 1000)
+(remaining % 3600000) / 60000
 );
 
 rewardBtn.textContent =
-"⏳ " +
-hours +
-"h " +
-minutes +
-"m";
+"⏳ " + hours + "h " + minutes + "m";
 
 }
 
@@ -531,7 +600,6 @@ balance += level;
 energy -= 1;
 
 save();
-
 render();
 
 status.textContent =
@@ -542,11 +610,7 @@ status.textContent =
 
 mine.addEventListener(
 "click",
-function(){
-
-mineCoin();
-
-}
+mineCoin
 );
 
 
@@ -566,11 +630,9 @@ return;
 }
 
 balance -= cost;
-
 level += 1;
 
 save();
-
 render();
 
 status.textContent =
@@ -594,11 +656,9 @@ return;
 }
 
 balance += DAILY_REWARD;
-
 lastReward = Date.now();
 
 save();
-
 render();
 
 status.textContent =
@@ -608,6 +668,122 @@ status.textContent =
 );
 
 
+/* Telegram user ID */
+
+var userId = "";
+
+try{
+
+if(
+window.Telegram &&
+window.Telegram.WebApp &&
+window.Telegram.WebApp.initDataUnsafe &&
+window.Telegram.WebApp.initDataUnsafe.user
+){
+
+userId =
+String(
+window.Telegram.WebApp.initDataUnsafe.user.id
+);
+
+}
+
+}catch(e){}
+
+
+/* Create invite link */
+
+var botUsername = "YOUR_BOT_USERNAME";
+
+if(userId){
+
+inviteLink.value =
+"https://t.me/" +
+botUsername +
+"?start=ref_" +
+userId;
+
+}else{
+
+inviteLink.value =
+"Open Afghani Coin inside Telegram";
+
+}
+
+
+/* Copy */
+
+copyBtn.addEventListener(
+"click",
+async function(){
+
+try{
+
+await navigator.clipboard.writeText(
+inviteLink.value
+);
+
+status.textContent =
+"📋 Invite link copied!";
+
+}catch(e){
+
+inviteLink.select();
+
+document.execCommand("copy");
+
+status.textContent =
+"📋 Invite link copied!";
+
+}
+
+}
+);
+
+
+/* Share */
+
+shareBtn.addEventListener(
+"click",
+function(){
+
+var text =
+"🪙 Join me on Afghani Coin and start mining AFC!";
+
+var url =
+inviteLink.value;
+
+if(
+window.Telegram &&
+window.Telegram.WebApp &&
+window.Telegram.WebApp.openTelegramLink
+){
+
+window.Telegram.WebApp.openTelegramLink(
+"https://t.me/share/url?url=" +
+encodeURIComponent(url) +
+"&text=" +
+encodeURIComponent(text)
+);
+
+}else{
+
+window.open(
+"https://t.me/share/url?url=" +
+encodeURIComponent(url) +
+"&text=" +
+encodeURIComponent(text),
+"_blank"
+);
+
+}
+
+}
+);
+
+
+/* Energy regeneration */
+
 setInterval(
 function(){
 
@@ -616,7 +792,6 @@ if(energy < MAX_ENERGY){
 energy += 1;
 
 save();
-
 render();
 
 }
@@ -625,6 +800,8 @@ render();
 3000
 );
 
+
+/* Reward timer */
 
 setInterval(
 function(){
@@ -636,21 +813,19 @@ render();
 );
 
 
+/* Reset */
+
 document.getElementById("reset")
 .addEventListener(
 "click",
 function(){
 
 balance = 0;
-
 energy = 100;
-
 level = 1;
-
 lastReward = 0;
 
 save();
-
 render();
 
 status.textContent =
@@ -660,6 +835,8 @@ status.textContent =
 );
 
 
+/* Telegram */
+
 try{
 
 if(
@@ -668,7 +845,6 @@ window.Telegram.WebApp
 ){
 
 window.Telegram.WebApp.ready();
-
 window.Telegram.WebApp.expand();
 
 }
@@ -677,7 +853,6 @@ window.Telegram.WebApp.expand();
 
 
 save();
-
 render();
 
 </script>
