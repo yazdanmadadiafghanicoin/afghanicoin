@@ -375,7 +375,7 @@ type="button">
 
 <div class="invite-info">
 Invite your friends to Afghani Coin.<br>
-Your invitation link is ready below.
+Get 100 AFC for each invite in this demo version.
 </div>
 
 <input
@@ -424,6 +424,7 @@ type="button">
 
 var MAX_ENERGY = 100;
 var DAILY_REWARD = 100;
+var INVITE_REWARD = 100;
 
 var balance =
 Number(localStorage.getItem("afc_balance") || 0);
@@ -535,11 +536,15 @@ energyFill.style.width =
 energy + "%";
 
 rate.textContent =
-"👆 1 CLICK = +" + level + " AFC";
+"👆 1 CLICK = +" +
+level +
+" AFC";
 
 upgradeInfo.textContent =
-"Level " + level +
-" • +" + level +
+"Level " +
+level +
+" • +" +
+level +
 " AFC per click";
 
 upgradeBtn.textContent =
@@ -577,7 +582,11 @@ Math.floor(
 );
 
 rewardBtn.textContent =
-"⏳ " + hours + "h " + minutes + "m";
+"⏳ " +
+hours +
+"h " +
+minutes +
+"m";
 
 }
 
@@ -603,7 +612,9 @@ save();
 render();
 
 status.textContent =
-"+" + level + " AFC 🪙";
+"+" +
+level +
+" AFC 🪙";
 
 }
 
@@ -668,7 +679,7 @@ status.textContent =
 );
 
 
-/* Telegram user ID */
+/* Telegram user */
 
 var userId = "";
 
@@ -691,9 +702,10 @@ window.Telegram.WebApp.initDataUnsafe.user.id
 }catch(e){}
 
 
-/* Create invite link */
+/* Invite link */
 
-var botUsername = "YOUR_BOT_USERNAME";
+var botUsername =
+"afghani_coin_bot";
 
 if(userId){
 
@@ -706,34 +718,41 @@ userId;
 }else{
 
 inviteLink.value =
-"Open Afghani Coin inside Telegram";
+"Open inside Telegram to get your invite link";
 
 }
 
 
-/* Copy */
+/* Copy invite link */
 
 copyBtn.addEventListener(
 "click",
 async function(){
 
+var link =
+inviteLink.value;
+
 try{
 
-await navigator.clipboard.writeText(
-inviteLink.value
-);
+if(navigator.clipboard){
+
+await navigator.clipboard.writeText(link);
+
+}else{
+
+inviteLink.select();
+
+document.execCommand("copy");
+
+}
 
 status.textContent =
 "📋 Invite link copied!";
 
 }catch(e){
 
-inviteLink.select();
-
-document.execCommand("copy");
-
 status.textContent =
-"📋 Invite link copied!";
+"❌ Copy failed";
 
 }
 
@@ -747,11 +766,18 @@ shareBtn.addEventListener(
 "click",
 function(){
 
+var url =
+inviteLink.value;
+
 var text =
 "🪙 Join me on Afghani Coin and start mining AFC!";
 
-var url =
-inviteLink.value;
+var shareUrl =
+"https://t.me/share/url?url=" +
+encodeURIComponent(url) +
+"&text=" +
+encodeURIComponent(text);
+
 
 if(
 window.Telegram &&
@@ -760,19 +786,13 @@ window.Telegram.WebApp.openTelegramLink
 ){
 
 window.Telegram.WebApp.openTelegramLink(
-"https://t.me/share/url?url=" +
-encodeURIComponent(url) +
-"&text=" +
-encodeURIComponent(text)
+shareUrl
 );
 
 }else{
 
 window.open(
-"https://t.me/share/url?url=" +
-encodeURIComponent(url) +
-"&text=" +
-encodeURIComponent(text),
+shareUrl,
 "_blank"
 );
 
@@ -835,7 +855,7 @@ status.textContent =
 );
 
 
-/* Telegram */
+/* Telegram WebApp */
 
 try{
 
@@ -858,4 +878,4 @@ render();
 </script>
 
 </body>
-  </html>
+</html>
