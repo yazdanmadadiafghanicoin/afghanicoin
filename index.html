@@ -638,13 +638,11 @@ async function loadUser(){
 
   const telegramUser = tg.initDataUnsafe?.user;
 
-if (!telegramUser) {
-    alert("⚠️ Telegram User پیدا نشد. لطفاً سایت را فقط از داخل ربات باز کنید.");
-    throw new Error("Telegram user data not available");
+let telegramId = null;
+
+if (telegramUser && telegramUser.id) {
+    telegramId = String(telegramUser.id);
 }
-
-const telegramId = String(telegramUser.id);
-
 
   try{
 
