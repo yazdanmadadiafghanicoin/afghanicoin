@@ -636,10 +636,14 @@ async function loadUser(){
   }
 
 
-  telegramId =
-    String(
-      tg.initDataUnsafe.user.id
-    );
+  const telegramUser = tg.initDataUnsafe?.user;
+
+if (!telegramUser) {
+    alert("⚠️ Telegram User پیدا نشد. لطفاً سایت را فقط از داخل ربات باز کنید.");
+    throw new Error("Telegram user data not available");
+}
+
+const telegramId = String(telegramUser.id);
 
 
   try{
