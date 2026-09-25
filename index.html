@@ -288,84 +288,51 @@ Mine • Upgrade • Earn
 
 <div class="stat">
 <div class="stat-title">⚡ ENERGY</div>
-
 <div class="stat-value">
 <span id="energy">100</span>/100
 </div>
-
 </div>
 
 <div class="stat">
 <div class="stat-title">🔥 PER CLICK</div>
-
 <div class="stat-value">
 <span id="perClick">1</span> AFC
 </div>
-
 </div>
 
 </div>
 
 <div class="energy-bar">
-
-<div
-id="energyFill"
-class="energy-fill">
+<div id="energyFill" class="energy-fill"></div>
 </div>
 
-</div>
-
-<button
-id="mineButton"
-class="mine-button">
-
+<button id="mineButton" class="mine-button">
 ⛏️
 <br>
 MINE
-
 </button>
 
-<div
-id="message"
-class="message">
-</div>
+<div id="message" class="message"></div>
 
 <div class="buttons">
 
-<button
-class="action upgrade"
-onclick="upgradePower()">
-
+<button class="action upgrade" onclick="upgradePower()">
 🚀 Upgrade
-
 </button>
 
-<button
-class="action daily"
-onclick="dailyReward()">
-
+<button class="action daily" onclick="dailyReward()">
 🎁 Daily Reward
-
 </button>
 
-<button
-class="action invite"
-onclick="inviteFriend()">
-
+<button class="action invite" onclick="inviteFriend()">
 👥 Invite
-
 </button>
 
-<button
-class="action reset"
-onclick="resetAccount()">
-
+<button class="action reset" onclick="resetAccount()">
 🔄 Reset
-
 </button>
 
 </div>
-
 
 <div class="section">
 
@@ -395,7 +362,6 @@ Target Value:
 
 </div>
 
-
 <div class="section">
 
 <div class="section-title">
@@ -420,7 +386,6 @@ onclick="copyInvite()">
 
 </div>
 
-
 <div class="section leaderboard">
 
 <div class="leader-title">
@@ -430,78 +395,45 @@ onclick="copyInvite()">
 <div class="rank">
 
 <div class="rank-left">
-
-<div class="rank-number">
-1
+<div class="rank-number">1</div>
+<div class="rank-name">AFC Miner</div>
 </div>
 
-<div class="rank-name">
-AFC Miner
-</div>
+<div class="rank-coins">10,000 AFC</div>
 
 </div>
-
-<div class="rank-coins">
-10,000 AFC
-</div>
-
-</div>
-
 
 <div class="rank">
 
 <div class="rank-left">
-
-<div class="rank-number">
-2
+<div class="rank-number">2</div>
+<div class="rank-name">Coin Hunter</div>
 </div>
 
-<div class="rank-name">
-Coin Hunter
-</div>
+<div class="rank-coins">7,500 AFC</div>
 
 </div>
-
-<div class="rank-coins">
-7,500 AFC
-</div>
-
-</div>
-
 
 <div class="rank">
 
 <div class="rank-left">
-
-<div class="rank-number">
-3
+<div class="rank-number">3</div>
+<div class="rank-name">Afghan Miner</div>
 </div>
 
-<div class="rank-name">
-Afghan Miner
-</div>
+<div class="rank-coins">5,000 AFC</div>
 
 </div>
-
-<div class="rank-coins">
-5,000 AFC
-</div>
-
-</div>
-
 
 <div class="my-rank">
 
 Your Balance:
-<span id="leaderBalance">
-0
-</span>
+<span id="leaderBalance">0</span>
 AFC
 
 </div>
 
 </div>
-
 
 <div class="footer">
 Afghani Coin © 2026
@@ -509,27 +441,19 @@ Afghani Coin © 2026
 
 </div>
 
-
 <script>
 
-const tg =
-window.Telegram.WebApp;
+const tg = window.Telegram.WebApp;
 
 tg.ready();
 tg.expand();
 
-
-const API_BASE =
-"https://afghanicoin.vercel.app";
-
+const API_BASE = "https://afghanicoin.vercel.app";
 
 const MAX_ENERGY = 100;
 
-
 let telegramId = null;
-
 let userData = null;
-
 
 const balanceElement =
 document.getElementById("balance");
@@ -561,9 +485,7 @@ function showMessage(text){
   message.textContent = text;
 
   setTimeout(function(){
-
     message.textContent = "";
-
   },2500);
 
 }
@@ -575,28 +497,20 @@ function updateUI(){
     return;
   }
 
-
   balanceElement.textContent =
-    Number(userData.balance)
-    .toLocaleString();
-
+    Number(userData.balance).toLocaleString();
 
   powerElement.textContent =
     userData.power;
 
-
   perClickElement.textContent =
     userData.power;
-
 
   energyElement.textContent =
     userData.energy;
 
-
   leaderBalance.textContent =
-    Number(userData.balance)
-    .toLocaleString();
-
+    Number(userData.balance).toLocaleString();
 
   const percentage =
     Math.max(
@@ -607,10 +521,8 @@ function updateUI(){
       )
     );
 
-
   energyFill.style.width =
     percentage + "%";
-
 
   mineButton.disabled =
     userData.energy <= 0;
@@ -620,29 +532,23 @@ function updateUI(){
 
 async function loadUser(){
 
-  if(
-    !tg.initDataUnsafe ||
-    !tg.initDataUnsafe.user
-  ){
+  const telegramUser =
+    tg.initDataUnsafe &&
+    tg.initDataUnsafe.user;
+
+  if(!telegramUser || !telegramUser.id){
 
     showMessage(
-      "⚠️ لطفاً بازی را از داخل Telegram باز کن."
+      "⚠️ لطفاً بازی را از داخل ربات Telegram باز کن."
     );
 
     mineButton.disabled = true;
 
     return;
-
   }
 
-
-  const telegramUser = tg.initDataUnsafe?.user;
-
-let telegramId = null;
-
-if (telegramUser && telegramUser.id) {
-    telegramId = String(telegramUser.id);
-}
+  telegramId =
+    String(telegramUser.id);
 
   try{
 
@@ -650,15 +556,17 @@ if (telegramUser && telegramUser.id) {
       await fetch(
         API_BASE +
         "/api/user?telegram_id=" +
-        encodeURIComponent(
-          telegramId
-        )
+        encodeURIComponent(telegramId)
       );
 
+    if(!response.ok){
+      throw new Error(
+        "HTTP " + response.status
+      );
+    }
 
     const data =
       await response.json();
-
 
     if(!data.success){
 
@@ -669,13 +577,12 @@ if (telegramUser && telegramUser.id) {
 
     }
 
-
     userData =
       data.user;
 
-
     updateUI();
 
+    showMessage("✅ حساب آماده است");
 
   }catch(error){
 
@@ -692,19 +599,14 @@ if (telegramUser && telegramUser.id) {
 
 async function mine(){
 
-  if(
-    !telegramId ||
-    !userData
-  ){
+  if(!telegramId || !userData){
 
     showMessage(
       "⏳ حساب هنوز آماده نیست."
     );
 
     return;
-
   }
-
 
   if(userData.energy <= 0){
 
@@ -713,12 +615,9 @@ async function mine(){
     );
 
     return;
-
   }
 
-
   mineButton.disabled = true;
-
 
   try{
 
@@ -734,18 +633,22 @@ async function mine(){
           },
 
           body:JSON.stringify({
-
             telegram_id:
               telegramId
-
           })
         }
       );
 
+    if(!response.ok){
+
+      throw new Error(
+        "HTTP " + response.status
+      );
+
+    }
 
     const data =
       await response.json();
-
 
     if(!data.success){
 
@@ -757,27 +660,21 @@ async function mine(){
         )
       );
 
-      mineButton.disabled =
-        false;
+      mineButton.disabled = false;
 
       return;
-
     }
-
 
     userData =
       data.user;
 
-
     updateUI();
-
 
     showMessage(
       "+" +
       data.mined +
       " AFC ⛏️"
     );
-
 
   }catch(error){
 
@@ -789,14 +686,12 @@ async function mine(){
 
   }
 
-
   if(
     userData &&
     userData.energy > 0
   ){
 
-    mineButton.disabled =
-      false;
+    mineButton.disabled = false;
 
   }
 
@@ -814,10 +709,8 @@ function inviteFriend(){
   const botUsername =
     "AfghaniCoinBot";
 
-
   const id =
     telegramId || "user";
-
 
   const link =
     "https://t.me/" +
@@ -825,11 +718,9 @@ function inviteFriend(){
     "?start=ref_" +
     id;
 
-
   document.getElementById(
     "inviteLink"
   ).value = link;
-
 
   showMessage(
     "👥 لینک دعوت ساخته شد."
@@ -845,7 +736,6 @@ function copyInvite(){
       "inviteLink"
     );
 
-
   if(
     !input.value ||
     input.value ===
@@ -856,9 +746,7 @@ function copyInvite(){
 
   }
 
-
   input.select();
-
 
   if(navigator.clipboard){
 
@@ -922,4 +810,4 @@ loadUser();
 </script>
 
 </body>
-  </html>
+</html>
