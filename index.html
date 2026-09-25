@@ -778,12 +778,71 @@ function copyInvite(){
 }
 
 
-function upgradePower(){
+async function upgrade(){
 
-  showMessage(
-    "🚀 Upgrade به‌زودی فعال می‌شود."
-  );
+  if(!telegramId || !userData){
+    showMessage("⏳ حساب هنوز آماده نیست.");
+    return;
+  }
 
+  const cost = userData.level * 100;
+
+  if(userData.balance < cost){
+    showMessage(
+      "❌ موجودی کافی نیست. هزینه Upgrade: " +
+      cost +
+      " AFC"
+    );
+    return;
+  }
+
+  try{
+
+    const response = await fetch(
+      API_BASE + "/api/upgrade",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          telegram_id: telegramId
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if(!data.success){
+
+      showMessage(
+        "❌ " +
+        (data.message || "Upgrade failed")
+      );
+
+      return;
+    }
+
+    userData = data.user;
+
+    updateUI();
+
+    showMessage(
+      "🚀 Upgrade موفق شد!\n" +
+      "Power: " +
+      userData.power +
+      "\nLevel: " +
+      userData.level
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "❌ خطا در اتصال به Upgrade"
+    );
+  }
 }
 
 
