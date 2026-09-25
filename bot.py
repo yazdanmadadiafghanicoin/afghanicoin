@@ -84,26 +84,17 @@ def send_message(
 # =========================
 
 keyboard = {
-
     "inline_keyboard": [
-
         [
-
             {
                 "text": "⛏️ استخراج Afghani Coin",
-
                 "web_app": {
-                    "url": WEB_APP_URL
+                    "url": "https://afghanicoin.vercel.app/"
                 }
-
             }
-
         ]
-
     ]
-
 }
-
 
 # =========================
 # START BOT
