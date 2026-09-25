@@ -15,16 +15,24 @@ export default async function handler(req, res) {
       )
     `;
 
+    // اضافه کردن ستون برای زمان آخرین تغییر انرژی
+    await sql`
+      ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS energy_updated_at TIMESTAMP DEFAULT NOW()
+    `;
+
     return res.status(200).json({
       success: true,
-      message: "Afghani Coin users table is ready!"
+      message: "Afghani Coin system is ready!"
     });
+
   } catch (error) {
-    console.error("Database error:", error);
+    console.error("Setup error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Database setup failed"
+      message: "Database setup failed",
+      error: error.message
     });
   }
 }
