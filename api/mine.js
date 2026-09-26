@@ -4,6 +4,22 @@ const MAX_ENERGY = 100;
 const ENERGY_REGEN_SECONDS = 60;
 
 export default async function handler(req, res) {
+  // CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type"
+  );
+
+  // پاسخ به CORS preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
     if (req.method !== "POST") {
       return res.status(405).json({
@@ -31,16 +47,30 @@ export default async function handler(req, res) {
     if (users.length === 0) {
       users = await sql`
         INSERT INTO users
-          (telegram_id, balance, energy, level, power, energy_updated_at)
+          (
+            telegram_id,
+            balance,
+            energy,
+            level,
+            power,
+            energy_updated_at
+          )
         VALUES
-          (${String(telegram_id)}, 0, 100, 1, 1, NOW())
+          (
+            ${String(telegram_id)},
+            0,
+            100,
+            1,
+            1,
+            NOW()
+          )
         RETURNING *
       `;
     }
 
     let user = users[0];
 
-    // محاسبه انرژی‌ای که از آخرین فعالیت دوباره شارژ شده
+    // محاسبه انرژی دوباره شارژ شده
     const lastUpdate = user.energy_updated_at
       ? new Date(user.energy_updated_at).getTime()
       : Date.now();
@@ -70,9 +100,15 @@ export default async function handler(req, res) {
           energy_updated_at = NOW()
         WHERE telegram_id = ${String(telegram_id)}
       `;
+
+      // اطلاعات جدید کاربر
+      user = {
+        ...user,
+        energy: currentEnergy
+      };
     }
 
-    // اگر انرژی صفر باشد
+    // انرژی تمام شده
     if (currentEnergy <= 0) {
       return res.status(400).json({
         success: false,
