@@ -1,5 +1,7 @@
-
 import sql from "./db.js";
+
+const MAX_ENERGY = 100;
+const ENERGY_REGEN_SECONDS = 60;
 
 export default async function handler(req, res) {
   try {
@@ -19,37 +21,79 @@ export default async function handler(req, res) {
       });
     }
 
-    const users = await sql`
+    let users = await sql`
       SELECT *
       FROM users
-      WHERE telegram_id = ${telegram_id}
+      WHERE telegram_id = ${String(telegram_id)}
       LIMIT 1
     `;
 
     if (users.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found"
-      });
+      users = await sql`
+        INSERT INTO users
+          (telegram_id, balance, energy, level, power, energy_updated_at)
+        VALUES
+          (${String(telegram_id)}, 0, 100, 1, 1, NOW())
+        RETURNING *
+      `;
     }
 
-    const user = users[0];
+    let user = users[0];
 
-    if (user.energy <= 0) {
+    // محاسبه انرژی‌ای که از آخرین فعالیت دوباره شارژ شده
+    const lastUpdate = user.energy_updated_at
+      ? new Date(user.energy_updated_at).getTime()
+      : Date.now();
+
+    const now = Date.now();
+
+    const elapsedSeconds = Math.floor(
+      (now - lastUpdate) / 1000
+    );
+
+    const regenerated = Math.floor(
+      elapsedSeconds / ENERGY_REGEN_SECONDS
+    );
+
+    let currentEnergy = Number(user.energy || 0);
+
+    if (regenerated > 0) {
+      currentEnergy = Math.min(
+        MAX_ENERGY,
+        currentEnergy + regenerated
+      );
+
+      await sql`
+        UPDATE users
+        SET
+          energy = ${currentEnergy},
+          energy_updated_at = NOW()
+        WHERE telegram_id = ${String(telegram_id)}
+      `;
+    }
+
+    // اگر انرژی صفر باشد
+    if (currentEnergy <= 0) {
       return res.status(400).json({
         success: false,
-        message: "No energy"
+        message: "No energy",
+        user: {
+          ...user,
+          energy: 0
+        }
       });
     }
 
-    const mined = user.power;
+    const mined = Number(user.power || 1);
 
+    // استخراج
     const updated = await sql`
       UPDATE users
       SET
         balance = balance + ${mined},
-        energy = energy - 1
-      WHERE telegram_id = ${telegram_id}
+        energy = energy - 1,
+        energy_updated_at = NOW()
+      WHERE telegram_id = ${String(telegram_id)}
       RETURNING *
     `;
 
@@ -69,4 +113,4 @@ export default async function handler(req, res) {
       error: error.message
     });
   }
-  }
+}
