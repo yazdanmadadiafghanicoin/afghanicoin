@@ -16,7 +16,7 @@ if not TOKEN:
 
 API = f"https://api.telegram.org/bot{TOKEN}"
 
-WEB_APP_URL = "https://afghanicoin.vercel.app/"
+WEB_APP_URL = "https://afghanicoin.vercel.app/?v=3"
 
 
 # =========================
