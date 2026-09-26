@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Afghani Coin</title>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
+
 *{
   box-sizing:border-box;
 }
@@ -44,6 +48,7 @@ h1{
 
 .energy{
   font-size:18px;
+  margin-top:10px;
 }
 
 .mine{
@@ -52,10 +57,22 @@ h1{
   border-radius:50%;
   border:5px solid #ffd54a;
   background:#ffb300;
+  color:#111;
   font-size:24px;
   font-weight:bold;
   margin:15px auto 30px;
   display:block;
+  cursor:pointer;
+}
+
+.mine:active{
+  transform:scale(.95);
+}
+
+.mine:disabled{
+  background:#666;
+  border-color:#888;
+  color:#ccc;
 }
 
 .menu{
@@ -74,6 +91,10 @@ h1{
   font-size:18px;
 }
 
+.menu a:active{
+  transform:scale(.96);
+}
+
 .panel{
   display:none;
   background:#123650;
@@ -90,8 +111,10 @@ h1{
   margin-top:0;
 }
 
-.panel a{
+.panel a,
+.panel button{
   display:block;
+  width:100%;
   text-decoration:none;
   background:#ffb300;
   color:#111;
@@ -99,6 +122,8 @@ h1{
   margin-top:12px;
   border-radius:12px;
   font-weight:bold;
+  border:0;
+  font-size:16px;
 }
 
 .close{
@@ -110,7 +135,20 @@ h1{
   margin-top:20px;
   color:#b9c7d3;
 }
+
+.message{
+  min-height:30px;
+  margin:15px 0;
+  font-weight:bold;
+}
+
+.small{
+  color:#b9c7d3;
+  font-size:14px;
+}
+
 </style>
+
 </head>
 
 <body>
@@ -123,20 +161,36 @@ h1{
 
   <div>💰 موجودی شما</div>
 
-  <div class="balance">
+  <div class="balance" id="balance">
     0 AFC
   </div>
 
-  <div class="energy">
+  <div class="energy" id="energy">
     ⚡ انرژی: 100 / 100
+  </div>
+
+  <div class="small" id="level">
+    Level: 1 | Power: 1
   </div>
 
 </div>
 
-<button class="mine">
+
+<button
+  class="mine"
+  id="mineButton"
+  onclick="mine()">
+
   ⛏️<br>
   MINE
+
 </button>
+
+
+<div class="message" id="message">
+  در حال اتصال...
+</div>
+
 
 <div class="menu">
 
@@ -173,19 +227,599 @@ h1{
     دوستان خود را به Afghani Coin دعوت کنید.
   </p>
 
-  <p>
-    لینک دعوت شما:
+  <p id="inviteLink">
+    در حال ساخت لینک...
   </p>
 
-  <p>
-    https://t.me/AfghaniCoinBot
-  </p>
+  <button onclick="copyInvite()">
+    📋 کپی لینک دعوت
+  </button>
 
-  <a href="#">
+  <button onclick="shareInvite()">
+    📤 اشتراک در Telegram
+  </button>
+
+  <a href="#" class="close">
     بستن
   </a>
 
 </div>
 
 
-<!--
+<!-- TASKS -->
+
+<div id="tasks" class="panel">
+
+  <h2>🎁 Tasks</h2>
+
+  <p>
+    وظایف Afghani Coin
+  </p>
+
+  <button onclick="dailyTask()">
+    🎁 پاداش روزانه
+  </button>
+
+  <button onclick="miningTask()">
+    ⛏️ وظیفه استخراج
+  </button>
+
+  <a href="#" class="close">
+    بستن
+  </a>
+
+</div>
+
+
+<!-- UPGRADE -->
+
+<div id="upgrade" class="panel">
+
+  <h2>🚀 Upgrade</h2>
+
+  <p>
+    Level:
+    <b id="upgradeLevel">1</b>
+  </p>
+
+  <p>
+    Power:
+    <b id="upgradePower">1</b>
+    AFC / کلیک
+  </p>
+
+  <p>
+    هزینه:
+    <b id="upgradeCost">100</b>
+    AFC
+  </p>
+
+  <button onclick="upgradePower()">
+    🚀 ارتقا
+  </button>
+
+  <a href="#" class="close">
+    بستن
+  </a>
+
+</div>
+
+
+<!-- WALLET -->
+
+<div id="wallet" class="panel">
+
+  <h2>👛 Wallet</h2>
+
+  <div class="balance" id="walletBalance">
+    0 AFC
+  </div>
+
+  <p>
+    🔒 کیف پول هنوز متصل نشده است.
+  </p>
+
+  <button onclick="connectWallet()">
+    🔗 اتصال کیف پول
+  </button>
+
+  <a href="#" class="close">
+    بستن
+  </a>
+
+</div>
+
+
+<div class="info">
+  🪙 Afghani Coin
+</div>
+
+
+<script>
+
+/* =========================
+   Telegram
+========================= */
+
+const tg = window.Telegram
+  ? window.Telegram.WebApp
+  : null;
+
+if(tg){
+  tg.ready();
+  tg.expand();
+}
+
+
+/* =========================
+   API
+========================= */
+
+const API =
+  "https://afghanicoin.vercel.app";
+
+
+let telegramId = null;
+let userData = null;
+
+
+/* =========================
+   Message
+========================= */
+
+function showMessage(text){
+
+  document.getElementById("message").textContent = text;
+
+}
+
+
+/* =========================
+   Update UI
+========================= */
+
+function updateUI(){
+
+  if(!userData){
+    return;
+  }
+
+  const balance =
+    Number(userData.balance || 0);
+
+  const energy =
+    Number(userData.energy || 0);
+
+  const level =
+    Number(userData.level || 1);
+
+  const power =
+    Number(userData.power || 1);
+
+
+  document.getElementById("balance")
+    .textContent =
+    balance + " AFC";
+
+
+  document.getElementById("walletBalance")
+    .textContent =
+    balance + " AFC";
+
+
+  document.getElementById("energy")
+    .textContent =
+    "⚡ انرژی: " + energy + " / 100";
+
+
+  document.getElementById("level")
+    .textContent =
+    "Level: " + level +
+    " | Power: " + power;
+
+
+  document.getElementById("upgradeLevel")
+    .textContent = level;
+
+
+  document.getElementById("upgradePower")
+    .textContent = power;
+
+
+  document.getElementById("upgradeCost")
+    .textContent = level * 100;
+
+
+  document.getElementById("mineButton")
+    .disabled = energy <= 0;
+
+}
+
+
+/* =========================
+   Load User
+========================= */
+
+async function loadUser(){
+
+  try{
+
+    if(!tg){
+
+      showMessage(
+        "❌ Telegram WebApp پیدا نشد"
+      );
+
+      return;
+    }
+
+
+    const telegramUser =
+      tg.initDataUnsafe &&
+      tg.initDataUnsafe.user;
+
+
+    if(!telegramUser){
+
+      showMessage(
+        "⚠️ برنامه را از داخل ربات تلگرام باز کنید"
+      );
+
+      return;
+    }
+
+
+    telegramId =
+      String(telegramUser.id);
+
+
+    showMessage(
+      "⏳ در حال دریافت حساب..."
+    );
+
+
+    const response =
+      await fetch(
+        API +
+        "/api/user?telegram_id=" +
+        encodeURIComponent(telegramId)
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!data.success){
+
+      throw new Error(
+        data.message ||
+        "خطا در دریافت حساب"
+      );
+
+    }
+
+
+    userData =
+      data.user;
+
+
+    updateUI();
+
+
+    document.getElementById("inviteLink")
+      .textContent =
+      "https://t.me/AfghaniCoinBot?start=" +
+      telegramId;
+
+
+    showMessage(
+      "✅ حساب شما آماده است"
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "❌ " + error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   MINE
+========================= */
+
+async function mine(){
+
+  if(!telegramId){
+
+    showMessage(
+      "⚠️ حساب هنوز آماده نیست"
+    );
+
+    return;
+  }
+
+
+  const button =
+    document.getElementById("mineButton");
+
+
+  button.disabled = true;
+
+  button.innerHTML =
+    "⛏️<br>در حال استخراج...";
+
+
+  try{
+
+    const response =
+      await fetch(
+        API + "/api/mine",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+            "application/json"
+          },
+
+          body:JSON.stringify({
+            telegram_id:
+            telegramId
+          })
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!data.success){
+
+      throw new Error(
+        data.message ||
+        "استخراج انجام نشد"
+      );
+
+    }
+
+
+    userData =
+      data.user;
+
+
+    updateUI();
+
+
+    showMessage(
+      "⛏️ +" +
+      data.mined +
+      " AFC استخراج شد"
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "❌ " +
+      error.message
+    );
+
+
+  }finally{
+
+    button.innerHTML =
+      "⛏️<br>MINE";
+
+    updateUI();
+
+  }
+
+}
+
+
+/* =========================
+   UPGRADE
+========================= */
+
+async function upgradePower(){
+
+  if(!telegramId){
+
+    showMessage(
+      "⚠️ حساب آماده نیست"
+    );
+
+    return;
+  }
+
+
+  try{
+
+    const response =
+      await fetch(
+        API + "/api/upgrade",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+            "application/json"
+          },
+
+          body:JSON.stringify({
+            telegram_id:
+            telegramId
+          })
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!data.success){
+
+      throw new Error(
+        data.message ||
+        "ارتقا انجام نشد"
+      );
+
+    }
+
+
+    userData =
+      data.user;
+
+
+    updateUI();
+
+
+    showMessage(
+      "🚀 ارتقا با موفقیت انجام شد"
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "❌ " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   INVITE
+========================= */
+
+function copyInvite(){
+
+  const text =
+    document.getElementById(
+      "inviteLink"
+    ).textContent;
+
+
+  if(
+    navigator.clipboard &&
+    navigator.clipboard.writeText
+  ){
+
+    navigator.clipboard
+      .writeText(text)
+      .then(function(){
+
+        showMessage(
+          "✅ لینک دعوت کپی شد"
+        );
+
+      });
+
+  }else{
+
+    showMessage(text);
+
+  }
+
+}
+
+
+function shareInvite(){
+
+  const text =
+    document.getElementById(
+      "inviteLink"
+    ).textContent;
+
+
+  if(
+    tg &&
+    tg.openTelegramLink
+  ){
+
+    tg.openTelegramLink(
+      "https://t.me/share/url?url=" +
+      encodeURIComponent(text)
+    );
+
+  }
+
+}
+
+
+/* =========================
+   TASKS
+========================= */
+
+function dailyTask(){
+
+  showMessage(
+    "🎁 پاداش روزانه در مرحله بعد فعال می‌شود"
+  );
+
+}
+
+
+function miningTask(){
+
+  if(
+    userData &&
+    Number(userData.balance || 0) >= 100
+  ){
+
+    showMessage(
+      "🎉 وظیفه استخراج تکمیل شد"
+    );
+
+  }else{
+
+    showMessage(
+      "⛏️ برای تکمیل این وظیفه باید 100 AFC داشته باشید"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   WALLET
+========================= */
+
+function connectWallet(){
+
+  showMessage(
+    "👛 اتصال کیف پول در مرحله بعد فعال می‌شود"
+  );
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadUser();
+
+</script>
+
+</body>
+
+</html>
