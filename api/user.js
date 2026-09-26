@@ -1,5 +1,8 @@
 import sql from "./db.js";
 
+const MAX_ENERGY = 100;
+const ENERGY_REGEN_SECONDS = 60;
+
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") {
@@ -27,19 +30,59 @@ export default async function handler(req, res) {
 
     if (users.length === 0) {
       users = await sql`
-        INSERT INTO users (telegram_id)
-        VALUES (${telegramId})
+        INSERT INTO users (
+          telegram_id,
+          energy,
+          energy_updated_at
+        )
+        VALUES (
+          ${telegramId},
+          ${MAX_ENERGY},
+          NOW()
+        )
         RETURNING *
       `;
     }
 
+    let user = users[0];
+
+    // محاسبه انرژی دوباره
+    const updatedAt = new Date(user.energy_updated_at || user.created_at);
+    const now = new Date();
+
+    const secondsPassed = Math.floor(
+      (now.getTime() - updatedAt.getTime()) / 1000
+    );
+
+    const regenerated = Math.floor(
+      secondsPassed / ENERGY_REGEN_SECONDS
+    );
+
+    let energy = Math.min(
+      MAX_ENERGY,
+      Number(user.energy || 0) + regenerated
+    );
+
+    if (energy !== Number(user.energy || 0)) {
+      const updated = await sql`
+        UPDATE users
+        SET
+          energy = ${energy},
+          energy_updated_at = NOW()
+        WHERE telegram_id = ${telegramId}
+        RETURNING *
+      `;
+
+      user = updated[0];
+    }
+
     return res.status(200).json({
       success: true,
-      user: users[0]
+      user
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("User error:", error);
 
     return res.status(500).json({
       success: false,
