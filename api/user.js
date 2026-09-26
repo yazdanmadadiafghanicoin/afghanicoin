@@ -4,6 +4,22 @@ const MAX_ENERGY = 100;
 const ENERGY_REGEN_SECONDS = 60;
 
 export default async function handler(req, res) {
+  // CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type"
+  );
+
+  // CORS preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
     if (req.method !== "GET") {
       return res.status(405).json({
@@ -24,7 +40,7 @@ export default async function handler(req, res) {
     let users = await sql`
       SELECT *
       FROM users
-      WHERE telegram_id = ${telegramId}
+      WHERE telegram_id = ${String(telegramId)}
       LIMIT 1
     `;
 
@@ -32,12 +48,18 @@ export default async function handler(req, res) {
       users = await sql`
         INSERT INTO users (
           telegram_id,
+          balance,
           energy,
+          level,
+          power,
           energy_updated_at
         )
         VALUES (
-          ${telegramId},
+          ${String(telegramId)},
+          0,
           ${MAX_ENERGY},
+          1,
+          1,
           NOW()
         )
         RETURNING *
@@ -46,8 +68,11 @@ export default async function handler(req, res) {
 
     let user = users[0];
 
-    // محاسبه انرژی دوباره
-    const updatedAt = new Date(user.energy_updated_at || user.created_at);
+    // محاسبه انرژی دوباره شارژ شده
+    const updatedAt = new Date(
+      user.energy_updated_at || user.created_at
+    );
+
     const now = new Date();
 
     const secondsPassed = Math.floor(
@@ -58,18 +83,20 @@ export default async function handler(req, res) {
       secondsPassed / ENERGY_REGEN_SECONDS
     );
 
-    let energy = Math.min(
+    const oldEnergy = Number(user.energy || 0);
+
+    const energy = Math.min(
       MAX_ENERGY,
-      Number(user.energy || 0) + regenerated
+      oldEnergy + regenerated
     );
 
-    if (energy !== Number(user.energy || 0)) {
+    if (energy !== oldEnergy) {
       const updated = await sql`
         UPDATE users
         SET
           energy = ${energy},
           energy_updated_at = NOW()
-        WHERE telegram_id = ${telegramId}
+        WHERE telegram_id = ${String(telegramId)}
         RETURNING *
       `;
 
