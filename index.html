@@ -1,184 +1,79 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Afghani Coin</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Afghani Coin</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 15px;
-      background: linear-gradient(135deg, #06111c, #0b2438);
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      min-height: 100vh;
-    }
-
-    .logo {
-      font-size: 55px;
-      margin-top: 15px;
-    }
-
-    h1 {
-      margin: 5px 0 20px;
-      font-size: 28px;
-    }
-
-    .card {
-      background: rgba(20, 50, 75, 0.95);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.25);
-    }
-
-    .balance {
-      font-size: 36px;
-      font-weight: bold;
-      margin: 8px 0;
-    }
-
-    .energy {
-      font-size: 17px;
-      margin-top: 8px;
-    }
-
-    .mine {
-      width: 185px;
-      height: 185px;
-      border-radius: 50%;
-      border: 5px solid #ffd54a;
-      background: #ffb300;
-      color: #111;
-      font-size: 25px;
-      font-weight: bold;
-      margin: 15px auto 25px;
-      display: block;
-      cursor: pointer;
-      box-shadow: 0 8px 25px rgba(255,179,0,.3);
-    }
-
-    .mine:active {
-      transform: scale(.95);
-    }
-
-    .mine:disabled {
-      background: #555;
-      border-color: #666;
-      color: #aaa;
-      box-shadow: none;
-    }
-
-    .menu {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .menu button {
-      border: none;
-      border-radius: 16px;
-      padding: 18px 8px;
-      background: #123b5b;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .menu button:active {
-      transform: scale(.97);
-    }
-
-    .panel {
-      display: none;
-      background: #102d45;
-      border-radius: 18px;
-      padding: 20px;
-      margin-top: 15px;
-      text-align: right;
-    }
-
-    .panel h2 {
-      text-align: center;
-      margin-top: 0;
-    }
-
-    .panel button {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 14px;
-      margin-top: 10px;
-      background: #ffb300;
-      color: #111;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .task {
-      background: #173e5b;
-      border-radius: 12px;
-      padding: 12px;
-      margin: 8px 0;
-    }
-
-    .task button {
-      background: #22a55a;
-      color: white;
-      margin-top: 8px;
-    }
-
-    .wallet-address {
-      background: #071a29;
-      border-radius: 10px;
-      padding: 12px;
-      word-break: break-all;
-      direction: ltr;
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    #message {
-      margin-top: 15px;
-      min-height: 25px;
-      white-space: pre-line;
-      color: #ddd;
-    }
-
-    .close {
-      background: #263f52 !important;
-      color: white !important;
-    }
-  </style>
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;padding:18px;background:#071827;color:white;
+font-family:Arial;text-align:center;min-height:100vh
+}
+.logo{font-size:55px;margin-top:15px}
+h1{margin:5px 0 18px}
+.card{
+background:#12334d;border-radius:20px;padding:20px;margin-bottom:18px
+}
+.balance{font-size:38px;font-weight:bold;margin:8px}
+#energy{font-size:17px}
+.mine{
+width:180px;height:180px;border-radius:50%;border:5px solid #ffd54a;
+background:#ffb300;font-size:25px;font-weight:bold;margin:15px auto 25px;
+display:block
+}
+.mine:disabled{background:#555;border-color:#666;color:#aaa}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.menu button{
+padding:17px;border:0;border-radius:15px;background:#16476b;
+color:white;font-size:16px
+}
+.panel{
+display:none;background:#12334d;border-radius:18px;
+padding:18px;margin-top:15px
+}
+.panel button{
+width:100%;padding:13px;margin-top:10px;border:0;
+border-radius:10px;background:#ffb300;font-weight:bold
+}
+.close{background:#456!important;color:white!important}
+#msg{margin:15px;min-height:24px}
+</style>
 </head>
 
 <body>
 
-  <div class="logo">🪙</div>
+<div class="logo">🪙</div>
+<h1>Afghani Coin</h1>
 
-  <h1>Afghani Coin</h1>
+<div class="card">
+<div>💰 موجودی شما</div>
+<div class="balance" id="balance">0 AFC</div>
+<div id="energy">⚡ انرژی: 0 / 100</div>
+</div>
 
-  <div class="card">
-    <div>💰 موجودی شما</div>
-    <div class="balance" id="balance">0 AFC</div>
-    <div class="energy" id="energy">
-      ⚡ انرژی: 0 / 100
-    </div>
-  </div>
+<button class="mine" id="mineBtn" onclick="mine()" disabled>
+⛏️<br>MINE
+</button>
 
-  <button
-    class="mine"
-    id="mineButton"
-    onclick="mine()"
-    disabled
-  >
-    ⛏️<br>
-    M
+<div class="menu">
+<button onclick="openPanel('invite')">👥<br>Invite</button>
+<button onclick="openPanel('tasks')">🎁<br>Tasks</button>
+<button onclick="openPanel('upgrade')">🚀<br>Upgrade</button>
+<button onclick="openPanel('wallet')">👛<br>Wallet</button>
+</div>
+
+<!-- Invite -->
+<div class="panel" id="invite">
+<h2>👥 دعوت دوستان</h2>
+<p>لینک دعوت شما:</p>
+<div id="inviteLink">در حال آماده‌سازی...</div>
+<button onclick="copyInvite()">📋 کپی لینک</button>
+<button onclick="shareInvite()">📤 اشتراک در تلگرام</button>
+<button class="close" onclick="closePanels()">بستن</button>
+</div>
+
+<!-- Tasks -->
+<div class
