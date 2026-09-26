@@ -1,118 +1,114 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Afghani Coin</title>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
-margin:0;
-padding:18px;
-background:#071827;
-color:#fff;
-font-family:Arial,sans-serif;
-text-align:center;
+  margin:0;
+  padding:18px;
+  background:#071827;
+  color:white;
+  font-family:Arial,sans-serif;
+  text-align:center;
 }
 
 .logo{
-font-size:55px;
-margin-top:15px;
+  font-size:55px;
+  margin-top:10px;
 }
 
 h1{
-margin:5px 0 20px;
+  margin:5px 0 20px;
 }
 
 .card{
-background:#123650;
-border-radius:22px;
-padding:20px;
-margin-bottom:20px;
+  background:#123650;
+  border-radius:22px;
+  padding:20px;
+  margin-bottom:20px;
 }
 
 .balance{
-font-size:38px;
-font-weight:bold;
-margin:10px;
+  font-size:38px;
+  font-weight:bold;
+  margin:10px;
 }
 
-#energy{
-font-size:18px;
+.energy{
+  font-size:18px;
 }
 
 .mine{
-width:180px;
-height:180px;
-border-radius:50%;
-border:5px solid #ffd54a;
-background:#ffb300;
-font-size:24px;
-font-weight:bold;
-margin:15px auto 30px;
-display:block;
-}
-
-.mine:disabled{
-background:#555;
-border-color:#777;
-color:#aaa;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  border:5px solid #ffd54a;
+  background:#ffb300;
+  font-size:24px;
+  font-weight:bold;
+  margin:15px auto 30px;
+  display:block;
 }
 
 .menu{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
 }
 
-.menu button{
-border:0;
-border-radius:17px;
-padding:20px 5px;
-background:#16496e;
-color:white;
-font-size:18px;
-}
-
-.menu button:active{
-transform:scale(.95);
+.menu a{
+  display:block;
+  text-decoration:none;
+  border-radius:17px;
+  padding:20px 5px;
+  background:#16496e;
+  color:white;
+  font-size:18px;
 }
 
 .panel{
-display:none;
-background:#123650;
-border-radius:20px;
-padding:20px;
-margin-top:18px;
+  display:none;
+  background:#123650;
+  border-radius:20px;
+  padding:20px;
+  margin-top:18px;
+}
+
+.panel:target{
+  display:block;
 }
 
 .panel h2{
-margin-top:0;
+  margin-top:0;
 }
 
-.panel button{
-width:100%;
-padding:15px;
-margin-top:10px;
-border:0;
-border-radius:12px;
-background:#ffb300;
-font-size:17px;
-font-weight:bold;
+.panel a{
+  display:block;
+  text-decoration:none;
+  background:#ffb300;
+  color:#111;
+  padding:15px;
+  margin-top:12px;
+  border-radius:12px;
+  font-weight:bold;
 }
 
 .close{
-background:#526579!important;
-color:white!important;
+  background:#526579!important;
+  color:white!important;
 }
 
-#msg{
-margin-top:18px;
-min-height:25px;
+.info{
+  margin-top:20px;
+  color:#b9c7d3;
 }
 </style>
 </head>
@@ -125,327 +121,71 @@ min-height:25px;
 
 <div class="card">
 
-<div>💰 موجودی شما</div>
+  <div>💰 موجودی شما</div>
 
-<div class="balance" id="balance">
-0 AFC
+  <div class="balance">
+    0 AFC
+  </div>
+
+  <div class="energy">
+    ⚡ انرژی: 100 / 100
+  </div>
+
 </div>
 
-<div id="energy">
-⚡ انرژی: 0 / 100
-</div>
-
-</div>
-
-<button
-class="mine"
-id="mineBtn"
-onclick="mine()"
-disabled
->
-⛏️<br>MINE
+<button class="mine">
+  ⛏️<br>
+  MINE
 </button>
-
 
 <div class="menu">
 
-<button onclick="showInvite()">
-👥<br>Invite
-</button>
+  <a href="#invite">
+    👥<br>
+    Invite
+  </a>
 
-<button onclick="showTasks()">
-🎁<br>Tasks
-</button>
+  <a href="#tasks">
+    🎁<br>
+    Tasks
+  </a>
 
-<button onclick="showUpgrade()">
-🚀<br>Upgrade
-</button>
+  <a href="#upgrade">
+    🚀<br>
+    Upgrade
+  </a>
 
-<button onclick="showWallet()">
-👛<br>Wallet
-</button>
+  <a href="#wallet">
+    👛<br>
+    Wallet
+  </a>
 
 </div>
 
 
 <!-- INVITE -->
 
-<div class="panel" id="invitePanel">
+<div id="invite" class="panel">
 
-<h2>👥 Invite</h2>
+  <h2>👥 دعوت دوستان</h2>
 
-<p>
-دوستان خود را دعوت کنید
-</p>
+  <p>
+    دوستان خود را به Afghani Coin دعوت کنید.
+  </p>
 
-<div id="inviteLink">
-در حال ساخت لینک...
-</div>
+  <p>
+    لینک دعوت شما:
+  </p>
 
-<button onclick="copyInvite()">
-📋 کپی لینک
-</button>
+  <p>
+    https://t.me/AfghaniCoinBot
+  </p>
 
-<button onclick="shareInvite()">
-📤 اشتراک در Telegram
-</button>
-
-<button class="close" onclick="closeAll()">
-بستن
-</button>
+  <a href="#">
+    بستن
+  </a>
 
 </div>
 
 
-<!-- TASKS -->
-
-<div class="panel" id="tasksPanel">
-
-<h2>🎁 Tasks</h2>
-
-<p>
-🎯 وظایف Afghani Coin
-</p>
-
-<button onclick="dailyTask()">
-🎁 پاداش روزانه
-</button>
-
-<button onclick="miningTask()">
-⛏️ وظیفه استخراج
-</button>
-
-<button class="close" onclick="closeAll()">
-بستن
-</button>
-
-</div>
-
-
-<!-- UPGRADE -->
-
-<div class="panel" id="upgradePanel">
-
-<h2>🚀 Upgrade</h2>
-
-<p>
-Level:
-<b id="level">1</b>
-</p>
-
-<p>
-Power:
-<b id="power">1</b>
-AFC / کلیک
-</p>
-
-<p>
-هزینه:
-<b id="upgradeCost">100</b>
-AFC
-</p>
-
-<button onclick="upgradePower()">
-🚀 ارتقا
-</button>
-
-<button class="close" onclick="closeAll()">
-بستن
-</button>
-
-</div>
-
-
-<!-- WALLET -->
-
-<div class="panel" id="walletPanel">
-
-<h2>👛 Wallet</h2>
-
-<div class="balance" id="walletBalance">
-0 AFC
-</div>
-
-<p>
-🔒 کیف پول هنوز متصل نشده
-</p>
-
-<button onclick="connectWallet()">
-🔗 اتصال کیف پول
-</button>
-
-<button class="close" onclick="closeAll()">
-بستن
-</button>
-
-</div>
-
-
-<div id="msg">
-در حال اتصال...
-</div>
-
-
-<script>
-
-const tg =
-window.Telegram &&
-window.Telegram.WebApp;
-
-if(tg){
-tg.ready();
-tg.expand();
-}
-
-const API =
-"https://afghanicoin.vercel.app";
-
-let telegramId = null;
-let userData = null;
-
-
-/* باز کردن پنل‌ها */
-
-function closeAll(){
-
-document.getElementById("invitePanel").style.display="none";
-
-document.getElementById("tasksPanel").style.display="none";
-
-document.getElementById("upgradePanel").style.display="none";
-
-document.getElementById("walletPanel").style.display="none";
-
-}
-
-
-function showInvite(){
-
-closeAll();
-
-document.getElementById("invitePanel").style.display="block";
-
-}
-
-
-function showTasks(){
-
-closeAll();
-
-document.getElementById("tasksPanel").style.display="block";
-
-}
-
-
-function showUpgrade(){
-
-closeAll();
-
-document.getElementById("upgradePanel").style.display="block";
-
-}
-
-
-function showWallet(){
-
-closeAll();
-
-document.getElementById("walletPanel").style.display="block";
-
-}
-
-
-/* پیام */
-
-function msg(text){
-
-document.getElementById("msg").textContent=text;
-
-}
-
-
-/* اطلاعات کاربر */
-
-async function loadUser(){
-
-if(!tg){
-
-msg("⚠️ Telegram WebApp پیدا نشد");
-
-return;
-
-}
-
-const u =
-tg.initDataUnsafe &&
-tg.initDataUnsafe.user;
-
-if(!u || !u.id){
-
-msg("⚠️ برنامه را از داخل ربات باز کنید");
-
-return;
-
-}
-
-telegramId =
-String(u.id);
-
-try{
-
-const response =
-await fetch(
-API+
-"/api/user?telegram_id="+
-encodeURIComponent(telegramId)
-);
-
-const data =
-await response.json();
-
-if(!data.success){
-
-throw new Error(data.message);
-
-}
-
-userData =
-data.user;
-
-updateUI();
-
-document.getElementById("inviteLink").textContent =
-"https://t.me/AfghaniCoinBot?start="+telegramId;
-
-msg("✅ حساب آماده است");
-
-}catch(error){
-
-console.log(error);
-
-msg("❌ خطا در اتصال به حساب");
-
-}
-
-}
-
-
-/* نمایش اطلاعات */
-
-function updateUI(){
-
-if(!userData)return;
-
-document.getElementById("balance").textContent =
-(userData.balance || 0)+" AFC";
-
-document.getElementById("walletBalance").textContent =
-(userData.balance || 0)+" AFC";
-
-document.getElementById("energy").textContent =
-"⚡ انرژی: "+
-(userData.energy || 0)+
-" / 100";
-
-document.getElementById("level").textContent =
-user
+<!--
