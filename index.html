@@ -10,7 +10,10 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -53,22 +56,60 @@ h1{
   font-size:14px;
 }
 
+
+/* =========================
+   MINING BUTTON
+========================= */
+
+.mine-wrapper{
+  position:relative;
+  width:210px;
+  height:230px;
+  margin:15px auto 20px;
+}
+
 .mine{
+  position:absolute;
+
+  left:15px;
+  top:15px;
+
   width:180px;
   height:180px;
+
   border-radius:50%;
-  border:5px solid #ffd54a;
-  background:#ffb300;
-  color:#111;
-  font-size:24px;
+
+  border:6px solid #ffd54a;
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #fff3a0 0%,
+      #ffd54a 25%,
+      #ffb300 60%,
+      #d88900 100%
+    );
+
+  color:#3b2600;
+
+  font-size:75px;
   font-weight:bold;
-  margin:15px auto 25px;
-  display:block;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
   cursor:pointer;
+
+  box-shadow:
+    0 0 20px rgba(255,213,74,.45),
+    inset 0 0 15px rgba(255,255,255,.35);
+
+  transition:transform .12s;
 }
 
 .mine:active{
-  transform:scale(.95);
+  transform:scale(.92);
 }
 
 .mine:disabled{
@@ -76,7 +117,109 @@ h1{
   border-color:#888;
   color:#ccc;
   cursor:not-allowed;
+  box-shadow:none;
 }
+
+
+/* =========================
+   FLYING COINS
+========================= */
+
+.coin-fly{
+  position:absolute;
+
+  left:50%;
+  top:70px;
+
+  font-size:30px;
+
+  pointer-events:none;
+
+  animation:coinFly .8s ease-out forwards;
+
+  z-index:10;
+}
+
+@keyframes coinFly{
+
+  0%{
+    transform:
+      translate(-50%,0)
+      scale(.5)
+      rotate(0deg);
+
+    opacity:0;
+  }
+
+  20%{
+    opacity:1;
+  }
+
+  100%{
+    transform:
+      translate(
+        calc(-50% + var(--x)),
+        -170px
+      )
+      scale(1.1)
+      rotate(360deg);
+
+    opacity:0;
+  }
+
+}
+
+
+/* =========================
+   + AFC ANIMATION
+========================= */
+
+.mined-text{
+  position:absolute;
+
+  left:50%;
+  top:75px;
+
+  font-size:22px;
+  font-weight:bold;
+
+  color:#ffd54a;
+
+  pointer-events:none;
+
+  animation:minedText .9s ease-out forwards;
+
+  z-index:20;
+}
+
+@keyframes minedText{
+
+  0%{
+    transform:
+      translate(-50%,0)
+      scale(.7);
+
+    opacity:0;
+  }
+
+  20%{
+    opacity:1;
+  }
+
+  100%{
+    transform:
+      translate(-50%,-150px)
+      scale(1.1);
+
+    opacity:0;
+  }
+
+}
+
+
+/* =========================
+   MENU
+========================= */
 
 .menu{
   display:grid;
@@ -136,44 +279,72 @@ h1{
   font-weight:bold;
   font-size:15px;
 }
+
 </style>
 
 </head>
 
+
 <body>
 
-<div class="logo">🪙</div>
+<div class="logo">
+  🪙
+</div>
 
-<h1>Afghani Coin</h1>
+<h1>
+  Afghani Coin
+</h1>
+
 
 <div class="card">
 
-  <div>💰 موجودی شما</div>
+  <div>
+    💰 موجودی شما
+  </div>
 
-  <div class="balance" id="balance">
+  <div
+    class="balance"
+    id="balance"
+  >
     0 AFC
   </div>
 
-  <div class="energy" id="energy">
+  <div
+    class="energy"
+    id="energy"
+  >
     ⚡ انرژی: 100 / 100
   </div>
 
-  <div class="small" id="level">
+  <div
+    class="small"
+    id="level"
+  >
     Level: 1 | Power: 1
   </div>
 
 </div>
 
 
-<button
-  class="mine"
-  id="mineButton"
-  onclick="mine()"
-  disabled
+<!-- =========================
+     MINING
+========================= -->
+
+<div
+  class="mine-wrapper"
+  id="mineWrapper"
 >
-  ⏳<br>
-  اتصال...
-</button>
+
+  <button
+    class="mine"
+    id="mineButton"
+    onclick="mine()"
+    disabled
+  >
+    ؋
+  </button>
+
+</div>
 
 
 <div
@@ -183,6 +354,10 @@ h1{
   ⏳ در حال اتصال به حساب...
 </div>
 
+
+<!-- =========================
+     MENU
+========================= -->
 
 <div class="menu">
 
@@ -209,9 +384,18 @@ h1{
 </div>
 
 
-<div id="tasks" class="panel">
+<!-- =========================
+     TASKS
+========================= -->
 
-  <h2>🎁 Tasks</h2>
+<div
+  id="tasks"
+  class="panel"
+>
+
+  <h2>
+    🎁 Tasks
+  </h2>
 
   <p>
     وظایف Afghani Coin
@@ -225,22 +409,37 @@ h1{
     ⛏️ وظیفه استخراج
   </button>
 
-  <a href="#" class="close">
+  <a
+    href="#"
+    class="close"
+  >
     بستن
   </a>
 
 </div>
 
 
-<div id="invite" class="panel">
+<!-- =========================
+     INVITE
+========================= -->
 
-  <h2>👥 Invite</h2>
+<div
+  id="invite"
+  class="panel"
+>
+
+  <h2>
+    👥 Invite
+  </h2>
 
   <p>
     دوستان خود را دعوت کنید.
   </p>
 
-  <p id="inviteLink" class="small">
+  <p
+    id="inviteLink"
+    class="small"
+  >
     در حال ساخت لینک...
   </p>
 
@@ -252,16 +451,28 @@ h1{
     📤 اشتراک در Telegram
   </button>
 
-  <a href="#" class="close">
+  <a
+    href="#"
+    class="close"
+  >
     بستن
   </a>
 
 </div>
 
 
-<div id="wallet" class="panel">
+<!-- =========================
+     WALLET
+========================= -->
 
-  <h2>👛 Wallet</h2>
+<div
+  id="wallet"
+  class="panel"
+>
+
+  <h2>
+    👛 Wallet
+  </h2>
 
   <div
     class="balance"
@@ -278,31 +489,49 @@ h1{
     🔗 اتصال کیف پول
   </button>
 
-  <a href="#" class="close">
+  <a
+    href="#"
+    class="close"
+  >
     بستن
   </a>
 
 </div>
 
 
-<div id="upgrade" class="panel">
+<!-- =========================
+     UPGRADE
+========================= -->
 
-  <h2>🚀 Upgrade</h2>
+<div
+  id="upgrade"
+  class="panel"
+>
+
+  <h2>
+    🚀 Upgrade
+  </h2>
 
   <p>
     Level:
-    <b id="upgradeLevel">1</b>
+    <b id="upgradeLevel">
+      1
+    </b>
   </p>
 
   <p>
     Power:
-    <b id="upgradePower">1</b>
+    <b id="upgradePower">
+      1
+    </b>
     AFC / کلیک
   </p>
 
   <p>
     هزینه:
-    <b id="upgradeCost">100</b>
+    <b id="upgradeCost">
+      100
+    </b>
     AFC
   </p>
 
@@ -310,7 +539,10 @@ h1{
     🚀 ارتقا
   </button>
 
-  <a href="#" class="close">
+  <a
+    href="#"
+    class="close"
+  >
     بستن
   </a>
 
@@ -443,14 +675,112 @@ function updateUI(){
   if(energy > 0){
 
     button.innerHTML =
-      "⛏️<br>MINE";
+      "؋";
 
   }else{
 
     button.innerHTML =
-      "⚡<br>انرژی تمام";
+      "⚡";
 
   }
+
+}
+
+
+/* =========================
+   FLYING COINS
+========================= */
+
+function createFlyingCoins(){
+
+  const wrapper =
+    document.getElementById(
+      "mineWrapper"
+    );
+
+
+  for(let i = 0; i < 6; i++){
+
+    const coin =
+      document.createElement(
+        "div"
+      );
+
+
+    coin.className =
+      "coin-fly";
+
+
+    coin.textContent =
+      "🪙";
+
+
+    const randomX =
+      (Math.random() * 140) - 70;
+
+
+    coin.style.setProperty(
+      "--x",
+      randomX + "px"
+    );
+
+
+    coin.style.animationDelay =
+      (i * 0.06) + "s";
+
+
+    wrapper.appendChild(
+      coin
+    );
+
+
+    setTimeout(function(){
+
+      coin.remove();
+
+    },1000);
+
+  }
+
+}
+
+
+/* =========================
+   MINED TEXT
+========================= */
+
+function createMinedText(amount){
+
+  const wrapper =
+    document.getElementById(
+      "mineWrapper"
+    );
+
+
+  const text =
+    document.createElement(
+      "div"
+    );
+
+
+  text.className =
+    "mined-text";
+
+
+  text.textContent =
+    "+" + amount + " AFC";
+
+
+  wrapper.appendChild(
+    text
+  );
+
+
+  setTimeout(function(){
+
+    text.remove();
+
+  },1000);
 
 }
 
@@ -594,7 +924,7 @@ async function loadUser(){
     document.getElementById(
       "mineButton"
     ).innerHTML =
-      "❌<br>اتصال";
+      "❌";
 
 
     showMessage(
@@ -647,7 +977,7 @@ async function mine(){
 
 
   button.innerHTML =
-    "⛏️<br>استخراج...";
+    "⏳";
 
 
   showMessage(
@@ -735,9 +1065,18 @@ async function mine(){
     updateUI();
 
 
+    /* انیمیشن */
+
+    createFlyingCoins();
+
+    createMinedText(
+      data.mined
+    );
+
+
     showMessage(
 
-      "⛏️ +" +
+      "🪙 +" +
       data.mined +
       " AFC استخراج شد"
 
