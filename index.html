@@ -1,737 +1,286 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-  >
+<title>Afghani Coin</title>
 
-  <title>Afghani Coin</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #06101c, #123653, #06101c);
-      color: white;
-      text-align: center;
-      direction: rtl;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 500px;
-      margin: auto;
-      padding: 25px 18px;
-    }
-
-    .logo {
-      font-size: 55px;
-      margin-top: 10px;
-    }
-
-    h1 {
-      margin: 5px 0;
-      font-size: 30px;
-    }
-
-    .version {
-      opacity: .7;
-      font-size: 13px;
-      margin-bottom: 25px;
-    }
-
-    .card {
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    }
-
-    .title {
-      font-size: 15px;
-      opacity: .75;
-    }
-
-    .balance {
-      font-size: 36px;
-      font-weight: bold;
-      margin-top: 8px;
-    }
-
-    .energy {
-      font-size: 20px;
-      margin-top: 8px;
-    }
-
-    .mine {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      border: none;
-      background: linear-gradient(145deg, #ffc107, #ff9800);
-      color: #111;
-      font-size: 25px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 10px 35px rgba(255,170,0,.35);
-      margin: 25px auto;
-      display: block;
-    }
-
-    .mine:active {
-      transform: scale(.94);
-    }
-
-    .mine:disabled {
-      background: #555;
-      color: #aaa;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
-
-    .upgrade {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 12px;
-      background: #2196f3;
-      color: white;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .upgrade:disabled {
-      background: #555;
-      color: #aaa;
-    }
-
-    .info {
-      margin-top: 15px;
-      line-height: 1.8;
-      font-size: 14px;
-      opacity: .8;
-    }
-
-    #message {
-      min-height: 45px;
-      margin-top: 15px;
-      white-space: pre-line;
-      font-size: 14px;
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="container">
-
-    <div class="logo">🪙</div>
-
-    <h1>Afghani Coin</h1>
-
-    <div class="version">
-      Telegram Mining • V3
-    </div>
-
-    <div class="card">
-
-      <div class="title">
-        موجودی شما
-      </div>
-
-      <div class="balance" id="balance">
-        0 AFC
-      </div>
-
-      <div class="energy" id="energy">
-        ⚡ 0 / 100
-      </div>
-
-    </div>
-
-    <button
-      class="mine"
-      id="mineButton"
-      onclick="mine()"
-      disabled
-    >
-      ⛏️
-      <br>
-      MINE
-    </button>
-
-    <div class="card">
-
-      <div class="title">
-        قدرت استخراج
-      </div>
-
-      <div id="power">
-        Power: 1
-      </div>
-
-      <div class="title" style="margin-top:10px;">
-        سطح
-      </div>
-
-      <div id="level">
-        Level: 1
-      </div>
-
-    </div>
-
-    <button
-      class="upgrade"
-      id="upgradeButton"
-      onclick="upgradePower()"
-      disabled
-    >
-      🚀 ارتقای قدرت
-    </button>
-
-    <div class="info">
-      ⚡ هر 60 ثانیه 1 انرژی شارژ می‌شود.
-      <br>
-      ⛏️ هر بار ماین، 1 انرژی مصرف می‌کند.
-    </div>
-
-    <div id="message">
-      در حال اتصال...
-    </div>
-
-  </div>
-
-<script>
-
-const tg = window.Telegram.WebApp;
-
-tg.ready();
-tg.expand();
-
-const API_BASE = "https://afghanicoin.vercel.app";
-
-const MAX_ENERGY = 100;
-
-let telegramId = null;
-let userData = null;
-
-
-/* -----------------------------
-   گرفتن اطلاعات کاربر Telegram
------------------------------ */
-
-function getTelegramUser() {
-
-  if (
-    tg &&
-    tg.initDataUnsafe &&
-    tg.initDataUnsafe.user &&
-    tg.initDataUnsafe.user.id
-  ) {
-    return tg.initDataUnsafe.user;
-  }
-
-  try {
-
-    if (tg && tg.initData) {
-
-      const params = new URLSearchParams(
-        tg.initData
-      );
-
-      const userRaw = params.get("user");
-
-      if (userRaw) {
-        return JSON.parse(userRaw);
-      }
-
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Telegram user error:",
-      error
-    );
-
-  }
-
-  return null;
+<style>
+*{
+  box-sizing:border-box;
 }
 
-
-/* -----------------------------
-   پیام
------------------------------ */
-
-function showMessage(message) {
-
-  document.getElementById("message").textContent =
-    message;
-
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#06111f,#0d2942,#06111f);
+  color:white;
+  direction:rtl;
+  min-height:100vh;
 }
 
-
-/* -----------------------------
-   نمایش اطلاعات
------------------------------ */
-
-function updateUI() {
-
-  if (!userData) {
-    return;
-  }
-
-  document.getElementById("balance").textContent =
-    Number(userData.balance || 0) + " AFC";
-
-  document.getElementById("energy").textContent =
-    "⚡ " +
-    Number(userData.energy || 0) +
-    " / " +
-    MAX_ENERGY;
-
-  document.getElementById("power").textContent =
-    "Power: " +
-    Number(userData.power || 1);
-
-  document.getElementById("level").textContent =
-    "Level: " +
-    Number(userData.level || 1);
-
-
-  const mineButton =
-    document.getElementById("mineButton");
-
-  const upgradeButton =
-    document.getElementById("upgradeButton");
-
-
-  /* فعال شدن دکمه ماین */
-
-  mineButton.disabled =
-    Number(userData.energy || 0) <= 0;
-
-
-  /* هزینه ارتقا */
-
-  const cost =
-    Number(userData.level || 1) * 100;
-
-
-  upgradeButton.textContent =
-    "🚀 ارتقای قدرت - " +
-    cost +
-    " AFC";
-
-
-  upgradeButton.disabled =
-    Number(userData.balance || 0) < cost;
-
+.container{
+  max-width:520px;
+  margin:auto;
+  padding:18px;
+  padding-bottom:100px;
 }
 
-
-/* -----------------------------
-   گرفتن اطلاعات کاربر
------------------------------ */
-
-async function loadUser() {
-
-  try {
-
-    const telegramUser =
-      getTelegramUser();
-
-
-    if (
-      !telegramUser ||
-      !telegramUser.id
-    ) {
-
-      showMessage(
-        "❌ Telegram ID دریافت نشد.\n" +
-        "لطفاً برنامه را از داخل ربات AfghaniCoinBot باز کنید."
-      );
-
-      return;
-    }
-
-
-    telegramId =
-      String(telegramUser.id);
-
-
-    showMessage(
-      "⏳ در حال دریافت حساب..."
-    );
-
-
-    const response =
-      await fetch(
-        API_BASE +
-        "/api/user?telegram_id=" +
-        encodeURIComponent(telegramId)
-      );
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        "HTTP " +
-        response.status
-      );
-
-    }
-
-
-    const data =
-      await response.json();
-
-
-    if (!data.success) {
-
-      throw new Error(
-        data.message ||
-        "User loading failed"
-      );
-
-    }
-
-
-    userData =
-      data.user;
-
-
-    updateUI();
-
-
-    showMessage(
-      "✅ حساب آماده است"
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    showMessage(
-      "❌ خطا در اتصال به حساب AFC\n" +
-      error.message
-    );
-
-  }
-
+.header{
+  text-align:center;
+  padding:10px 0 20px;
 }
 
-
-/* -----------------------------
-   ماین
------------------------------ */
-
-async function mine() {
-
-  if (!telegramId) {
-
-    showMessage(
-      "❌ حساب هنوز آماده نیست."
-    );
-
-    return;
-  }
-
-
-  if (
-    !userData ||
-    Number(userData.energy || 0) <= 0
-  ) {
-
-    showMessage(
-      "⚡ انرژی کافی نیست."
-    );
-
-    return;
-  }
-
-
-  const button =
-    document.getElementById(
-      "mineButton"
-    );
-
-
-  button.disabled = true;
-
-
-  try {
-
-    const response =
-      await fetch(
-        API_BASE + "/api/mine",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-            telegram_id:
-              telegramId
-          })
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.message ||
-        "Mining failed"
-      );
-
-    }
-
-
-    if (!data.success) {
-
-      throw new Error(
-        data.message ||
-        "Mining failed"
-      );
-
-    }
-
-
-    userData =
-      data.user;
-
-
-    updateUI();
-
-
-    showMessage(
-      "⛏️ +" +
-      data.mined +
-      " AFC استخراج شد!"
-    );
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    showMessage(
-      "❌ " +
-      error.message
-    );
-
-
-    updateUI();
-
-  }
-
+.logo{
+  font-size:55px;
 }
 
-
-/* -----------------------------
-   ارتقای قدرت
------------------------------ */
-
-async function upgradePower() {
-
-  if (!telegramId) {
-
-    showMessage(
-      "❌ حساب هنوز آماده نیست."
-    );
-
-    return;
-  }
-
-
-  try {
-
-    const response =
-      await fetch(
-        API_BASE + "/api/upgrade",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-            telegram_id:
-              telegramId
-          })
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.message ||
-        "Upgrade failed"
-      );
-
-    }
-
-
-    if (!data.success) {
-
-      throw new Error(
-        data.message ||
-        "Upgrade failed"
-      );
-
-    }
-
-
-    userData =
-      data.user;
-
-
-    updateUI();
-
-
-    showMessage(
-      "🚀 قدرت شما افزایش یافت!"
-    );
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    showMessage(
-      "❌ " +
-      error.message
-    );
-
-  }
-
+.header h1{
+  margin:5px 0;
+  font-size:28px;
 }
 
-
-/* -----------------------------
-   شارژ خودکار انرژی در صفحه
------------------------------ */
-
-let lastEnergyUpdate =
-  Date.now();
-
-
-function startEnergyRegeneration() {
-
-  setInterval(
-    async function() {
-
-      if (!userData || !telegramId) {
-        return;
-      }
-
-
-      if (
-        Number(userData.energy || 0)
-        >= MAX_ENERGY
-      ) {
-        return;
-      }
-
-
-      const now =
-        Date.now();
-
-
-      const secondsPassed =
-        Math.floor(
-          (now - lastEnergyUpdate) /
-          1000
-        );
-
-
-      if (secondsPassed >= 60) {
-
-        lastEnergyUpdate =
-          now;
-
-
-        try {
-
-          const response =
-            await fetch(
-              API_BASE +
-              "/api/user?telegram_id=" +
-              encodeURIComponent(
-                telegramId
-              )
-            );
-
-
-          const data =
-            await response.json();
-
-
-          if (data.success) {
-
-            userData =
-              data.user;
-
-            updateUI();
-
-          }
-
-        } catch (error) {
-
-          console.error(
-            "Energy update error:",
-            error
-          );
-
-        }
-
-      }
-
-    },
-    5000
-  );
-
+.version{
+  opacity:.6;
+  font-size:12px;
 }
 
+.card{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;
+  padding:18px;
+  margin-bottom:14px;
+  box-shadow:0 8px 25px rgba(0,0,0,.2);
+}
 
-/* -----------------------------
-   شروع برنامه
------------------------------ */
+.balance-title{
+  text-align:center;
+  opacity:.7;
+  font-size:14px;
+}
 
-loadUser();
+.balance{
+  text-align:center;
+  font-size:38px;
+  font-weight:bold;
+  margin:8px 0;
+}
 
-startEnergyRegeneration();
+.energy-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:12px;
+}
 
-</script>
+.energy-bar{
+  width:100%;
+  height:12px;
+  background:#263646;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:8px;
+}
 
-</body>
-</html>
+.energy-fill{
+  height:100%;
+  width:100%;
+  background:#ffc107;
+  transition:.3s;
+}
+
+.mine{
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  border:0;
+  display:block;
+  margin:22px auto;
+  background:linear-gradient(145deg,#ffd54f,#ff9800);
+  color:#111;
+  font-size:27px;
+  font-weight:bold;
+  box-shadow:0 12px 40px rgba(255,170,0,.35);
+}
+
+.mine:active{
+  transform:scale(.94);
+}
+
+.mine:disabled{
+  background:#555;
+  color:#aaa;
+  box-shadow:none;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.option{
+  border:0;
+  border-radius:17px;
+  padding:20px 10px;
+  color:white;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.1);
+  font-size:16px;
+  font-weight:bold;
+}
+
+.option span{
+  display:block;
+  font-size:28px;
+  margin-bottom:8px;
+}
+
+.option:active{
+  transform:scale(.97);
+}
+
+.section{
+  display:none;
+}
+
+.section.active{
+  display:block;
+}
+
+.section-title{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:15px;
+}
+
+.back{
+  border:0;
+  background:rgba(255,255,255,.1);
+  color:white;
+  padding:10px 15px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+
+.invite-box{
+  text-align:center;
+}
+
+.ref-link{
+  background:#071522;
+  padding:13px;
+  border-radius:10px;
+  word-break:break-all;
+  margin:15px 0;
+  direction:ltr;
+}
+
+.main-button{
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:13px;
+  background:#2196f3;
+  color:white;
+  font-size:17px;
+  font-weight:bold;
+}
+
+.task{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:rgba(255,255,255,.06);
+  padding:15px;
+  border-radius:14px;
+  margin-bottom:10px;
+}
+
+.task-info{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.task-icon{
+  font-size:27px;
+}
+
+.task button{
+  border:0;
+  background:#2196f3;
+  color:white;
+  padding:9px 13px;
+  border-radius:9px;
+}
+
+.upgrade-card{
+  text-align:center;
+}
+
+.upgrade-button{
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:13px;
+  background:#ff9800;
+  font-size:17px;
+  font-weight:bold;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.stat{
+  background:rgba(255,255,255,.06);
+  border-radius:13px;
+  padding:15px;
+  text-align:center;
+}
+
+.stat-number{
+  font-size:23px;
+  font-weight:bold;
+  margin-top:5px;
+}
+
+.message{
+  min-height:40px;
+  text-align:center;
+  padding:10px;
+  white-space:pre-line;
+  font-size:14px;
+  opacity:.9;
+}
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  max-width:520px;
+  margin:auto;
+  background:#071522;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 5px;
+  border-top:1px solid rgba(255,255,255,.1);
+}
+
+.nav-button{
+  background:none;
+  border:0;
+  color:#aaa;
+  font-size:12px;
+}
+
+.nav-button span{
+  display
