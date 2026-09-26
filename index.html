@@ -3,76 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Afghani Coin</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      padding: 20px;
-      background: #071522;
+      padding: 15px;
+      background: linear-gradient(135deg, #06111c, #0b2438);
       color: white;
       font-family: Arial, sans-serif;
       text-align: center;
+      min-height: 100vh;
     }
 
     .logo {
-      font-size: 60px;
-      margin-top: 30px;
+      font-size: 55px;
+      margin-top: 15px;
     }
 
     h1 {
-      font-size: 30px;
+      margin: 5px 0 20px;
+      font-size: 28px;
     }
 
     .card {
-      background: #10283d;
+      background: rgba(20, 50, 75, 0.95);
+      border-radius: 20px;
       padding: 20px;
-      margin: 15px 0;
-      border-radius: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.25);
     }
 
     .balance {
-      font-size: 35px;
+      font-size: 36px;
       font-weight: bold;
+      margin: 8px 0;
+    }
+
+    .energy {
+      font-size: 17px;
+      margin-top: 8px;
     }
 
     .mine {
-      width: 180px;
-      height: 180px;
+      width: 185px;
+      height: 185px;
       border-radius: 50%;
-      border: none;
+      border: 5px solid #ffd54a;
       background: #ffb300;
+      color: #111;
       font-size: 25px;
       font-weight: bold;
-      margin: 25px;
+      margin: 15px auto 25px;
+      display: block;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(255,179,0,.3);
+    }
+
+    .mine:active {
+      transform: scale(.95);
     }
 
     .mine:disabled {
       background: #555;
+      border-color: #666;
       color: #aaa;
+      box-shadow: none;
     }
 
-    .buttons {
+    .menu {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
-    button.option {
-      padding: 18px;
+    .menu button {
       border: none;
-      border-radius: 15px;
-      background: #153b59;
+      border-radius: 16px;
+      padding: 18px 8px;
+      background: #123b5b;
       color: white;
       font-size: 16px;
+      cursor: pointer;
+    }
+
+    .menu button:active {
+      transform: scale(.97);
+    }
+
+    .panel {
+      display: none;
+      background: #102d45;
+      border-radius: 18px;
+      padding: 20px;
+      margin-top: 15px;
+      text-align: right;
+    }
+
+    .panel h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .panel button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 10px;
+      background: #ffb300;
+      color: #111;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .task {
+      background: #173e5b;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 8px 0;
+    }
+
+    .task button {
+      background: #22a55a;
+      color: white;
+      margin-top: 8px;
+    }
+
+    .wallet-address {
+      background: #071a29;
+      border-radius: 10px;
+      padding: 12px;
+      word-break: break-all;
+      direction: ltr;
+      text-align: center;
+      margin-top: 10px;
     }
 
     #message {
-      margin-top: 20px;
+      margin-top: 15px;
+      min-height: 25px;
       white-space: pre-line;
+      color: #ddd;
+    }
+
+    .close {
+      background: #263f52 !important;
+      color: white !important;
     }
   </style>
 </head>
@@ -84,20 +167,11 @@
   <h1>Afghani Coin</h1>
 
   <div class="card">
-
-    <div>💰 موجودی</div>
-
-    <div
-      class="balance"
-      id="balance"
-    >
-      0 AFC
-    </div>
-
-    <div id="energy">
+    <div>💰 موجودی شما</div>
+    <div class="balance" id="balance">0 AFC</div>
+    <div class="energy" id="energy">
       ⚡ انرژی: 0 / 100
     </div>
-
   </div>
 
   <button
@@ -106,327 +180,5 @@
     onclick="mine()"
     disabled
   >
-    ⛏️
-    <br>
-    MINE
-  </button>
-
-  <div class="buttons">
-
-    <button
-      class="option"
-      onclick="invite()"
-    >
-      👥
-      <br>
-      دعوت دوستان
-    </button>
-
-    <button
-      class="option"
-      onclick="tasks()"
-    >
-      🎁
-      <br>
-      Tasks
-    </button>
-
-    <button
-      class="option"
-      onclick="upgrade()"
-    >
-      🚀
-      <br>
-      Upgrade
-    </button>
-
-    <button
-      class="option"
-      onclick="wallet()"
-    >
-      👛
-      <br>
-      Wallet
-    </button>
-
-  </div>
-
-  <div id="message">
-    در حال اتصال...
-  </div>
-
-
-<script>
-
-const tg =
-  window.Telegram &&
-  window.Telegram.WebApp;
-
-if (tg) {
-  tg.ready();
-  tg.expand();
-}
-
-const API =
-  "https://afghanicoin.vercel.app";
-
-let telegramId = null;
-let userData = null;
-
-
-/* دریافت Telegram ID */
-
-function getTelegramUser() {
-
-  if (
-    tg &&
-    tg.initDataUnsafe &&
-    tg.initDataUnsafe.user
-  ) {
-
-    return tg.initDataUnsafe.user;
-
-  }
-
-  return null;
-}
-
-
-/* پیام */
-
-function message(text) {
-
-  document.getElementById(
-    "message"
-  ).textContent = text;
-
-}
-
-
-/* دریافت حساب */
-
-async function loadUser() {
-
-  const user =
-    getTelegramUser();
-
-
-  if (
-    !user ||
-    !user.id
-  ) {
-
-    message(
-      "⚠️ برنامه را از داخل ربات Telegram باز کنید."
-    );
-
-    return;
-  }
-
-
-  telegramId =
-    String(user.id);
-
-
-  try {
-
-    const response =
-      await fetch(
-        API +
-        "/api/user?telegram_id=" +
-        encodeURIComponent(
-          telegramId
-        )
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (!data.success) {
-
-      throw new Error(
-        data.message
-      );
-
-    }
-
-
-    userData =
-      data.user;
-
-
-    updateUI();
-
-
-    message(
-      "✅ حساب آماده است"
-    );
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    message(
-      "❌ خطا در اتصال به حساب"
-    );
-
-  }
-
-}
-
-
-/* نمایش حساب */
-
-function updateUI() {
-
-  if (!userData) {
-    return;
-  }
-
-
-  document.getElementById(
-    "balance"
-  ).textContent =
-    Number(
-      userData.balance || 0
-    ) + " AFC";
-
-
-  document.getElementById(
-    "energy"
-  ).textContent =
-    "⚡ انرژی: " +
-    Number(
-      userData.energy || 0
-    ) +
-    " / 100";
-
-
-  document.getElementById(
-    "mineButton"
-  ).disabled =
-    Number(
-      userData.energy || 0
-    ) <= 0;
-
-}
-
-
-/* ماین */
-
-async function mine() {
-
-  if (!telegramId) {
-    return;
-  }
-
-
-  try {
-
-    const response =
-      await fetch(
-        API + "/api/mine",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-            telegram_id:
-              telegramId
-          })
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (!data.success) {
-
-      throw new Error(
-        data.message
-      );
-
-    }
-
-
-    userData =
-      data.user;
-
-
-    updateUI();
-
-
-    message(
-      "⛏️ +" +
-      data.mined +
-      " AFC"
-    );
-
-
-  } catch (error) {
-
-    message(
-      "❌ " +
-      error.message
-    );
-
-  }
-
-}
-
-
-/* گزینه‌ها */
-
-function invite() {
-
-  message(
-    "👥 بخش دعوت دوستان آماده می‌شود."
-  );
-
-}
-
-
-function tasks() {
-
-  message(
-    "🎁 بخش Tasks آماده می‌شود."
-  );
-
-}
-
-
-function upgrade() {
-
-  message(
-    "🚀 بخش Upgrade آماده می‌شود."
-  );
-
-}
-
-
-function wallet() {
-
-  message(
-    "👛 بخش Wallet آماده می‌شود."
-  );
-
-}
-
-
-/* شروع */
-
-loadUser();
-
-</script>
-
-</body>
-</html>
+    ⛏️<br>
+    M
