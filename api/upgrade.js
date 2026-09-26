@@ -1,6 +1,22 @@
 import sql from "./db.js";
 
 export default async function handler(req, res) {
+  // CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type"
+  );
+
+  // CORS preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
     if (req.method !== "POST") {
       return res.status(405).json({
@@ -21,7 +37,7 @@ export default async function handler(req, res) {
     const users = await sql`
       SELECT *
       FROM users
-      WHERE telegram_id = ${telegram_id}
+      WHERE telegram_id = ${String(telegram_id)}
       LIMIT 1
     `;
 
@@ -34,12 +50,13 @@ export default async function handler(req, res) {
 
     const user = users[0];
 
-    const cost = user.level * 100;
+    const cost = Number(user.level || 1) * 100;
 
-    if (user.balance < cost) {
+    if (Number(user.balance || 0) < cost) {
       return res.status(400).json({
         success: false,
-        message: `Not enough AFC. Upgrade costs ${cost} AFC.`
+        message:
+          `Not enough AFC. Upgrade costs ${cost} AFC.`
       });
     }
 
@@ -49,7 +66,7 @@ export default async function handler(req, res) {
         balance = balance - ${cost},
         level = level + 1,
         power = power + 1
-      WHERE telegram_id = ${telegram_id}
+      WHERE telegram_id = ${String(telegram_id)}
       RETURNING *
     `;
 
