@@ -20,7 +20,6 @@ body{
 }
 
 .logo{font-size:55px;margin-top:8px}
-
 h1{margin:5px 0 20px}
 
 .card{
@@ -179,36 +178,6 @@ h1{margin:5px 0 20px}
   font-size:11px;
 }
 
-.rank-box{
-  background:#0c2940;
-  border-radius:15px;
-  padding:15px;
-  margin-bottom:15px;
-}
-
-.rank-item{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  background:#16496e;
-  padding:12px;
-  margin-top:8px;
-  border-radius:12px;
-  text-align:right;
-}
-
-.rank-number{
-  width:42px;
-  font-weight:bold;
-}
-
-.rank-name{flex:1}
-
-.rank-balance{
-  font-weight:bold;
-  color:#ffd54a;
-}
-
 .invite-stat{
   background:#16496e;
   border-radius:12px;
@@ -223,6 +192,161 @@ h1{margin:5px 0 20px}
   padding:12px;
   margin-top:15px;
   direction:ltr;
+}
+
+/* =========================
+   LEADERBOARD
+========================= */
+
+.leaderboard-header{
+  background:linear-gradient(135deg,#26105d,#4d1bb8);
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:18px;
+}
+
+.leaderboard-header .cup{
+  font-size:50px;
+}
+
+.leaderboard-header h2{
+  margin:5px 0;
+}
+
+.my-rank-box{
+  background:#0c2940;
+  border:2px solid #ffd54a;
+  border-radius:17px;
+  padding:16px;
+  margin-bottom:18px;
+}
+
+.my-rank-title{
+  color:#ffd54a;
+  font-size:19px;
+  font-weight:bold;
+}
+
+.my-rank-number{
+  font-size:34px;
+  font-weight:bold;
+  margin:5px 0;
+}
+
+.my-rank-balance{
+  font-size:18px;
+}
+
+.podium{
+  display:grid;
+  grid-template-columns:1fr 1.15fr 1fr;
+  align-items:end;
+  gap:7px;
+  margin-bottom:20px;
+}
+
+.podium-card{
+  background:#16496e;
+  border-radius:15px 15px 10px 10px;
+  padding:12px 5px;
+  min-height:145px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  overflow:hidden;
+}
+
+.podium-card.first{
+  min-height:175px;
+  background:linear-gradient(180deg,#5d35a9,#16496e);
+  border:2px solid #ffd54a;
+}
+
+.podium-medal{
+  font-size:38px;
+}
+
+.podium-name{
+  font-weight:bold;
+  margin:5px 0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.podium-balance{
+  color:#ffd54a;
+  font-weight:bold;
+  font-size:14px;
+}
+
+.podium-level{
+  color:#b9c7d3;
+  font-size:11px;
+  margin-top:4px;
+}
+
+.rank-list-title{
+  text-align:right;
+  font-weight:bold;
+  font-size:18px;
+  margin:12px 2px;
+}
+
+.rank-list{
+  max-height:430px;
+  overflow-y:auto;
+  padding-left:2px;
+}
+
+.rank-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#16496e;
+  padding:12px 9px;
+  margin-top:8px;
+  border-radius:12px;
+  text-align:right;
+  border:1px solid transparent;
+}
+
+.rank-item.me{
+  background:linear-gradient(135deg,#254f70,#4d1bb8);
+  border-color:#ffd54a;
+}
+
+.rank-number{
+  width:48px;
+  font-weight:bold;
+  flex-shrink:0;
+}
+
+.rank-name{
+  flex:1;
+  min-width:0;
+}
+
+.rank-balance{
+  font-weight:bold;
+  color:#ffd54a;
+  font-size:13px;
+  white-space:nowrap;
+}
+
+.rank-me{
+  display:inline-block;
+  background:#ffd54a;
+  color:#111;
+  border-radius:7px;
+  padding:2px 6px;
+  font-size:10px;
+  margin-right:4px;
+}
+
+.leaderboard-loading{
+  padding:25px;
+  color:#b9c7d3;
 }
 
 .coin{
@@ -486,29 +610,75 @@ h1{margin:5px 0 20px}
 
 <div id="leaderboard" class="panel">
 
-  <h2>🏆 Leaderboard</h2>
+  <div class="leaderboard-header">
 
-  <div class="rank-box">
+    <div class="cup">🏆</div>
 
-    <div id="myRank">
-      ⏳ در حال دریافت رتبه...
+    <h2>Leaderboard</h2>
+
+    <div class="small">
+      برترین استخراج‌کنندگان Afghani Coin
     </div>
 
-    <div id="myLeaderboardBalance">
+  </div>
+
+  <!-- MY RANK -->
+
+  <div class="my-rank-box">
+
+    <div class="my-rank-title">
+      ⭐ رتبه شما
+    </div>
+
+    <div
+      class="my-rank-number"
+      id="myRank"
+    >
+      -
+    </div>
+
+    <div
+      class="my-rank-balance"
+      id="myLeaderboardBalance"
+    >
       💰 0 AFC
     </div>
 
   </div>
 
-  <div id="leaderboardList">
-    ⏳ در حال دریافت اطلاعات...
+  <!-- TOP 3 -->
+
+  <div
+    id="podium"
+    class="podium"
+  >
+    <div class="leaderboard-loading">
+      ⏳ در حال دریافت...
+    </div>
+  </div>
+
+  <!-- OTHER USERS -->
+
+  <div class="rank-list-title">
+    👥 رتبه‌بندی کاربران
+  </div>
+
+  <div
+    id="leaderboardList"
+    class="rank-list"
+  >
+    <div class="leaderboard-loading">
+      ⏳ در حال دریافت اطلاعات...
+    </div>
   </div>
 
   <button onclick="loadLeaderboard()">
-    🔄 بروزرسانی
+    🔄 بروزرسانی Leaderboard
   </button>
 
-  <a href="#" class="close">بستن</a>
+  <a href="#" class="close">
+    بستن
+  </a>
 
 </div>
 
@@ -655,21 +825,25 @@ async function loadUser(){
         }
       );
 
-    const text = await response.text();
+    const text =
+      await response.text();
 
     let data;
 
     try{
       data = JSON.parse(text);
     }catch(e){
-      throw new Error("پاسخ سرور معتبر نیست");
+      throw new Error(
+        "پاسخ سرور معتبر نیست"
+      );
     }
 
     if(!response.ok){
 
       throw new Error(
         data.message ||
-        "خطای سرور: " + response.status
+        "خطای سرور: " +
+        response.status
       );
 
     }
@@ -1385,8 +1559,16 @@ async function loadLeaderboard(){
       "myLeaderboardBalance"
     );
 
+  const podium =
+    document.getElementById(
+      "podium"
+    );
+
   list.innerHTML =
-    "⏳ در حال دریافت اطلاعات...";
+    '<div class="leaderboard-loading">⏳ در حال دریافت اطلاعات...</div>';
+
+  podium.innerHTML =
+    '<div class="leaderboard-loading">⏳ در حال دریافت...</div>';
 
   try{
 
@@ -1420,17 +1602,18 @@ async function loadLeaderboard(){
 
     }
 
+    /* MY RANK */
+
     if(data.myRank){
 
       rank.innerHTML =
-        "🏆 رتبه شما: <b>#" +
-        data.myRank +
-        "</b>";
+        "#" +
+        data.myRank;
 
     }else{
 
       rank.innerHTML =
-        "🏆 رتبه شما: -";
+        "-";
 
     }
 
@@ -1438,26 +1621,136 @@ async function loadLeaderboard(){
 
       myBalance.innerHTML =
         "💰 موجودی شما: <b>" +
-        data.myUser.balance +
-        " AFC</b>";
+        Number(data.myUser.balance || 0) +
+        " AFC</b>" +
+        "<br>" +
+        "<span class='small'>" +
+        "Level " +
+        Number(data.myUser.level || 1) +
+        " | Power " +
+        Number(data.myUser.power || 1) +
+        "</span>";
+
+    }else{
+
+      myBalance.innerHTML =
+        "💰 موجودی شما: 0 AFC";
 
     }
+
+    /* EMPTY */
 
     if(
       !data.leaderboard ||
       data.leaderboard.length === 0
     ){
 
+      podium.innerHTML =
+        '<div class="leaderboard-loading">هنوز کاربری وجود ندارد</div>';
+
       list.innerHTML =
-        "هنوز کاربری وجود ندارد";
+        '<div class="leaderboard-loading">هنوز کاربری وجود ندارد</div>';
 
       return;
 
     }
 
+    const users =
+      data.leaderboard;
+
+    /* =========================
+       TOP 3
+    ========================= */
+
+    const first =
+      users.find(
+        user => Number(user.rank) === 1
+      );
+
+    const second =
+      users.find(
+        user => Number(user.rank) === 2
+      );
+
+    const third =
+      users.find(
+        user => Number(user.rank) === 3
+      );
+
+    function podiumCard(user, medal, extraClass){
+
+      if(!user){
+
+        return `
+          <div class="podium-card ${extraClass}">
+            <div class="podium-medal">${medal}</div>
+            <div class="podium-name">---</div>
+            <div class="podium-balance">---</div>
+          </div>
+        `;
+
+      }
+
+      return `
+        <div class="podium-card ${extraClass}">
+
+          <div class="podium-medal">
+            ${medal}
+          </div>
+
+          <div class="podium-name">
+            ${escapeHtml(
+              user.username || "AFC Miner"
+            )}
+          </div>
+
+          <div class="podium-balance">
+            ${Number(user.balance || 0)} AFC
+          </div>
+
+          <div class="podium-level">
+            Level ${Number(user.level || 1)}
+            |
+            Power ${Number(user.power || 1)}
+          </div>
+
+        </div>
+      `;
+
+    }
+
+    /*
+      ترتیب عمداً دوم، اول، سوم است
+      تا نفر اول وسط نمایش داده شود.
+    */
+
+    podium.innerHTML =
+      podiumCard(
+        second,
+        "🥈",
+        "second"
+      ) +
+
+      podiumCard(
+        first,
+        "🥇",
+        "first"
+      ) +
+
+      podiumCard(
+        third,
+        "🥉",
+        "third"
+      );
+
+
+    /* =========================
+       FULL LIST
+    ========================= */
+
     list.innerHTML = "";
 
-    data.leaderboard.forEach(
+    users.forEach(
       function(user){
 
         const item =
@@ -1468,43 +1761,78 @@ async function loadLeaderboard(){
         item.className =
           "rank-item";
 
+        const isMe =
+          data.myRank &&
+          Number(user.rank) ===
+          Number(data.myRank);
+
+        if(isMe){
+
+          item.classList.add("me");
+
+        }
+
         let medal = "🏅";
 
-        if(user.rank === 1)
+        if(Number(user.rank) === 1)
           medal = "🥇";
 
-        if(user.rank === 2)
+        if(Number(user.rank) === 2)
           medal = "🥈";
 
-        if(user.rank === 3)
+        if(Number(user.rank) === 3)
           medal = "🥉";
 
         item.innerHTML =
+
           "<div class='rank-number'>" +
+
           medal +
+
           " #" +
-          user.rank +
+
+          Number(user.rank) +
+
           "</div>" +
 
           "<div class='rank-name'>" +
+
           escapeHtml(
             user.username ||
             "AFC Miner"
-          ) +
+          );
+
+        if(isMe){
+
+          item.innerHTML +=
+            " <span class='rank-me'>شما</span>";
+
+        }
+
+        item.innerHTML +=
+
           "<br>" +
 
           "<span class='small'>" +
+
           "Level " +
-          user.level +
+
+          Number(user.level || 1) +
+
           " | Power " +
-          user.power +
+
+          Number(user.power || 1) +
+
           "</span>" +
 
           "</div>" +
 
           "<div class='rank-balance'>" +
-          user.balance +
+
+          Number(user.balance || 0) +
+
           " AFC" +
+
           "</div>";
 
         list.appendChild(item);
@@ -1516,9 +1844,15 @@ async function loadLeaderboard(){
 
     console.error(error);
 
+    podium.innerHTML =
+      '<div class="leaderboard-loading">❌ ' +
+      escapeHtml(error.message) +
+      '</div>';
+
     list.innerHTML =
-      "❌ " +
-      error.message;
+      '<div class="leaderboard-loading">❌ ' +
+      escapeHtml(error.message) +
+      '</div>';
 
   }
 
@@ -1589,4 +1923,4 @@ loadUser();
 </script>
 
 </body>
-    </html>
+  </html>
