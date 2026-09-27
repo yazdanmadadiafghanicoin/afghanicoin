@@ -1,1396 +1,327 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+import sql from "./db.js";
 
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+const MAX_ENERGY = 100;
+const ENERGY_REGEN_SECONDS = 10;
+const RATE_LIMIT_MS = 700;
 
-<title>Afghani Coin</title>
+const lastRequests = new Map();
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+function getClientKey(req, telegramId) {
+  const forwarded = req.headers["x-forwarded-for"];
 
-<style>
+  const ip = forwarded
+    ? forwarded.split(",")[0].trim()
+    : req.socket?.remoteAddress || "unknown";
 
-*{
-  box-sizing:border-box;
+  return `${ip}:${telegramId}`;
 }
 
-body{
-  margin:0;
-  padding:18px;
-  background:linear-gradient(135deg,#071827,#102f48,#071827);
-  color:white;
-  font-family:Arial,sans-serif;
-  text-align:center;
-}
+function isRateLimited(req, telegramId) {
+  const key = getClientKey(req, telegramId);
+  const now = Date.now();
 
-.logo{
-  font-size:55px;
-  margin-top:8px;
-}
+  const last = lastRequests.get(key) || 0;
 
-h1{
-  margin:5px 0 20px;
-}
-
-.card{
-  background:#123650;
-  border-radius:22px;
-  padding:20px;
-  margin-bottom:18px;
-}
-
-.balance{
-  font-size:38px;
-  font-weight:bold;
-  margin:10px;
-}
-
-.energy{
-  font-size:18px;
-  margin-top:10px;
-}
-
-.small{
-  color:#b9c7d3;
-  font-size:14px;
-}
-
-
-/* =========================
-   MINING BUTTON
-========================= */
-
-.mine-wrapper{
-  position:relative;
-  width:210px;
-  height:230px;
-  margin:15px auto 20px;
-}
-
-.mine{
-  position:absolute;
-
-  left:15px;
-  top:15px;
-
-  width:180px;
-  height:180px;
-
-  border-radius:50%;
-
-  border:6px solid #ffd54a;
-
-  background:
-    radial-gradient(
-      circle at 35% 30%,
-      #fff3a0 0%,
-      #ffd54a 25%,
-      #ffb300 60%,
-      #d88900 100%
-    );
-
-  color:#3b2600;
-
-  font-size:75px;
-  font-weight:bold;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  cursor:pointer;
-
-  box-shadow:
-    0 0 20px rgba(255,213,74,.45),
-    inset 0 0 15px rgba(255,255,255,.35);
-
-  transition:transform .12s;
-}
-
-.mine:active{
-  transform:scale(.92);
-}
-
-.mine:disabled{
-  background:#666;
-  border-color:#888;
-  color:#ccc;
-  cursor:not-allowed;
-  box-shadow:none;
-}
-
-
-/* =========================
-   FLYING COINS
-========================= */
-
-.coin-fly{
-  position:absolute;
-
-  left:50%;
-  top:70px;
-
-  font-size:30px;
-
-  pointer-events:none;
-
-  animation:coinFly .8s ease-out forwards;
-
-  z-index:10;
-}
-
-@keyframes coinFly{
-
-  0%{
-    transform:
-      translate(-50%,0)
-      scale(.5)
-      rotate(0deg);
-
-    opacity:0;
+  if (now - last < RATE_LIMIT_MS) {
+    return true;
   }
 
-  20%{
-    opacity:1;
+  lastRequests.set(key, now);
+
+  if (lastRequests.size > 5000) {
+    for (const [k, time] of lastRequests) {
+      if (now - time > 60000) {
+        lastRequests.delete(k);
+      }
+    }
   }
 
-  100%{
-    transform:
-      translate(
-        calc(-50% + var(--x)),
-        -170px
-      )
-      scale(1.1)
-      rotate(360deg);
+  return false;
+}
 
-    opacity:0;
+/*
+  محاسبه انرژی جدید
+
+  هر 10 ثانیه = 1 انرژی
+
+  مثال:
+  انرژی = 90
+  30 ثانیه گذشته
+  انرژی جدید = 93
+*/
+
+async function regenerateEnergy(user) {
+  if (!user.energy_updated_at) {
+    return user;
   }
 
-}
+  const now = Date.now();
+  const lastUpdate = new Date(user.energy_updated_at).getTime();
 
-
-/* =========================
-   + AFC ANIMATION
-========================= */
-
-.mined-text{
-  position:absolute;
-
-  left:50%;
-  top:75px;
-
-  font-size:22px;
-  font-weight:bold;
-
-  color:#ffd54a;
-
-  pointer-events:none;
-
-  animation:minedText .9s ease-out forwards;
-
-  z-index:20;
-}
-
-@keyframes minedText{
-
-  0%{
-    transform:
-      translate(-50%,0)
-      scale(.7);
-
-    opacity:0;
+  if (Number.isNaN(lastUpdate)) {
+    return user;
   }
 
-  20%{
-    opacity:1;
-  }
-
-  100%{
-    transform:
-      translate(-50%,-150px)
-      scale(1.1);
-
-    opacity:0;
-  }
-
-}
-
-
-/* =========================
-   MENU
-========================= */
-
-.menu{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.menu a{
-  display:block;
-  text-decoration:none;
-  border-radius:17px;
-  padding:20px 5px;
-  background:#16496e;
-  color:white;
-  font-size:18px;
-}
-
-.panel{
-  display:none;
-  background:#123650;
-  border-radius:20px;
-  padding:20px;
-  margin-top:18px;
-}
-
-.panel:target{
-  display:block;
-}
-
-.panel h2{
-  margin-top:0;
-}
-
-.panel button,
-.panel a{
-  display:block;
-  width:100%;
-  text-decoration:none;
-  background:#ffb300;
-  color:#111;
-  padding:15px;
-  margin-top:12px;
-  border-radius:12px;
-  font-weight:bold;
-  border:0;
-  font-size:16px;
-}
-
-.close{
-  background:#526579!important;
-  color:white!important;
-}
-
-.message{
-  min-height:30px;
-  margin:10px 0 15px;
-  font-weight:bold;
-  font-size:15px;
-}
-
-</style>
-
-</head>
-
-
-<body>
-
-<div class="logo">
-  🪙
-</div>
-
-<h1>
-  Afghani Coin
-</h1>
-
-
-<div class="card">
-
-  <div>
-    💰 موجودی شما
-  </div>
-
-  <div
-    class="balance"
-    id="balance"
-  >
-    0 AFC
-  </div>
-
-  <div
-    class="energy"
-    id="energy"
-  >
-    ⚡ انرژی: 100 / 100
-  </div>
-
-  <div
-    class="small"
-    id="level"
-  >
-    Level: 1 | Power: 1
-  </div>
-
-</div>
-
-
-<!-- =========================
-     MINING
-========================= -->
-
-<div
-  class="mine-wrapper"
-  id="mineWrapper"
->
-
-  <button
-    class="mine"
-    id="mineButton"
-    onclick="mine()"
-    disabled
-  >
-    ؋
-  </button>
-
-</div>
-
-
-<div
-  class="message"
-  id="message"
->
-  ⏳ در حال اتصال به حساب...
-</div>
-
-
-<!-- =========================
-     MENU
-========================= -->
-
-<div class="menu">
-
-  <a href="#tasks">
-    🎁<br>
-    Tasks
-  </a>
-
-  <a href="#invite">
-    👥<br>
-    Invite
-  </a>
-
-  <a href="#wallet">
-    👛<br>
-    Wallet
-  </a>
-
-  <a href="#upgrade">
-    🚀<br>
-    Upgrade
-  </a>
-
-</div>
-
-
-<!-- =========================
-     TASKS
-========================= -->
-
-<div
-  id="tasks"
-  class="panel"
->
-
-  <h2>
-    🎁 Tasks
-  </h2>
-
-  <p>
-    وظایف Afghani Coin
-  </p>
-
-  <button onclick="dailyTask()">
-    🎁 پاداش روزانه
-  </button>
-
-  <button onclick="miningTask()">
-    ⛏️ وظیفه استخراج
-  </button>
-
-  <a
-    href="#"
-    class="close"
-  >
-    بستن
-  </a>
-
-</div>
-
-
-<!-- =========================
-     INVITE
-========================= -->
-
-<div
-  id="invite"
-  class="panel"
->
-
-  <h2>
-    👥 Invite
-  </h2>
-
-  <p>
-    دوستان خود را دعوت کنید.
-  </p>
-
-  <p
-    id="inviteLink"
-    class="small"
-  >
-    در حال ساخت لینک...
-  </p>
-
-  <button onclick="copyInvite()">
-    📋 کپی لینک
-  </button>
-
-  <button onclick="shareInvite()">
-    📤 اشتراک در Telegram
-  </button>
-
-  <a
-    href="#"
-    class="close"
-  >
-    بستن
-  </a>
-
-</div>
-
-
-<!-- =========================
-     WALLET
-========================= -->
-
-<div
-  id="wallet"
-  class="panel"
->
-
-  <h2>
-    👛 Wallet
-  </h2>
-
-  <div
-    class="balance"
-    id="walletBalance"
-  >
-    0 AFC
-  </div>
-
-  <p>
-    🔒 کیف پول هنوز متصل نشده است.
-  </p>
-
-  <button onclick="connectWallet()">
-    🔗 اتصال کیف پول
-  </button>
-
-  <a
-    href="#"
-    class="close"
-  >
-    بستن
-  </a>
-
-</div>
-
-
-<!-- =========================
-     UPGRADE
-========================= -->
-
-<div
-  id="upgrade"
-  class="panel"
->
-
-  <h2>
-    🚀 Upgrade
-  </h2>
-
-  <p>
-    Level:
-    <b id="upgradeLevel">
-      1
-    </b>
-  </p>
-
-  <p>
-    Power:
-    <b id="upgradePower">
-      1
-    </b>
-    AFC / کلیک
-  </p>
-
-  <p>
-    هزینه:
-    <b id="upgradeCost">
-      100
-    </b>
-    AFC
-  </p>
-
-  <button onclick="upgradePower()">
-    🚀 ارتقا
-  </button>
-
-  <a
-    href="#"
-    class="close"
-  >
-    بستن
-  </a>
-
-</div>
-
-
-<div class="small">
-  🪙 Afghani Coin
-</div>
-
-
-<script>
-
-/* =========================
-   SERVER
-========================= */
-
-const API =
-  "https://afghanicoin.vercel.app";
-
-
-/* =========================
-   TELEGRAM
-========================= */
-
-const tg =
-  window.Telegram &&
-  window.Telegram.WebApp
-    ? window.Telegram.WebApp
-    : null;
-
-
-let telegramId = null;
-let userData = null;
-
-
-/* =========================
-   MESSAGE
-========================= */
-
-function showMessage(text){
-
-  document.getElementById(
-    "message"
-  ).textContent = text;
-
-}
-
-
-/* =========================
-   UPDATE UI
-========================= */
-
-function updateUI(){
-
-  if(!userData){
-    return;
-  }
-
-  const balance =
-    Number(userData.balance || 0);
-
-  const energy =
-    Number(userData.energy || 0);
-
-  const level =
-    Number(userData.level || 1);
-
-  const power =
-    Number(userData.power || 1);
-
-
-  document.getElementById(
-    "balance"
-  ).textContent =
-    balance + " AFC";
-
-
-  document.getElementById(
-    "walletBalance"
-  ).textContent =
-    balance + " AFC";
-
-
-  document.getElementById(
-    "energy"
-  ).textContent =
-    "⚡ انرژی: " +
-    energy +
-    " / 100";
-
-
-  document.getElementById(
-    "level"
-  ).textContent =
-    "Level: " +
-    level +
-    " | Power: " +
-    power;
-
-
-  document.getElementById(
-    "upgradeLevel"
-  ).textContent =
-    level;
-
-
-  document.getElementById(
-    "upgradePower"
-  ).textContent =
-    power;
-
-
-  document.getElementById(
-    "upgradeCost"
-  ).textContent =
-    level * 100;
-
-
-  const button =
-    document.getElementById(
-      "mineButton"
-    );
-
-
-  button.disabled =
-    energy <= 0;
-
-
-  if(energy > 0){
-
-    button.innerHTML =
-      "؋";
-
-  }else{
-
-    button.innerHTML =
-      "⚡";
-
-  }
-
-}
-
-
-/* =========================
-   FLYING COINS
-========================= */
-
-function createFlyingCoins(){
-
-  const wrapper =
-    document.getElementById(
-      "mineWrapper"
-    );
-
-
-  for(let i = 0; i < 6; i++){
-
-    const coin =
-      document.createElement(
-        "div"
-      );
-
-
-    coin.className =
-      "coin-fly";
-
-
-    coin.textContent =
-      "🪙";
-
-
-    const randomX =
-      (Math.random() * 140) - 70;
-
-
-    coin.style.setProperty(
-      "--x",
-      randomX + "px"
-    );
-
-
-    coin.style.animationDelay =
-      (i * 0.06) + "s";
-
-
-    wrapper.appendChild(
-      coin
-    );
-
-
-    setTimeout(function(){
-
-      coin.remove();
-
-    },1000);
-
-  }
-
-}
-
-
-/* =========================
-   MINED TEXT
-========================= */
-
-function createMinedText(amount){
-
-  const wrapper =
-    document.getElementById(
-      "mineWrapper"
-    );
-
-
-  const text =
-    document.createElement(
-      "div"
-    );
-
-
-  text.className =
-    "mined-text";
-
-
-  text.textContent =
-    "+" + amount + " AFC";
-
-
-  wrapper.appendChild(
-    text
+  const elapsedSeconds = Math.floor(
+    (now - lastUpdate) / 1000
   );
 
-
-  setTimeout(function(){
-
-    text.remove();
-
-  },1000);
-
-}
-
-
-/* =========================
-   LOAD USER
-========================= */
-
-async function loadUser(){
-
-  try{
-
-    if(!tg){
-
-      showMessage(
-        "❌ این صفحه باید از داخل Telegram باز شود"
-      );
-
-      return;
-    }
-
-
-    tg.ready();
-    tg.expand();
-
-
-    const user =
-      tg.initDataUnsafe &&
-      tg.initDataUnsafe.user;
-
-
-    if(!user || !user.id){
-
-      showMessage(
-        "⚠️ بازی را از داخل ربات AfghaniCoinBot باز کنید"
-      );
-
-      return;
-    }
-
-
-    telegramId =
-      String(user.id);
-
-
-    showMessage(
-      "⏳ حساب در حال اتصال..."
-    );
-
-
-    const response =
-      await fetch(
-
-        API +
-        "/api/user?telegram_id=" +
-        encodeURIComponent(
-          telegramId
-        ) +
-        "&t=" +
-        Date.now(),
-
-        {
-          method:"GET",
-          cache:"no-store"
-        }
-
-      );
-
-
-    const text =
-      await response.text();
-
-
-    let data;
-
-
-    try{
-
-      data =
-        JSON.parse(text);
-
-    }catch(e){
-
-      throw new Error(
-        "پاسخ سرور معتبر نیست"
-      );
-
-    }
-
-
-    if(!response.ok){
-
-      throw new Error(
-        data.message ||
-        "خطای سرور: " +
-        response.status
-      );
-
-    }
-
-
-    if(!data.success){
-
-      throw new Error(
-        data.message ||
-        "خطای حساب"
-      );
-
-    }
-
-
-    userData =
-      data.user;
-
-
-    updateUI();
-
-
-    document.getElementById(
-      "inviteLink"
-    ).textContent =
-      "https://t.me/AfghaniCoinBot?start=" +
-      telegramId;
-
-
-    showMessage(
-      "✅ حساب شما وصل شد"
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-
-    document.getElementById(
-      "mineButton"
-    ).disabled = true;
-
-
-    document.getElementById(
-      "mineButton"
-    ).innerHTML =
-      "❌";
-
-
-    showMessage(
-      "❌ اتصال انجام نشد: " +
-      error.message
-    );
-
+  if (elapsedSeconds < ENERGY_REGEN_SECONDS) {
+    return user;
   }
 
-}
-
-
-/* =========================
-   MINE
-========================= */
-
-async function mine(){
-
-  if(!telegramId || !userData){
-
-    showMessage(
-      "⚠️ حساب هنوز وصل نشده است"
-    );
-
-    return;
-  }
-
-
-  if(
-    Number(
-      userData.energy || 0
-    ) <= 0
-  ){
-
-    showMessage(
-      "⚡ انرژی شما تمام شده است"
-    );
-
-    return;
-  }
-
-
-  const button =
-    document.getElementById(
-      "mineButton"
-    );
-
-
-  button.disabled = true;
-
-
-  button.innerHTML =
-    "⏳";
-
-
-  showMessage(
-    "⛏️ در حال استخراج..."
+  const energyToAdd = Math.floor(
+    elapsedSeconds / ENERGY_REGEN_SECONDS
   );
 
-
-  try{
-
-    const response =
-      await fetch(
-
-        API + "/api/mine",
-
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          body:JSON.stringify({
-
-            telegram_id:
-              telegramId
-
-          })
-
-        }
-
-      );
-
-
-    const text =
-      await response.text();
-
-
-    let data;
-
-
-    try{
-
-      data =
-        JSON.parse(text);
-
-    }catch(e){
-
-      throw new Error(
-        "پاسخ سرور معتبر نیست"
-      );
-
-    }
-
-
-    if(!response.ok){
-
-      throw new Error(
-
-        data.message ||
-        "خطای سرور: " +
-        response.status
-
-      );
-
-    }
-
-
-    if(!data.success){
-
-      throw new Error(
-
-        data.message ||
-        "استخراج انجام نشد"
-
-      );
-
-    }
-
-
-    userData =
-      data.user;
-
-
-    updateUI();
-
-
-    /* انیمیشن */
-
-    createFlyingCoins();
-
-    createMinedText(
-      data.mined
-    );
-
-
-    showMessage(
-
-      "🪙 +" +
-      data.mined +
-      " AFC استخراج شد"
-
-    );
-
-
-    if(
-      tg &&
-      tg.HapticFeedback
-    ){
-
-      tg.HapticFeedback
-        .impactOccurred(
-          "medium"
-        );
-
-    }
-
-
-  }catch(error){
-
-    console.error(error);
-
-
-    showMessage(
-      "❌ " +
-      error.message
-    );
-
-
-  }finally{
-
-    if(userData){
-
-      updateUI();
-
-    }
-
+  if (energyToAdd <= 0) {
+    return user;
   }
 
+  const newEnergy = Math.min(
+    MAX_ENERGY,
+    Number(user.energy) + energyToAdd
+  );
+
+  const updated = await sql`
+    UPDATE users
+    SET
+      energy = ${newEnergy},
+      energy_updated_at = NOW()
+    WHERE telegram_id = ${user.telegram_id}
+    RETURNING *
+  `;
+
+  return updated[0] || user;
 }
 
 
-/* =========================
-   UPGRADE
-========================= */
+export default async function handler(req, res) {
 
-async function upgradePower(){
+  try {
 
-  if(!telegramId || !userData){
-
-    showMessage(
-      "⚠️ حساب هنوز وصل نشده است"
-    );
-
-    return;
-  }
-
-
-  try{
-
-    const response =
-      await fetch(
-
-        API + "/api/upgrade",
-
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          body:JSON.stringify({
-
-            telegram_id:
-              telegramId
-
-          })
-
-        }
-
-      );
-
-
-    const text =
-      await response.text();
-
-
-    let data;
-
-
-    try{
-
-      data =
-        JSON.parse(text);
-
-    }catch(e){
-
-      throw new Error(
-        "پاسخ سرور معتبر نیست"
-      );
-
-    }
-
-
-    if(!response.ok){
-
-      throw new Error(
-
-        data.message ||
-        "خطای سرور: " +
-        response.status
-
-      );
-
-    }
-
-
-    if(!data.success){
-
-      throw new Error(
-
-        data.message ||
-        "ارتقا انجام نشد"
-
-      );
-
-    }
-
-
-    userData =
-      data.user;
-
-
-    updateUI();
-
-
-    showMessage(
-      "🚀 ارتقا با موفقیت انجام شد"
+    const url = new URL(
+      req.url,
+      `http://${req.headers.host}`
     );
 
 
-  }catch(error){
+    // =========================================
+    // API TEST
+    // =========================================
 
-    showMessage(
-      "❌ " +
-      error.message
-    );
+    if (
+      req.method === "GET" &&
+      url.pathname === "/api"
+    ) {
 
-  }
-
-}
-
-
-/* =========================
-   INVITE
-========================= */
-
-function copyInvite(){
-
-  const link =
-    document.getElementById(
-      "inviteLink"
-    ).textContent;
-
-
-  if(
-    !link ||
-    link.includes("در حال")
-  ){
-
-    showMessage(
-      "⚠️ لینک هنوز آماده نیست"
-    );
-
-    return;
-  }
-
-
-  if(navigator.clipboard){
-
-    navigator.clipboard
-      .writeText(link)
-
-      .then(function(){
-
-        showMessage(
-          "✅ لینک کپی شد"
-        );
-
-      })
-
-      .catch(function(){
-
-        showMessage(
-          "❌ کپی نشد"
-        );
-
+      return res.status(200).json({
+        success: true,
+        message: "Afghani Coin Backend is running!",
+        coin: "AFC",
+        energy_regeneration: "1 energy every 10 seconds"
       });
 
-  }else{
-
-    showMessage(
-      "❌ کپی در این دستگاه پشتیبانی نمی‌شود"
-    );
-
-  }
-
-}
+    }
 
 
-function shareInvite(){
+    // =========================================
+    // GET USER
+    // =========================================
 
-  const link =
-    document.getElementById(
-      "inviteLink"
-    ).textContent;
+    if (
+      req.method === "GET" &&
+      url.pathname === "/api/user"
+    ) {
 
+      const telegramId =
+        url.searchParams.get("telegram_id");
 
-  if(
-    !link ||
-    link.includes("در حال")
-  ){
+      if (!telegramId) {
 
-    showMessage(
-      "⚠️ لینک هنوز آماده نیست"
-    );
+        return res.status(400).json({
+          success: false,
+          message: "telegram_id is required"
+        });
 
-    return;
-  }
-
-
-  if(
-    tg &&
-    tg.openTelegramLink
-  ){
-
-    tg.openTelegramLink(
-
-      "https://t.me/share/url?url=" +
-      encodeURIComponent(link)
-
-    );
-
-  }else{
-
-    showMessage(
-      "⚠️ فقط داخل Telegram قابل اشتراک است"
-    );
-
-  }
-
-}
+      }
 
 
-/* =========================
-   TASKS
-========================= */
-
-function dailyTask(){
-
-  showMessage(
-    "🎁 پاداش روزانه به‌زودی فعال می‌شود"
-  );
-
-}
+      let users = await sql`
+        SELECT *
+        FROM users
+        WHERE telegram_id = ${telegramId}
+        LIMIT 1
+      `;
 
 
-function miningTask(){
+      // اگر کاربر وجود نداشت، ایجاد شود
+      if (users.length === 0) {
 
-  if(
-    userData &&
-    Number(
-      userData.balance || 0
-    ) >= 100
-  ){
+        users = await sql`
+          INSERT INTO users (
+            telegram_id,
+            balance,
+            energy,
+            level,
+            power,
+            energy_updated_at
+          )
+          VALUES (
+            ${telegramId},
+            0,
+            ${MAX_ENERGY},
+            1,
+            1,
+            NOW()
+          )
+          RETURNING *
+        `;
 
-    showMessage(
-      "🎉 وظیفه استخراج تکمیل شد"
-    );
-
-  }else{
-
-    showMessage(
-      "⛏️ هنوز 100 AFC ندارید"
-    );
-
-  }
-
-}
-
-
-/* =========================
-   WALLET
-========================= */
-
-function connectWallet(){
-
-  showMessage(
-    "👛 اتصال کیف پول در مرحله بعد فعال می‌شود"
-  );
-
-}
+      }
 
 
-/* =========================
-   START
-========================= */
+      // بازگرداندن انرژی
+      const user =
+        await regenerateEnergy(users[0]);
 
-loadUser();
 
-</script>
+      return res.status(200).json({
+        success: true,
+        user
+      });
 
-</body>
-  </html>
+    }
+
+
+    // =========================================
+    // MINE
+    // =========================================
+
+    if (
+      req.method === "POST" &&
+      url.pathname === "/api/mine"
+    ) {
+
+      const { telegram_id } =
+        req.body || {};
+
+
+      if (!telegram_id) {
+
+        return res.status(400).json({
+          success: false,
+          message: "telegram_id is required"
+        });
+
+      }
+
+
+      // جلوگیری از کلیک بسیار سریع
+      if (
+        isRateLimited(
+          req,
+          telegram_id
+        )
+      ) {
+
+        return res.status(429).json({
+          success: false,
+          message: "Too many requests. Please slow down."
+        });
+
+      }
+
+
+      // پیدا کردن کاربر
+      let users = await sql`
+        SELECT *
+        FROM users
+        WHERE telegram_id = ${telegram_id}
+        LIMIT 1
+      `;
+
+
+      if (users.length === 0) {
+
+        return res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+
+      }
+
+
+      // اول انرژی برگشتی محاسبه شود
+      const currentUser =
+        await regenerateEnergy(users[0]);
+
+
+      // اگر انرژی صفر باشد
+      if (
+        Number(currentUser.energy) <= 0
+      ) {
+
+        return res.status(400).json({
+          success: false,
+          message: "No energy",
+          user: currentUser
+        });
+
+      }
+
+
+      // مقدار استخراج
+      const power =
+        Number(currentUser.power);
+
+
+      // کم کردن 1 انرژی
+      // اضافه کردن power به balance
+      const updated = await sql`
+
+        UPDATE users
+
+        SET
+          balance = balance + ${power},
+          energy = energy - 1,
+          energy_updated_at = NOW()
+
+        WHERE
+          telegram_id = ${telegram_id}
+          AND energy > 0
+
+        RETURNING *
+
+      `;
+
+
+      if (updated.length === 0) {
+
+        return res.status(400).json({
+          success: false,
+          message: "Mining failed"
+        });
+
+      }
+
+
+      const user = updated[0];
+
+
+      // =========================================
+      // ثبت تاریخچه استخراج
+      // =========================================
+
+      await sql`
+
+        INSERT INTO mining_history (
+          user_id,
+          telegram_id,
+          mined,
+          power,
+          balance_after,
+          energy_after
+        )
+
+       
