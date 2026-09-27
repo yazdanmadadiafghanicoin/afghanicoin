@@ -89,7 +89,9 @@ body{
     font-weight:bold;
 }
 
-/* MINE */
+/* =========================
+   MINE
+========================= */
 
 .mine-area{
     width:250px;
@@ -168,7 +170,9 @@ body{
     100%{transform:scale(1) rotate(0)}
 }
 
-/* ENERGY */
+/* =========================
+   ENERGY
+========================= */
 
 .energy-box{
     margin:10px 0 25px;
@@ -197,7 +201,9 @@ body{
     transition:.3s;
 }
 
-/* BUTTONS */
+/* =========================
+   BUTTONS
+========================= */
 
 .buttons{
     display:grid;
@@ -221,7 +227,9 @@ body{
     color:#07111f;
 }
 
-/* COIN ANIMATION */
+/* =========================
+   COIN ANIMATION
+========================= */
 
 .coin{
     position:fixed;
@@ -251,7 +259,9 @@ body{
     }
 }
 
-/* STATUS */
+/* =========================
+   STATUS
+========================= */
 
 .status{
     min-height:22px;
@@ -260,7 +270,9 @@ body{
     font-size:13px;
 }
 
-/* WALLET */
+/* =========================
+   MODAL
+========================= */
 
 .modal{
     position:fixed;
@@ -270,7 +282,6 @@ body{
     display:none;
     align-items:flex-end;
     justify-content:center;
-    padding:0;
 }
 
 .modal.show{
@@ -280,10 +291,9 @@ body{
 .wallet{
     width:100%;
     max-width:430px;
-    max-height:88vh;
+    max-height:90vh;
     overflow-y:auto;
-    background:
-        linear-gradient(180deg,#10263d,#07111f);
+    background:linear-gradient(180deg,#10263d,#07111f);
     border-radius:25px 25px 0 0;
     padding:22px 18px 30px;
     box-shadow:0 -10px 40px rgba(0,0,0,.5);
@@ -310,16 +320,20 @@ body{
     background:#23384c;
     color:white;
     font-size:22px;
+    cursor:pointer;
 }
+
+/* =========================
+   WALLET BALANCE
+========================= */
 
 .wallet-card{
     border-radius:20px;
     padding:22px;
-    background:
-        linear-gradient(135deg,#111,#c8102e 50%,#007a3d);
+    background:linear-gradient(135deg,#111,#c8102e 50%,#007a3d);
     border:2px solid #ffd700;
     box-shadow:0 10px 30px rgba(0,0,0,.35);
-    margin-bottom:15px;
+    margin-bottom:18px;
 }
 
 .wallet-label{
@@ -351,7 +365,71 @@ body{
     background:#ffd700;
     color:#07111f;
     font-weight:bold;
+    cursor:pointer;
 }
+
+/* =========================
+   CONNECT WALLETS
+========================= */
+
+.connect-title{
+    text-align:right;
+    font-size:18px;
+    font-weight:bold;
+    margin:20px 0 10px;
+}
+
+.wallet-connect{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+}
+
+.connect-btn{
+    width:100%;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:15px;
+    padding:16px 14px;
+    color:white;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+}
+
+.ton-btn{
+    background:linear-gradient(135deg,#0098ea,#0066cc);
+}
+
+.binance-btn{
+    background:linear-gradient(135deg,#f0b90b,#c88a00);
+    color:#07111f;
+}
+
+.wallet-connected{
+    margin-top:10px;
+    padding:10px;
+    border-radius:10px;
+    background:rgba(0,255,136,.08);
+    border:1px solid rgba(0,255,136,.2);
+    color:#00ff88;
+    font-size:12px;
+    display:none;
+}
+
+.wallet-note{
+    margin-top:12px;
+    color:#899aaa;
+    font-size:11px;
+    line-height:1.7;
+}
+
+/* =========================
+   HISTORY
+========================= */
 
 .history-title{
     text-align:right;
@@ -390,6 +468,17 @@ body{
 .empty{
     color:#8fa1b2;
     padding:25px;
+}
+
+/* =========================
+   CONNECT STATUS
+========================= */
+
+.connection-status{
+    min-height:20px;
+    margin-top:10px;
+    font-size:12px;
+    color:#9eb0c1;
 }
 </style>
 </head>
@@ -529,6 +618,9 @@ body{
 
         </div>
 
+
+        <!-- BALANCE -->
+
         <div class="wallet-card">
 
             <div class="wallet-label">
@@ -558,6 +650,56 @@ body{
             </button>
 
         </div>
+
+
+        <!-- CONNECT -->
+
+        <div class="connect-title">
+            🔐 Connect Wallet
+        </div>
+
+        <div class="wallet-connect">
+
+            <!-- TONKEEPER -->
+
+            <button
+                class="connect-btn ton-btn"
+                onclick="connectTonkeeper()">
+
+                <span>🟣</span>
+                <span>Connect TON Keeper</span>
+
+            </button>
+
+
+            <!-- BINANCE -->
+
+            <button
+                class="connect-btn binance-btn"
+                onclick="connectBinance()">
+
+                <span>🟡</span>
+                <span>Connect Binance Wallet</span>
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="connectionStatus"
+            class="connection-status">
+        </div>
+
+
+        <div class="wallet-note">
+            برای اتصال واقعی و انتقال AFC، توکن باید روی یک شبکه
+            بلاکچین واقعی مانند TON ایجاد و قرارداد آن مشخص شود.
+            هیچ Seed Phrase یا Private Key را داخل این برنامه وارد نکن.
+        </div>
+
+
+        <!-- HISTORY -->
 
         <div class="history-title">
             📊 Mining History
@@ -656,6 +798,9 @@ const walletId =
 const historyEl =
     document.getElementById("history");
 
+const connectionStatus =
+    document.getElementById("connectionStatus");
+
 
 /* =========================
    USER
@@ -672,7 +817,7 @@ let mining = false;
 
 
 /* =========================
-   SCREEN
+   UPDATE SCREEN
 ========================= */
 
 function updateScreen(){
@@ -700,6 +845,15 @@ function updateScreen(){
 
     energyFillEl.style.width =
         energy + "%";
+
+    if(
+        walletModal.classList.contains("show")
+    ){
+
+        walletBalance.innerText =
+            Number(user.balance || 0) +
+            " AFC";
+    }
 }
 
 
@@ -713,7 +867,9 @@ function showMessage(message){
         message;
 
     setTimeout(() => {
+
         statusEl.innerText = "";
+
     },2500);
 }
 
@@ -751,7 +907,9 @@ async function loadUser(){
                 "Connected ✓";
 
             setTimeout(() => {
+
                 statusEl.innerText = "";
+
             },1200);
 
         }
@@ -813,7 +971,9 @@ function createCoin(){
     document.body.appendChild(coin);
 
     setTimeout(() => {
+
         coin.remove();
+
     },900);
 }
 
@@ -841,6 +1001,7 @@ function playMineSound(){
             audioContext.state ===
             "suspended"
         ){
+
             audioContext.resume();
         }
 
@@ -1086,6 +1247,7 @@ function closeWalletOutside(event){
         event.target ===
         walletModal
     ){
+
         closeWallet();
     }
 }
@@ -1113,6 +1275,72 @@ async function copyWalletId(){
             "Copy failed"
         );
     }
+}
+
+
+/* =========================
+   TONKEEPER
+========================= */
+
+function connectTonkeeper(){
+
+    connectionStatus.innerText =
+        "🟣 Opening TON Keeper...";
+
+    /*
+       فعلاً هیچ Seed Phrase یا Private Key
+       درخواست نمی‌کنیم.
+
+       این لینک رسمی Tonkeeper را باز می‌کند.
+    */
+
+    const tonkeeperUrl =
+        "https://app.tonkeeper.com/ton-connect";
+
+    window.open(
+        tonkeeperUrl,
+        "_blank"
+    );
+
+    setTimeout(() => {
+
+        connectionStatus.innerText =
+            "TON Keeper باز شد. اتصال واقعی AFC بعد از ایجاد توکن روی TON فعال می‌شود.";
+
+    },1200);
+}
+
+
+/* =========================
+   BINANCE
+========================= */
+
+function connectBinance(){
+
+    connectionStatus.innerText =
+        "🟡 Opening Binance Wallet...";
+
+    /*
+       Binance Wallet باید از طریق
+       روش‌های رسمی Wallet/DApp وصل شود.
+
+       فعلاً کاربر را به Binance Wallet می‌بریم.
+    */
+
+    const binanceUrl =
+        "https://www.binance.com/en/web3wallet";
+
+    window.open(
+        binanceUrl,
+        "_blank"
+    );
+
+    setTimeout(() => {
+
+        connectionStatus.innerText =
+            "Binance Wallet باز شد. اتصال واقعی AFC بعد از ایجاد توکن روی شبکه فعال می‌شود.";
+
+    },1200);
 }
 
 
@@ -1223,7 +1451,7 @@ loadUser();
 
 
 /* =========================
-   REFRESH
+   AUTO REFRESH
 ========================= */
 
 setInterval(() => {
@@ -1239,4 +1467,4 @@ setInterval(() => {
 </script>
 
 </body>
-    </html>
+</html>
