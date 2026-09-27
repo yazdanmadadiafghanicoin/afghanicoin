@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,9 +40,9 @@ body{
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:60px;
+    font-size:50px;
     font-weight:bold;
-    background:linear-gradient(145deg,#ffd700,#d99b00);
+    background:linear-gradient(145deg,#ffd700,#b77b00);
     color:#07111f;
     box-shadow:
         0 0 20px rgba(255,215,0,.5),
@@ -58,6 +58,18 @@ body{
 .subtitle{
     color:#a9b9c9;
     font-size:14px;
+    margin-bottom:22px;
+}
+
+.balance{
+    font-size:42px;
+    font-weight:bold;
+    margin:10px 0 3px;
+}
+
+.coin-name{
+    color:#ffd700;
+    font-size:15px;
     margin-bottom:22px;
 }
 
@@ -86,58 +98,56 @@ body{
     font-weight:bold;
 }
 
-.balance{
-    font-size:42px;
-    font-weight:bold;
-    margin:10px 0 3px;
-}
-
-.coin-name{
-    color:#ffd700;
-    font-size:15px;
-    margin-bottom:25px;
-}
+/* =========================
+   MINE AREA
+========================= */
 
 .mine-area{
     position:relative;
-    width:240px;
-    height:240px;
-    margin:0 auto 25px;
+    width:250px;
+    height:250px;
+    margin:0 auto 20px;
 }
 
 .mine-button{
     position:absolute;
-    left:20px;
-    top:20px;
-    width:200px;
-    height:200px;
+    left:15px;
+    top:15px;
+
+    width:220px;
+    height:220px;
+
     border:none;
     border-radius:50%;
+
     cursor:pointer;
 
     background:
-        radial-gradient(circle at 35% 30%,
-        #fff3a0 0%,
-        #ffd700 30%,
-        #e5a900 65%,
-        #9e6c00 100%);
-
-    color:#07111f;
-    font-size:95px;
-    font-weight:bold;
+        radial-gradient(
+            circle at 35% 25%,
+            #fff6b0 0%,
+            #ffd700 25%,
+            #e2a900 65%,
+            #815700 100%
+        );
 
     box-shadow:
-        0 12px 0 #795300,
-        0 20px 35px rgba(0,0,0,.5),
-        inset 0 5px 10px rgba(255,255,255,.5);
+        0 13px 0 #664500,
+        0 20px 35px rgba(0,0,0,.55),
+        inset 0 5px 12px rgba(255,255,255,.5);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
     transition:.1s;
 }
 
 .mine-button:active{
-    transform:translateY(10px);
+    transform:translateY(9px);
+
     box-shadow:
-        0 3px 0 #795300,
+        0 4px 0 #664500,
         0 10px 20px rgba(0,0,0,.4);
 }
 
@@ -146,6 +156,39 @@ body{
     cursor:not-allowed;
 }
 
+/* Afghanistan SVG */
+
+.afghanistan{
+    width:175px;
+    height:175px;
+
+    filter:
+        drop-shadow(0 5px 4px rgba(0,0,0,.45));
+}
+
+/* shine */
+
+.mine-shine{
+    position:absolute;
+    top:31px;
+    left:42px;
+
+    width:55px;
+    height:25px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.3);
+
+    transform:rotate(-25deg);
+
+    pointer-events:none;
+}
+
+/* =========================
+   ENERGY
+========================= */
+
 .energy-box{
     margin:10px 0 25px;
 }
@@ -153,26 +196,44 @@ body{
 .energy-text{
     display:flex;
     justify-content:space-between;
+
     font-size:14px;
+
     margin-bottom:7px;
+
     color:#c8d5e0;
 }
 
 .energy-bar{
     width:100%;
     height:12px;
+
     background:#172536;
+
     border-radius:20px;
+
     overflow:hidden;
 }
 
 .energy-fill{
     height:100%;
     width:100%;
-    background:linear-gradient(90deg,#00e5ff,#00ff88);
+
+    background:
+        linear-gradient(
+            90deg,
+            #00e5ff,
+            #00ff88
+        );
+
     border-radius:20px;
+
     transition:width .3s;
 }
+
+/* =========================
+   BUTTONS
+========================= */
 
 .buttons{
     display:grid;
@@ -182,13 +243,21 @@ body{
 
 .action{
     border:none;
+
     border-radius:13px;
+
     padding:15px 8px;
+
     background:#12263b;
+
     color:white;
+
     font-size:14px;
+
     font-weight:bold;
+
     cursor:pointer;
+
     border:1px solid #23445f;
 }
 
@@ -197,58 +266,144 @@ body{
 }
 
 .upgrade{
-    background:linear-gradient(135deg,#a66b00,#e0a800);
+    background:
+        linear-gradient(
+            135deg,
+            #a66b00,
+            #e0a800
+        );
+
     color:#07111f;
 }
 
+/* =========================
+   STATUS
+========================= */
+
 .status{
     min-height:22px;
+
     margin-top:18px;
+
     color:#9eb0c1;
+
     font-size:13px;
 }
 
+/* =========================
+   COIN JUMP
+========================= */
+
 .coin{
     position:fixed;
-    pointer-events:none;
-    z-index:9999;
-    font-size:20px;
-    font-weight:bold;
-    color:#ffd700;
-    text-shadow:0 0 8px #ffd700;
 
-    animation:coinJump 900ms ease-out forwards;
+    pointer-events:none;
+
+    z-index:9999;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    color:#ffd700;
+
+    text-shadow:
+        0 0 8px #ffd700,
+        0 0 15px rgba(255,215,0,.5);
+
+    animation:
+        coinJump .85s ease-out forwards;
 }
 
 @keyframes coinJump{
+
     0%{
-        transform:translate(0,0) scale(.6);
+        transform:
+            translate(0,0)
+            scale(.5)
+            rotate(0deg);
+
         opacity:0;
     }
 
     15%{
         opacity:1;
-        transform:translate(0,-20px) scale(1);
+
+        transform:
+            translate(0,-25px)
+            scale(1.1)
+            rotate(-8deg);
+    }
+
+    50%{
+
+        transform:
+            translate(
+                var(--x),
+                -100px
+            )
+            scale(1.25)
+            rotate(8deg);
     }
 
     100%{
-        transform:translate(
-            var(--x),
-            -170px
-        ) scale(1.25);
+
+        transform:
+            translate(
+                var(--x2),
+                -185px
+            )
+            scale(.9)
+            rotate(20deg);
+
         opacity:0;
     }
 }
 
-.flash{
-    animation:flash .18s ease;
+/* button animation */
+
+.mine-hit{
+    animation:
+        mineHit .18s ease;
 }
 
-@keyframes flash{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.08);}
-    100%{transform:scale(1);}
+@keyframes mineHit{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(.94);
+    }
+
+    100%{
+        transform:scale(1);
+    }
 }
+
+/* map animation */
+
+.map-hit{
+    animation:
+        mapHit .22s ease;
+}
+
+@keyframes mapHit{
+
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.08);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
 </style>
 </head>
 
@@ -256,64 +411,315 @@ body{
 
 <div class="container">
 
-    <div class="logo">؋</div>
+    <div class="logo">
+        ؋
+    </div>
 
-    <div class="title">Afghani Coin</div>
-    <div class="subtitle">Mine AFC and build your balance</div>
+    <div class="title">
+        Afghani Coin
+    </div>
 
-    <div class="balance" id="balance">0</div>
-    <div class="coin-name">AFC</div>
+    <div class="subtitle">
+        Mine AFC and build your balance
+    </div>
+
+    <div
+        class="balance"
+        id="balance">
+        0
+    </div>
+
+    <div class="coin-name">
+        AFC
+    </div>
 
     <div class="stats">
 
         <div class="stat">
-            <div class="stat-name">LEVEL</div>
-            <div class="stat-value" id="level">1</div>
+
+            <div class="stat-name">
+                LEVEL
+            </div>
+
+            <div
+                class="stat-value"
+                id="level">
+                1
+            </div>
+
         </div>
 
         <div class="stat">
-            <div class="stat-name">POWER</div>
-            <div class="stat-value" id="power">1</div>
+
+            <div class="stat-name">
+                POWER
+            </div>
+
+            <div
+                class="stat-value"
+                id="power">
+                1
+            </div>
+
         </div>
 
     </div>
 
+    <!-- =========================
+         MINE BUTTON
+    ========================== -->
+
     <div class="mine-area">
+
         <button
             id="mineButton"
             class="mine-button"
             onclick="mine()">
-            ؋
+
+            <!-- Afghanistan map -->
+            <svg
+                id="afghanistanMap"
+                class="afghanistan"
+                viewBox="0 0 220 220"
+                xmlns="http://www.w3.org/2000/svg">
+
+                <defs>
+
+                    <!-- Three-color Afghanistan -->
+                    <clipPath id="afghanClip">
+
+                        <!-- stylized Afghanistan geographic silhouette -->
+                        <path
+                            d="
+                            M42 28
+                            L62 18
+                            L83 25
+                            L101 18
+                            L119 28
+                            L137 23
+                            L157 37
+                            L174 39
+                            L180 55
+                            L193 67
+                            L181 79
+                            L187 94
+                            L176 106
+                            L181 120
+                            L168 130
+                            L166 148
+                            L151 153
+                            L144 170
+                            L126 169
+                            L114 181
+                            L97 176
+                            L82 187
+                            L68 177
+                            L51 181
+                            L44 166
+                            L30 158
+                            L36 143
+                            L25 131
+                            L33 116
+                            L25 102
+                            L37 91
+                            L31 76
+                            L43 65
+                            L37 49
+                            Z
+                            "
+                        />
+
+                    </clipPath>
+
+                    <linearGradient
+                        id="blackRedGreen"
+                        x1="0"
+                        y1="0"
+                        x2="1"
+                        y2="0">
+
+                        <stop
+                            offset="0%"
+                            stop-color="#111111"/>
+
+                        <stop
+                            offset="33.33%"
+                            stop-color="#111111"/>
+
+                        <stop
+                            offset="33.34%"
+                            stop-color="#c8102e"/>
+
+                        <stop
+                            offset="66.66%"
+                            stop-color="#c8102e"/>
+
+                        <stop
+                            offset="66.67%"
+                            stop-color="#007a3d"/>
+
+                        <stop
+                            offset="100%"
+                            stop-color="#007a3d"/>
+
+                    </linearGradient>
+
+                    <filter
+                        id="mapShadow"
+                        x="-30%"
+                        y="-30%"
+                        width="160%"
+                        height="160%">
+
+                        <feDropShadow
+                            dx="0"
+                            dy="5"
+                            stdDeviation="4"
+                            flood-opacity=".55"/>
+
+                    </filter>
+
+                </defs>
+
+                <!-- Afghan map -->
+                <g
+                    clip-path="url(#afghanClip)"
+                    filter="url(#mapShadow)">
+
+                    <rect
+                        x="20"
+                        y="15"
+                        width="180"
+                        height="180"
+                        fill="url(#blackRedGreen)"/>
+
+                    <!-- subtle shine -->
+                    <ellipse
+                        cx="105"
+                        cy="55"
+                        rx="65"
+                        ry="20"
+                        fill="white"
+                        opacity=".10"/>
+
+                </g>
+
+                <!-- map border -->
+                <path
+                    d="
+                    M42 28
+                    L62 18
+                    L83 25
+                    L101 18
+                    L119 28
+                    L137 23
+                    L157 37
+                    L174 39
+                    L180 55
+                    L193 67
+                    L181 79
+                    L187 94
+                    L176 106
+                    L181 120
+                    L168 130
+                    L166 148
+                    L151 153
+                    L144 170
+                    L126 169
+                    L114 181
+                    L97 176
+                    L82 187
+                    L68 177
+                    L51 181
+                    L44 166
+                    L30 158
+                    L36 143
+                    L25 131
+                    L33 116
+                    L25 102
+                    L37 91
+                    L31 76
+                    L43 65
+                    L37 49
+                    Z
+                    "
+                    fill="none"
+                    stroke="#ffd700"
+                    stroke-width="4"
+                    stroke-linejoin="round"/>
+
+                <!-- small central emblem -->
+                <circle
+                    cx="108"
+                    cy="103"
+                    r="12"
+                    fill="#ffd700"
+                    opacity=".9"/>
+
+                <text
+                    x="108"
+                    y="109"
+                    text-anchor="middle"
+                    font-size="13"
+                    font-weight="bold"
+                    fill="#07111f">
+                    ؋
+                </text>
+
+            </svg>
+
+            <div class="mine-shine"></div>
+
         </button>
+
     </div>
+
+    <!-- ENERGY -->
 
     <div class="energy-box">
 
         <div class="energy-text">
-            <span>⚡ Energy</span>
-            <span id="energyText">100 / 100</span>
+
+            <span>
+                ⚡ Energy
+            </span>
+
+            <span id="energyText">
+                100 / 100
+            </span>
+
         </div>
 
         <div class="energy-bar">
+
             <div
                 id="energyFill"
                 class="energy-fill">
             </div>
+
         </div>
 
     </div>
 
+    <!-- BUTTONS -->
+
     <div class="buttons">
 
-        <button class="action" onclick="showMessage('Tasks coming soon 🚀')">
+        <button
+            class="action"
+            onclick="showMessage('Tasks coming soon 🚀')">
             📋 Tasks
         </button>
 
-        <button class="action" onclick="showMessage('Invite system coming soon 👥')">
+        <button
+            class="action"
+            onclick="showMessage('Invite system coming soon 👥')">
             👥 Invite
         </button>
 
-        <button class="action" onclick="showMessage('Wallet coming soon 💰')">
+        <button
+            class="action"
+            onclick="showMessage('Wallet coming soon 💰')">
             💰 Wallet
         </button>
 
@@ -335,24 +741,29 @@ body{
 
 <script>
 
-const tg = window.Telegram.WebApp;
+/* ==================================
+   TELEGRAM
+================================== */
+
+const tg =
+    window.Telegram.WebApp;
 
 tg.ready();
 tg.expand();
 
-/*
-========================================
-AFGHANI COIN API
-========================================
-*/
+/* ==================================
+   API
+================================== */
 
-const API_BASE = "https://afghanicoin.vercel.app";
+const API_BASE =
+    "https://afghanicoin.vercel.app";
 
-/*
-Telegram user ID
-*/
+/* ==================================
+   TELEGRAM USER
+================================== */
 
-let telegramId = "123456789";
+let telegramId =
+    "123456789";
 
 if(
     tg &&
@@ -361,14 +772,14 @@ if(
     tg.initDataUnsafe.user.id
 ){
     telegramId =
-        String(tg.initDataUnsafe.user.id);
+        String(
+            tg.initDataUnsafe.user.id
+        );
 }
 
-/*
-========================================
-ELEMENTS
-========================================
-*/
+/* ==================================
+   ELEMENTS
+================================== */
 
 const balanceEl =
     document.getElementById("balance");
@@ -391,105 +802,122 @@ const mineButton =
 const statusEl =
     document.getElementById("status");
 
-/*
-========================================
-USER DATA
-========================================
-*/
+const mapEl =
+    document.getElementById("afghanistanMap");
+
+/* ==================================
+   USER
+================================== */
 
 let user = {
+
     balance:0,
+
     energy:100,
+
     level:1,
+
     power:1
+
 };
 
-let mining = false;
+let mining =
+    false;
 
-/*
-========================================
-SHOW STATUS
-========================================
-*/
+/* ==================================
+   STATUS
+================================== */
 
 function showMessage(message){
 
-    statusEl.innerText = message;
+    statusEl.innerText =
+        message;
 
     setTimeout(() => {
 
-        statusEl.innerText = "";
+        statusEl.innerText =
+            "";
 
-    },3000);
+    },2500);
+
 }
 
-/*
-========================================
-UPDATE SCREEN
-========================================
-*/
+/* ==================================
+   SCREEN
+================================== */
 
 function updateScreen(){
 
     balanceEl.innerText =
-        Number(user.balance || 0);
+        Number(
+            user.balance || 0
+        );
 
     energyTextEl.innerText =
         `${Number(user.energy || 0)} / 100`;
 
     levelEl.innerText =
-        Number(user.level || 1);
+        Number(
+            user.level || 1
+        );
 
     powerEl.innerText =
-        Number(user.power || 1);
+        Number(
+            user.power || 1
+        );
 
     let energy =
-        Number(user.energy || 0);
+        Number(
+            user.energy || 0
+        );
 
-    if(energy < 0){
-        energy = 0;
-    }
-
-    if(energy > 100){
-        energy = 100;
-    }
+    energy =
+        Math.max(
+            0,
+            Math.min(100,energy)
+        );
 
     energyFillEl.style.width =
         energy + "%";
 
     if(energy <= 0){
 
-        mineButton.classList.add("disabled");
+        mineButton.classList.add(
+            "disabled"
+        );
 
     }else{
 
-        mineButton.classList.remove("disabled");
+        mineButton.classList.remove(
+            "disabled"
+        );
 
     }
+
 }
 
-/*
-========================================
-LOAD USER
-========================================
-*/
+/* ==================================
+   LOAD USER
+================================== */
 
 async function loadUser(){
 
     try{
 
-        const response = await fetch(
-            `${API_BASE}/api/user?telegram_id=${encodeURIComponent(telegramId)}`,
-            {
-                method:"GET",
-                cache:"no-store"
-            }
-        );
+        const response =
+            await fetch(
+                `${API_BASE}/api/user?telegram_id=${encodeURIComponent(telegramId)}`,
+                {
+                    method:"GET",
+                    cache:"no-store"
+                }
+            );
 
         if(!response.ok){
 
             throw new Error(
-                "HTTP " + response.status
+                "HTTP " +
+                response.status
             );
 
         }
@@ -502,7 +930,8 @@ async function loadUser(){
             data.user
         ){
 
-            user = data.user;
+            user =
+                data.user;
 
             updateScreen();
 
@@ -511,15 +940,16 @@ async function loadUser(){
 
             setTimeout(() => {
 
-                statusEl.innerText = "";
+                statusEl.innerText =
+                    "";
 
-            },2000);
+            },1500);
 
         }else{
 
             throw new Error(
                 data.message ||
-                "User data error"
+                "User error"
             );
 
         }
@@ -527,7 +957,7 @@ async function loadUser(){
     }catch(error){
 
         console.error(
-            "LOAD USER ERROR:",
+            "LOAD ERROR:",
             error
         );
 
@@ -535,60 +965,178 @@ async function loadUser(){
             "Connection error";
 
     }
+
 }
 
-/*
-========================================
-COIN ANIMATION
-========================================
-*/
+/* ==================================
+   COIN JUMP
+================================== */
 
 function createCoin(){
 
     const coin =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    coin.className = "coin";
+    coin.className =
+        "coin";
+
+    const amount =
+        Number(
+            user.power || 1
+        );
 
     coin.innerText =
-        "+" + Number(user.power || 1) + " AFC";
+        "+" + amount + " AFC";
 
     const rect =
         mineButton.getBoundingClientRect();
 
     coin.style.left =
-        (rect.left + rect.width / 2 - 25) + "px";
+        (
+            rect.left +
+            rect.width / 2 -
+            25
+        ) + "px";
 
     coin.style.top =
-        (rect.top + rect.height / 2) + "px";
+        (
+            rect.top +
+            rect.height / 2
+        ) + "px";
 
-    const randomX =
-        (Math.random() * 100 - 50) + "px";
+    const x =
+        (
+            Math.random() * 100 -
+            50
+        ) + "px";
+
+    const x2 =
+        (
+            Math.random() * 160 -
+            80
+        ) + "px";
 
     coin.style.setProperty(
         "--x",
-        randomX
+        x
     );
 
-    document.body.appendChild(coin);
+    coin.style.setProperty(
+        "--x2",
+        x2
+    );
+
+    document.body.appendChild(
+        coin
+    );
 
     setTimeout(() => {
 
         coin.remove();
 
     },900);
+
 }
 
-/*
-========================================
-MINE
-========================================
-*/
+/* ==================================
+   SOUND
+================================== */
+
+let audioContext = null;
+
+function playMineSound(){
+
+    try{
+
+        if(!audioContext){
+
+            audioContext =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+
+        }
+
+        if(
+            audioContext.state ===
+            "suspended"
+        ){
+
+            audioContext.resume();
+
+        }
+
+        const oscillator =
+            audioContext.createOscillator();
+
+        const gain =
+            audioContext.createGain();
+
+        oscillator.type =
+            "sine";
+
+        oscillator.frequency.setValueAtTime(
+            700,
+            audioContext.currentTime
+        );
+
+        oscillator.frequency.exponentialRampToValueAtTime(
+            1200,
+            audioContext.currentTime + 0.08
+        );
+
+        gain.gain.setValueAtTime(
+            0.0001,
+            audioContext.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.18,
+            audioContext.currentTime + 0.01
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.0001,
+            audioContext.currentTime + 0.13
+        );
+
+        oscillator.connect(gain);
+
+        gain.connect(
+            audioContext.destination
+        );
+
+        oscillator.start();
+
+        oscillator.stop(
+            audioContext.currentTime +
+            0.14
+        );
+
+    }catch(error){
+
+        console.log(
+            "Sound error:",
+            error
+        );
+
+    }
+
+}
+
+/* ==================================
+   MINE
+================================== */
 
 async function mine(){
 
     if(mining){
+
         return;
+
     }
 
     if(
@@ -601,20 +1149,43 @@ async function mine(){
         );
 
         return;
+
     }
 
     mining = true;
 
-    mineButton.classList.add("flash");
+    /*
+    Visual
+    */
+
+    mineButton.classList.add(
+        "mine-hit"
+    );
+
+    mapEl.classList.add(
+        "map-hit"
+    );
 
     setTimeout(() => {
 
-        mineButton.classList.remove("flash");
+        mineButton.classList.remove(
+            "mine-hit"
+        );
 
-    },200);
+        mapEl.classList.remove(
+            "map-hit"
+        );
+
+    },220);
 
     /*
-    Show animation immediately
+    Sound
+    */
+
+    playMineSound();
+
+    /*
+    Coin
     */
 
     createCoin();
@@ -644,7 +1215,8 @@ async function mine(){
         if(!response.ok){
 
             throw new Error(
-                "HTTP " + response.status
+                "HTTP " +
+                response.status
             );
 
         }
@@ -653,7 +1225,7 @@ async function mine(){
             await response.json();
 
         console.log(
-            "MINE RESPONSE:",
+            "MINE:",
             data
         );
 
@@ -662,7 +1234,8 @@ async function mine(){
             data.user
         ){
 
-            user = data.user;
+            user =
+                data.user;
 
             updateScreen();
 
@@ -691,13 +1264,12 @@ async function mine(){
         mining = false;
 
     }
+
 }
 
-/*
-========================================
-UPGRADE
-========================================
-*/
+/* ==================================
+   UPGRADE
+================================== */
 
 async function upgrade(){
 
@@ -726,7 +1298,8 @@ async function upgrade(){
         if(!response.ok){
 
             throw new Error(
-                "HTTP " + response.status
+                "HTTP " +
+                response.status
             );
 
         }
@@ -734,17 +1307,13 @@ async function upgrade(){
         const data =
             await response.json();
 
-        console.log(
-            "UPGRADE RESPONSE:",
-            data
-        );
-
         if(
             data.success &&
             data.user
         ){
 
-            user = data.user;
+            user =
+                data.user;
 
             updateScreen();
 
@@ -773,19 +1342,18 @@ async function upgrade(){
         );
 
     }
+
 }
 
-/*
-========================================
-AUTO LOAD
-========================================
-*/
+/* ==================================
+   START
+================================== */
 
 loadUser();
 
-/*
-Refresh user every 10 seconds
-*/
+/* ==================================
+   AUTO REFRESH
+================================== */
 
 setInterval(() => {
 
@@ -800,4 +1368,4 @@ setInterval(() => {
 </script>
 
 </body>
-</html>
+    </html>
