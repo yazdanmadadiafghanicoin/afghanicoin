@@ -1,15 +1,8 @@
-<!DOCTYPE html>
-<html lang="fa">
+<!DOCTYPE html><html lang="fa">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#07111f">
-
-<title>Afghani Coin</title>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-<style>
+<meta name="theme-color" content="#07111f"><title>Afghani Coin</title><script src="https://telegram.org/js/telegram-web-app.js"></script><style>
 *{box-sizing:border-box}
 
 body{
@@ -89,9 +82,7 @@ body{
     font-weight:bold;
 }
 
-/* =========================
-   MINE
-========================= */
+/* MINE */
 
 .mine-area{
     width:250px;
@@ -170,9 +161,7 @@ body{
     100%{transform:scale(1) rotate(0)}
 }
 
-/* =========================
-   ENERGY
-========================= */
+/* ENERGY */
 
 .energy-box{
     margin:10px 0 25px;
@@ -201,9 +190,7 @@ body{
     transition:.3s;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+/* BUTTONS */
 
 .buttons{
     display:grid;
@@ -227,9 +214,13 @@ body{
     color:#07111f;
 }
 
-/* =========================
-   COIN ANIMATION
-========================= */
+.leaderboard-button{
+    grid-column:1 / -1;
+    background:linear-gradient(135deg,#4d2c8a,#8b5cf6);
+    border-color:#a78bfa;
+}
+
+/* COIN */
 
 .coin{
     position:fixed;
@@ -259,9 +250,7 @@ body{
     }
 }
 
-/* =========================
-   STATUS
-========================= */
+/* STATUS */
 
 .status{
     min-height:22px;
@@ -270,9 +259,7 @@ body{
     font-size:13px;
 }
 
-/* =========================
-   MODAL
-========================= */
+/* MODAL */
 
 .modal{
     position:fixed;
@@ -323,9 +310,7 @@ body{
     cursor:pointer;
 }
 
-/* =========================
-   WALLET BALANCE
-========================= */
+/* WALLET */
 
 .wallet-card{
     border-radius:20px;
@@ -368,9 +353,7 @@ body{
     cursor:pointer;
 }
 
-/* =========================
-   CONNECT WALLETS
-========================= */
+/* CONNECT */
 
 .connect-title{
     text-align:right;
@@ -409,17 +392,6 @@ body{
     color:#07111f;
 }
 
-.wallet-connected{
-    margin-top:10px;
-    padding:10px;
-    border-radius:10px;
-    background:rgba(0,255,136,.08);
-    border:1px solid rgba(0,255,136,.2);
-    color:#00ff88;
-    font-size:12px;
-    display:none;
-}
-
 .wallet-note{
     margin-top:12px;
     color:#899aaa;
@@ -427,9 +399,14 @@ body{
     line-height:1.7;
 }
 
-/* =========================
-   HISTORY
-========================= */
+.connection-status{
+    min-height:20px;
+    margin-top:10px;
+    font-size:12px;
+    color:#9eb0c1;
+}
+
+/* HISTORY */
 
 .history-title{
     text-align:right;
@@ -470,283 +447,334 @@ body{
     padding:25px;
 }
 
-/* =========================
-   CONNECT STATUS
-========================= */
+/* LEADERBOARD */
 
-.connection-status{
-    min-height:20px;
-    margin-top:10px;
-    font-size:12px;
-    color:#9eb0c1;
+.leaderboard{
+    width:100%;
 }
-</style>
-</head>
 
-<body>
+.my-rank-card{
+    background:linear-gradient(135deg,#26134f,#4d2c8a);
+    border:1px solid #8b5cf6;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:15px;
+}
 
-<div class="container">
+.my-rank-title{
+    color:#c4b5fd;
+    font-size:13px;
+}
 
-    <div class="logo">؋</div>
+.my-rank-number{
+    font-size:38px;
+    font-weight:bold;
+    color:#ffd700;
+    margin:4px 0;
+}
 
-    <div class="title">
-        Afghani Coin
+.my-rank-info{
+    color:#d8d0ff;
+    font-size:13px;
+}
+
+.lb-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.lb-row{
+    display:grid;
+    grid-template-columns:45px 1fr auto;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;
+    padding:12px 10px;
+}
+
+.lb-row.me{
+    border:1px solid #ffd700;
+    background:rgba(255,215,0,.08);
+}
+
+.lb-rank{
+    font-size:18px;
+    font-weight:bold;
+    color:#ffd700;
+}
+
+.lb-name{
+    text-align:right;
+    font-weight:bold;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.lb-level{
+    color:#8fa1b2;
+    font-size:10px;
+    margin-top:3px;
+}
+
+.lb-balance{
+    color:#00ff88;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.refresh-btn{
+    width:100%;
+    margin-top:15px;
+    border:1px solid #34546e;
+    border-radius:12px;
+    padding:13px;
+    background:#12263b;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+</style></head><body><div class="container"><div class="logo">؋</div>
+
+<div class="title">
+    Afghani Coin
+</div>
+
+<div class="subtitle">
+    Mine AFC and build your balance
+</div>
+
+<div class="balance" id="balance">0</div>
+
+<div class="coin-name">AFC</div>
+
+<div class="stats">
+
+    <div class="stat">
+        <div class="stat-name">LEVEL</div>
+        <div class="stat-value" id="level">1</div>
     </div>
 
-    <div class="subtitle">
-        Mine AFC and build your balance
+    <div class="stat">
+        <div class="stat-name">POWER</div>
+        <div class="stat-value" id="power">1</div>
     </div>
 
-    <div class="balance" id="balance">
-        0
+</div>
+
+<div class="mine-area">
+
+    <button
+        id="mineButton"
+        class="mine-button"
+        onclick="mine()">
+
+        <div class="afghani-symbol">؋</div>
+
+    </button>
+
+</div>
+
+<div class="energy-box">
+
+    <div class="energy-text">
+        <span>⚡ Energy</span>
+        <span id="energyText">100 / 100</span>
     </div>
 
-    <div class="coin-name">
-        AFC
+    <div class="energy-bar">
+        <div id="energyFill" class="energy-fill"></div>
     </div>
 
-    <div class="stats">
+</div>
 
-        <div class="stat">
-            <div class="stat-name">LEVEL</div>
-            <div class="stat-value" id="level">1</div>
+<div class="buttons">
+
+    <button
+        class="action"
+        onclick="showMessage('Tasks coming soon 🚀')">
+        📋 Tasks
+    </button>
+
+    <button
+        class="action"
+        onclick="showMessage('Invite system coming soon 👥')">
+        👥 Invite
+    </button>
+
+    <button
+        class="action"
+        onclick="openWallet()">
+        💰 Wallet
+    </button>
+
+    <button
+        class="action upgrade"
+        onclick="upgrade()">
+        ⬆️ Upgrade
+    </button>
+
+    <button
+        class="action leaderboard-button"
+        onclick="openLeaderboard()">
+        🏆 Leaderboard
+    </button>
+
+</div>
+
+<div id="status" class="status">
+    Connecting...
+</div>
+
+</div><!-- WALLET --><div
+    id="walletModal"
+    class="modal"
+    onclick="closeWalletOutside(event)"><div class="wallet">
+
+    <div class="wallet-head">
+
+        <div class="wallet-title">
+            💰 AFC Wallet
         </div>
-
-        <div class="stat">
-            <div class="stat-name">POWER</div>
-            <div class="stat-value" id="power">1</div>
-        </div>
-
-    </div>
-
-    <!-- MINE -->
-
-    <div class="mine-area">
 
         <button
-            id="mineButton"
-            class="mine-button"
-            onclick="mine()">
-
-            <div class="afghani-symbol">
-                ؋
-            </div>
-
+            class="close"
+            onclick="closeWallet()">
+            ×
         </button>
 
     </div>
 
-    <!-- ENERGY -->
+    <div class="wallet-card">
 
-    <div class="energy-box">
-
-        <div class="energy-text">
-            <span>⚡ Energy</span>
-            <span id="energyText">100 / 100</span>
+        <div class="wallet-label">
+            Available Balance
         </div>
 
-        <div class="energy-bar">
-            <div
-                id="energyFill"
-                class="energy-fill">
-            </div>
+        <div
+            class="wallet-balance"
+            id="walletBalance">
+            0 AFC
         </div>
+
+        <div class="wallet-label">
+            Telegram Wallet ID
+        </div>
+
+        <div
+            class="wallet-id"
+            id="walletId">
+            -
+        </div>
+
+        <button
+            class="copy-btn"
+            onclick="copyWalletId()">
+            📋 Copy ID
+        </button>
 
     </div>
 
-    <!-- BUTTONS -->
+    <div class="connect-title">
+        🔐 Connect Wallet
+    </div>
 
-    <div class="buttons">
+    <div class="wallet-connect">
 
         <button
-            class="action"
-            onclick="showMessage('Tasks coming soon 🚀')">
-            📋 Tasks
+            class="connect-btn ton-btn"
+            onclick="connectTonkeeper()">
+            <span>🟣</span>
+            <span>Connect TON Keeper</span>
         </button>
 
         <button
-            class="action"
-            onclick="showMessage('Invite system coming soon 👥')">
-            👥 Invite
-        </button>
-
-        <button
-            class="action"
-            onclick="openWallet()">
-            💰 Wallet
-        </button>
-
-        <button
-            class="action upgrade"
-            onclick="upgrade()">
-            ⬆️ Upgrade
+            class="connect-btn binance-btn"
+            onclick="connectBinance()">
+            <span>🟡</span>
+            <span>Connect Binance Wallet</span>
         </button>
 
     </div>
 
     <div
-        id="status"
-        class="status">
-        Connecting...
+        id="connectionStatus"
+        class="connection-status">
+    </div>
+
+    <div class="wallet-note">
+        برای اتصال واقعی و انتقال AFC، توکن باید روی یک شبکه
+        بلاکچین واقعی مانند TON ایجاد و قرارداد آن مشخص شود.
+        هیچ Seed Phrase یا Private Key را داخل این برنامه وارد نکن.
+    </div>
+
+    <div class="history-title">
+        📊 Mining History
+    </div>
+
+    <div id="history" class="history">
+        <div class="empty">Loading...</div>
     </div>
 
 </div>
 
-
-<!-- =========================
-     WALLET MODAL
-========================= -->
-
-<div
-    id="walletModal"
+</div><!-- LEADERBOARD --><div
+    id="leaderboardModal"
     class="modal"
-    onclick="closeWalletOutside(event)">
+    onclick="closeLeaderboardOutside(event)"><div class="wallet">
 
-    <div class="wallet">
+    <div class="wallet-head">
 
-        <div class="wallet-head">
-
-            <div class="wallet-title">
-                💰 AFC Wallet
-            </div>
-
-            <button
-                class="close"
-                onclick="closeWallet()">
-                ×
-            </button>
-
+        <div class="wallet-title">
+            🏆 AFC Leaderboard
         </div>
 
+        <button
+            class="close"
+            onclick="closeLeaderboard()">
+            ×
+        </button>
 
-        <!-- BALANCE -->
+    </div>
 
-        <div class="wallet-card">
+    <div id="leaderboardContent">
 
-            <div class="wallet-label">
-                Available Balance
-            </div>
-
-            <div
-                class="wallet-balance"
-                id="walletBalance">
-                0 AFC
-            </div>
-
-            <div class="wallet-label">
-                Telegram Wallet ID
-            </div>
-
-            <div
-                class="wallet-id"
-                id="walletId">
-                -
-            </div>
-
-            <button
-                class="copy-btn"
-                onclick="copyWalletId()">
-                📋 Copy ID
-            </button>
-
-        </div>
-
-
-        <!-- CONNECT -->
-
-        <div class="connect-title">
-            🔐 Connect Wallet
-        </div>
-
-        <div class="wallet-connect">
-
-            <!-- TONKEEPER -->
-
-            <button
-                class="connect-btn ton-btn"
-                onclick="connectTonkeeper()">
-
-                <span>🟣</span>
-                <span>Connect TON Keeper</span>
-
-            </button>
-
-
-            <!-- BINANCE -->
-
-            <button
-                class="connect-btn binance-btn"
-                onclick="connectBinance()">
-
-                <span>🟡</span>
-                <span>Connect Binance Wallet</span>
-
-            </button>
-
-        </div>
-
-
-        <div
-            id="connectionStatus"
-            class="connection-status">
-        </div>
-
-
-        <div class="wallet-note">
-            برای اتصال واقعی و انتقال AFC، توکن باید روی یک شبکه
-            بلاکچین واقعی مانند TON ایجاد و قرارداد آن مشخص شود.
-            هیچ Seed Phrase یا Private Key را داخل این برنامه وارد نکن.
-        </div>
-
-
-        <!-- HISTORY -->
-
-        <div class="history-title">
-            📊 Mining History
-        </div>
-
-        <div
-            id="history"
-            class="history">
-
-            <div class="empty">
-                Loading...
-            </div>
-
+        <div class="empty">
+            Loading Leaderboard...
         </div>
 
     </div>
 
+    <button
+        class="refresh-btn"
+        onclick="loadLeaderboard()">
+        🔄 Refresh Leaderboard
+    </button>
+
 </div>
 
+</div><script>
 
-<script>
+/* TELEGRAM */
 
-/* =========================
-   TELEGRAM
-========================= */
-
-const tg =
-    window.Telegram.WebApp;
+const tg = window.Telegram.WebApp;
 
 tg.ready();
 tg.expand();
 
 
-/* =========================
-   API
-========================= */
+/* API */
 
 const API_BASE =
     "https://afghanicoin.vercel.app";
 
 
-/* =========================
-   TELEGRAM ID
-========================= */
+/* TELEGRAM ID */
 
-let telegramId =
-    "123456789";
+let telegramId = "123456789";
 
 if(
     tg &&
@@ -755,15 +783,11 @@ if(
     tg.initDataUnsafe.user.id
 ){
     telegramId =
-        String(
-            tg.initDataUnsafe.user.id
-        );
+        String(tg.initDataUnsafe.user.id);
 }
 
 
-/* =========================
-   ELEMENTS
-========================= */
+/* ELEMENTS */
 
 const balanceEl =
     document.getElementById("balance");
@@ -789,6 +813,9 @@ const statusEl =
 const walletModal =
     document.getElementById("walletModal");
 
+const leaderboardModal =
+    document.getElementById("leaderboardModal");
+
 const walletBalance =
     document.getElementById("walletBalance");
 
@@ -801,10 +828,11 @@ const historyEl =
 const connectionStatus =
     document.getElementById("connectionStatus");
 
+const leaderboardContent =
+    document.getElementById("leaderboardContent");
 
-/* =========================
-   USER
-========================= */
+
+/* USER */
 
 let user = {
     balance:0,
@@ -816,9 +844,7 @@ let user = {
 let mining = false;
 
 
-/* =========================
-   UPDATE SCREEN
-========================= */
+/* UPDATE SCREEN */
 
 function updateScreen(){
 
@@ -857,9 +883,7 @@ function updateScreen(){
 }
 
 
-/* =========================
-   MESSAGE
-========================= */
+/* MESSAGE */
 
 function showMessage(message){
 
@@ -874,9 +898,7 @@ function showMessage(message){
 }
 
 
-/* =========================
-   LOAD USER
-========================= */
+/* LOAD USER */
 
 async function loadUser(){
 
@@ -924,9 +946,7 @@ async function loadUser(){
 }
 
 
-/* =========================
-   COIN ANIMATION
-========================= */
+/* COIN */
 
 function createCoin(){
 
@@ -971,16 +991,12 @@ function createCoin(){
     document.body.appendChild(coin);
 
     setTimeout(() => {
-
         coin.remove();
-
     },900);
 }
 
 
-/* =========================
-   SOUND
-========================= */
+/* SOUND */
 
 let audioContext = null;
 
@@ -1001,7 +1017,6 @@ function playMineSound(){
             audioContext.state ===
             "suspended"
         ){
-
             audioContext.resume();
         }
 
@@ -1049,15 +1064,12 @@ function playMineSound(){
         );
 
     }catch(e){
-
         console.log(e);
     }
 }
 
 
-/* =========================
-   MINE
-========================= */
+/* MINE */
 
 async function mine(){
 
@@ -1098,12 +1110,10 @@ async function mine(){
                 `${API_BASE}/api/mine`,
                 {
                     method:"POST",
-
                     headers:{
                         "Content-Type":
                             "application/json"
                     },
-
                     body:JSON.stringify({
                         telegram_id:
                             telegramId
@@ -1147,9 +1157,7 @@ async function mine(){
 }
 
 
-/* =========================
-   UPGRADE
-========================= */
+/* UPGRADE */
 
 async function upgrade(){
 
@@ -1160,12 +1168,10 @@ async function upgrade(){
                 `${API_BASE}/api/upgrade`,
                 {
                     method:"POST",
-
                     headers:{
                         "Content-Type":
                             "application/json"
                     },
-
                     body:JSON.stringify({
                         telegram_id:
                             telegramId
@@ -1209,9 +1215,7 @@ async function upgrade(){
 }
 
 
-/* =========================
-   OPEN WALLET
-========================= */
+/* WALLET */
 
 async function openWallet(){
 
@@ -1229,11 +1233,6 @@ async function openWallet(){
     await loadHistory();
 }
 
-
-/* =========================
-   CLOSE WALLET
-========================= */
-
 function closeWallet(){
 
     walletModal.classList.remove(
@@ -1247,15 +1246,12 @@ function closeWalletOutside(event){
         event.target ===
         walletModal
     ){
-
         closeWallet();
     }
 }
 
 
-/* =========================
-   COPY WALLET ID
-========================= */
+/* COPY */
 
 async function copyWalletId(){
 
@@ -1278,27 +1274,15 @@ async function copyWalletId(){
 }
 
 
-/* =========================
-   TONKEEPER
-========================= */
+/* TONKEEPER */
 
 function connectTonkeeper(){
 
     connectionStatus.innerText =
         "🟣 Opening TON Keeper...";
 
-    /*
-       فعلاً هیچ Seed Phrase یا Private Key
-       درخواست نمی‌کنیم.
-
-       این لینک رسمی Tonkeeper را باز می‌کند.
-    */
-
-    const tonkeeperUrl =
-        "https://app.tonkeeper.com/ton-connect";
-
     window.open(
-        tonkeeperUrl,
+        "https://app.tonkeeper.com/ton-connect",
         "_blank"
     );
 
@@ -1311,27 +1295,15 @@ function connectTonkeeper(){
 }
 
 
-/* =========================
-   BINANCE
-========================= */
+/* BINANCE */
 
 function connectBinance(){
 
     connectionStatus.innerText =
         "🟡 Opening Binance Wallet...";
 
-    /*
-       Binance Wallet باید از طریق
-       روش‌های رسمی Wallet/DApp وصل شود.
-
-       فعلاً کاربر را به Binance Wallet می‌بریم.
-    */
-
-    const binanceUrl =
-        "https://www.binance.com/en/web3wallet";
-
     window.open(
-        binanceUrl,
+        "https://www.binance.com/en/web3wallet",
         "_blank"
     );
 
@@ -1344,16 +1316,12 @@ function connectBinance(){
 }
 
 
-/* =========================
-   MINING HISTORY
-========================= */
+/* HISTORY */
 
 async function loadHistory(){
 
     historyEl.innerHTML =
-        `<div class="empty">
-            Loading...
-        </div>`;
+        `<div class="empty">Loading...</div>`;
 
     try{
 
@@ -1372,7 +1340,6 @@ async function loadHistory(){
             !data.success ||
             !Array.isArray(data.history)
         ){
-
             throw new Error(
                 "History unavailable"
             );
@@ -1444,15 +1411,219 @@ async function loadHistory(){
 
 
 /* =========================
-   START
+   LEADERBOARD
 ========================= */
+
+function openLeaderboard(){
+
+    leaderboardModal.classList.add(
+        "show"
+    );
+
+    loadLeaderboard();
+}
+
+
+function closeLeaderboard(){
+
+    leaderboardModal.classList.remove(
+        "show"
+    );
+}
+
+
+function closeLeaderboardOutside(event){
+
+    if(
+        event.target ===
+        leaderboardModal
+    ){
+        closeLeaderboard();
+    }
+}
+
+
+async function loadLeaderboard(){
+
+    leaderboardContent.innerHTML =
+        `<div class="empty">
+            Loading Leaderboard...
+        </div>`;
+
+    try{
+
+        const response =
+            await fetch(
+                `${API_BASE}/api/leaderboard?telegram_id=${encodeURIComponent(telegramId)}`,
+                {
+                    cache:"no-store"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if(
+            !data.success
+        ){
+            throw new Error(
+                data.message ||
+                "Leaderboard failed"
+            );
+        }
+
+        let html = "";
+
+        if(data.myRank !== null){
+
+            const myBalance =
+                data.myUser
+                    ? Number(
+                        data.myUser.balance || 0
+                    )
+                    : 0;
+
+            html += `
+
+                <div class="my-rank-card">
+
+                    <div class="my-rank-title">
+                        رتبه فعلی شما
+                    </div>
+
+                    <div class="my-rank-number">
+                        #${Number(data.myRank)}
+                    </div>
+
+                    <div class="my-rank-info">
+                        ${myBalance.toLocaleString()} AFC
+                    </div>
+
+                </div>
+            `;
+        }
+
+        html += `
+            <div class="leaderboard">
+                <div class="lb-list">
+        `;
+
+        if(
+            !Array.isArray(
+                data.leaderboard
+            ) ||
+            data.leaderboard.length === 0
+        ){
+
+            html += `
+                <div class="empty">
+                    هنوز کاربری در Leaderboard نیست.
+                </div>
+            `;
+
+        }else{
+
+            data.leaderboard.forEach(
+                (item) => {
+
+                    const isMe =
+                        data.myUser &&
+                        Number(item.balance) ===
+                        Number(data.myUser.balance) &&
+                        Number(item.rank) ===
+                        Number(data.myRank);
+
+                    let medal = "";
+
+                    if(item.rank === 1){
+                        medal = "🥇";
+                    }else if(item.rank === 2){
+                        medal = "🥈";
+                    }else if(item.rank === 3){
+                        medal = "🥉";
+                    }else{
+                        medal = "#" + item.rank;
+                    }
+
+                    html += `
+
+                        <div class="lb-row ${isMe ? "me" : ""}">
+
+                            <div class="lb-rank">
+                                ${medal}
+                            </div>
+
+                            <div class="lb-name">
+
+                                ${escapeHtml(
+                                    item.username ||
+                                    "AFC Miner"
+                                )}
+
+                                <div class="lb-level">
+                                    Level ${Number(item.level || 1)}
+                                    • Power ${Number(item.power || 1)}
+                                </div>
+
+                            </div>
+
+                            <div class="lb-balance">
+                                ${Number(item.balance || 0).toLocaleString()}
+                                AFC
+                            </div>
+
+                        </div>
+                    `;
+                }
+            );
+        }
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        leaderboardContent.innerHTML =
+            html;
+
+    }catch(error){
+
+        console.error(
+            "LEADERBOARD ERROR:",
+            error
+        );
+
+        leaderboardContent.innerHTML =
+            `
+            <div class="empty">
+                خطا در دریافت Leaderboard
+                <br>
+                دوباره تلاش کن.
+            </div>
+            `;
+    }
+}
+
+
+/* SECURITY */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+/* START */
 
 loadUser();
 
 
-/* =========================
-   AUTO REFRESH
-========================= */
+/* AUTO REFRESH */
 
 setInterval(() => {
 
@@ -1464,7 +1635,5 @@ setInterval(() => {
 
 },10000);
 
-</script>
-
-</body>
-</html>
+</script></body>
+    </html>
