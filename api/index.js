@@ -33,9 +33,7 @@ function regenerateEnergy(user) {
 
     return {
         energy: newEnergy,
-        energy_updated_at: new Date(
-            now
-        ).toISOString()
+        energy_updated_at: new Date(now).toISOString()
     };
 }
 
@@ -171,6 +169,180 @@ export default async function handler(req, res) {
                 success: true,
 
                 user: users[0]
+
+            });
+        }
+
+        /*
+        ================================
+        LEADERBOARD
+        ================================
+        */
+
+        if (
+            req.method === "GET" &&
+            req.url.startsWith("/api/leaderboard")
+        ) {
+
+            const url =
+                new URL(
+                    req.url,
+                    "https://afghanicoin.vercel.app"
+                );
+
+            const telegramId =
+                url.searchParams.get(
+                    "telegram_id"
+                );
+
+            /*
+            Top 50 users
+            sorted by AFC balance
+            */
+
+            const leaderboard =
+                await sql`
+                    SELECT
+                        id,
+                        telegram_id,
+                        username,
+                        balance,
+                        level,
+                        power
+
+                    FROM users
+
+                    ORDER BY
+                        balance DESC,
+                        id ASC
+
+                    LIMIT 50
+                `;
+
+            /*
+            Add rank
+            */
+
+            const rankedUsers =
+                leaderboard.map(
+                    (user, index) => ({
+
+                        rank: index + 1,
+
+                        id: user.id,
+
+                        telegram_id:
+                            user.telegram_id,
+
+                        username:
+                            user.username ||
+                            "AFC Miner",
+
+                        balance:
+                            Number(
+                                user.balance || 0
+                            ),
+
+                        level:
+                            Number(
+                                user.level || 1
+                            ),
+
+                        power:
+                            Number(
+                                user.power || 1
+                            )
+
+                    })
+                );
+
+            /*
+            Find user's real rank
+            */
+
+            let myRank = null;
+            let myUser = null;
+
+            if (telegramId) {
+
+                const currentUser =
+                    await sql`
+                        SELECT
+                            id,
+                            telegram_id,
+                            username,
+                            balance,
+                            level,
+                            power
+
+                        FROM users
+
+                        WHERE telegram_id =
+                            ${telegramId}
+
+                        LIMIT 1
+                    `;
+
+                if (currentUser.length > 0) {
+
+                    myUser =
+                        currentUser[0];
+
+                    const rankResult =
+                        await sql`
+                            SELECT
+                                COUNT(*) + 1 AS rank
+
+                            FROM users
+
+                            WHERE balance >
+                                ${Number(
+                                    myUser.balance || 0
+                                )}
+                        `;
+
+                    myRank =
+                        Number(
+                            rankResult[0].rank
+                        );
+                }
+            }
+
+            return res.status(200).json({
+
+                success: true,
+
+                leaderboard:
+                    rankedUsers,
+
+                myRank:
+
+                    myRank,
+
+                myUser:
+
+                    myUser
+                        ? {
+                            username:
+                                myUser.username ||
+                                "AFC Miner",
+
+                            balance:
+                                Number(
+                                    myUser.balance || 0
+                                ),
+
+                            level:
+                                Number(
+                                    myUser.level || 1
+                                ),
+
+                            power:
+                                Number(
+                                    myUser.power || 1
+                                )
+                        }
+                        : null
 
             });
         }
@@ -337,7 +509,9 @@ export default async function handler(req, res) {
 
                     SET
                         balance = ${newBalance},
+
                         energy = ${newEnergy},
+
                         energy_updated_at =
                             ${regenerated.energy_updated_at}
 
@@ -366,10 +540,15 @@ export default async function handler(req, res) {
                     VALUES
                     (
                         ${updated[0].id},
+
                         ${String(telegram_id)},
+
                         ${power},
+
                         ${power},
+
                         ${newBalance},
+
                         ${newEnergy}
                     )
                 `;
@@ -425,8 +604,10 @@ export default async function handler(req, res) {
                 await sql`
                     SELECT *
                     FROM users
+
                     WHERE telegram_id =
                         ${String(telegram_id)}
+
                     LIMIT 1
                 `;
 
