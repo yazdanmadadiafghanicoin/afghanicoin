@@ -10,6 +10,7 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
 }
@@ -17,33 +18,60 @@
 body{
     margin:0;
     min-height:100vh;
+
     font-family:Arial,sans-serif;
+
     background:
-        radial-gradient(circle at top,#173b5f 0%,#07111f 45%,#030912 100%);
+        radial-gradient(
+            circle at top,
+            #173b5f 0%,
+            #07111f 45%,
+            #030912 100%
+        );
+
     color:white;
     text-align:center;
+
     overflow-x:hidden;
 }
 
 .container{
     width:100%;
     max-width:430px;
+
     margin:auto;
+
     padding:25px 18px 40px;
 }
+
+/* =========================
+   LOGO
+========================= */
 
 .logo{
     width:95px;
     height:95px;
+
     margin:5px auto 12px;
+
     border-radius:50%;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     font-size:50px;
     font-weight:bold;
-    background:linear-gradient(145deg,#ffd700,#b77b00);
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffd700,
+            #b77b00
+        );
+
     color:#07111f;
+
     box-shadow:
         0 0 20px rgba(255,215,0,.5),
         inset 0 0 12px rgba(255,255,255,.4);
@@ -52,44 +80,67 @@ body{
 .title{
     font-size:28px;
     font-weight:bold;
+
     margin-bottom:4px;
 }
 
 .subtitle{
     color:#a9b9c9;
     font-size:14px;
+
     margin-bottom:22px;
 }
+
+/* =========================
+   BALANCE
+========================= */
 
 .balance{
     font-size:42px;
     font-weight:bold;
+
     margin:10px 0 3px;
 }
 
 .coin-name{
     color:#ffd700;
     font-size:15px;
+
     margin-bottom:22px;
 }
 
+/* =========================
+   STATS
+========================= */
+
 .stats{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+
+    grid-template-columns:
+        repeat(2,1fr);
+
     gap:10px;
+
     margin-bottom:25px;
 }
 
 .stat{
-    background:rgba(255,255,255,.07);
-    border:1px solid rgba(255,255,255,.1);
+    background:
+        rgba(255,255,255,.07);
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
     border-radius:15px;
+
     padding:14px 8px;
 }
 
 .stat-name{
     color:#9eb0c1;
+
     font-size:12px;
+
     margin-bottom:6px;
 }
 
@@ -103,14 +154,23 @@ body{
 ========================= */
 
 .mine-area{
+
     position:relative;
+
     width:250px;
     height:250px;
+
     margin:0 auto 20px;
 }
 
+/* =========================
+   MINE BUTTON
+========================= */
+
 .mine-button{
+
     position:absolute;
+
     left:15px;
     top:15px;
 
@@ -118,71 +178,232 @@ body{
     height:220px;
 
     border:none;
+
     border-radius:50%;
+
+    overflow:hidden;
 
     cursor:pointer;
 
+    padding:0;
+
+    /*
+    سه رنگ بیرق افغانستان
+    تمام سطح دایره را می‌گیرد
+    */
+
     background:
-        radial-gradient(
-            circle at 35% 25%,
-            #fff6b0 0%,
-            #ffd700 25%,
-            #e2a900 65%,
-            #815700 100%
+        linear-gradient(
+            90deg,
+            #111111 0%,
+            #111111 33.33%,
+
+            #c8102e 33.33%,
+            #c8102e 66.66%,
+
+            #007a3d 66.66%,
+            #007a3d 100%
         );
 
     box-shadow:
-        0 13px 0 #664500,
-        0 20px 35px rgba(0,0,0,.55),
-        inset 0 5px 12px rgba(255,255,255,.5);
+
+        0 13px 0 #533900,
+
+        0 20px 35px
+        rgba(0,0,0,.55),
+
+        inset 0 5px 15px
+        rgba(255,255,255,.30),
+
+        inset 0 -10px 20px
+        rgba(0,0,0,.30);
 
     display:flex;
+
     align-items:center;
+
     justify-content:center;
 
-    transition:.1s;
+    transition:
+        transform .12s,
+        box-shadow .12s;
 }
 
-.mine-button:active{
-    transform:translateY(9px);
+/*
+حلقه طلایی دور سکه
+*/
 
-    box-shadow:
-        0 4px 0 #664500,
-        0 10px 20px rgba(0,0,0,.4);
-}
+.mine-button::before{
 
-.mine-button.disabled{
-    opacity:.45;
-    cursor:not-allowed;
-}
+    content:"";
 
-/* Afghanistan SVG */
-
-.afghanistan{
-    width:175px;
-    height:175px;
-
-    filter:
-        drop-shadow(0 5px 4px rgba(0,0,0,.45));
-}
-
-/* shine */
-
-.mine-shine{
     position:absolute;
-    top:31px;
-    left:42px;
 
-    width:55px;
-    height:25px;
+    inset:7px;
 
     border-radius:50%;
 
-    background:rgba(255,255,255,.3);
+    border:
+        4px solid #ffd700;
 
-    transform:rotate(-25deg);
+    box-shadow:
+
+        inset 0 0 8px
+        rgba(255,255,255,.6),
+
+        0 0 8px
+        rgba(255,215,0,.7);
+
+    z-index:4;
 
     pointer-events:none;
+}
+
+/*
+درخشش روی سکه
+*/
+
+.mine-button::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:90px;
+    height:35px;
+
+    top:27px;
+    left:37px;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.18);
+
+    transform:
+        rotate(-25deg);
+
+    z-index:5;
+
+    pointer-events:none;
+}
+
+/* =========================
+   AFGHAN FLAG CIRCLE
+========================= */
+
+.flag-circle{
+
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    border-radius:50%;
+
+    z-index:1;
+
+    pointer-events:none;
+}
+
+/* =========================
+   AFGHANI SYMBOL
+========================= */
+
+.afghani-symbol{
+
+    position:relative;
+
+    z-index:6;
+
+    width:105px;
+    height:105px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:68px;
+
+    font-weight:bold;
+
+    color:#ffd700;
+
+    text-shadow:
+
+        0 3px 3px
+        rgba(0,0,0,.9),
+
+        0 0 10px
+        rgba(255,215,0,.7);
+
+    background:
+        rgba(0,0,0,.16);
+
+    border:
+        2px solid
+        rgba(255,215,0,.55);
+
+    box-shadow:
+
+        inset 0 0 20px
+        rgba(0,0,0,.3),
+
+        0 3px 10px
+        rgba(0,0,0,.4);
+}
+
+/* =========================
+   CLICK ANIMATION
+========================= */
+
+.mine-hit{
+
+    animation:
+        mineHit .22s ease;
+}
+
+@keyframes mineHit{
+
+    0%{
+        transform:
+            translateY(0)
+            scale(1)
+            rotate(0deg);
+    }
+
+    25%{
+        transform:
+            translateY(4px)
+            scale(.94)
+            rotate(-2deg);
+    }
+
+    50%{
+        transform:
+            translateY(-8px)
+            scale(1.06)
+            rotate(2deg);
+    }
+
+    75%{
+        transform:
+            translateY(-3px)
+            scale(1.02)
+            rotate(-1deg);
+    }
+
+    100%{
+        transform:
+            translateY(0)
+            scale(1)
+            rotate(0deg);
+    }
 }
 
 /* =========================
@@ -194,7 +415,9 @@ body{
 }
 
 .energy-text{
+
     display:flex;
+
     justify-content:space-between;
 
     font-size:14px;
@@ -205,7 +428,9 @@ body{
 }
 
 .energy-bar{
+
     width:100%;
+
     height:12px;
 
     background:#172536;
@@ -216,7 +441,9 @@ body{
 }
 
 .energy-fill{
+
     height:100%;
+
     width:100%;
 
     background:
@@ -228,7 +455,8 @@ body{
 
     border-radius:20px;
 
-    transition:width .3s;
+    transition:
+        width .3s;
 }
 
 /* =========================
@@ -236,12 +464,17 @@ body{
 ========================= */
 
 .buttons{
+
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+
+    grid-template-columns:
+        repeat(2,1fr);
+
     gap:10px;
 }
 
 .action{
+
     border:none;
 
     border-radius:13px;
@@ -258,14 +491,18 @@ body{
 
     cursor:pointer;
 
-    border:1px solid #23445f;
+    border:
+        1px solid #23445f;
 }
 
 .action:active{
-    transform:scale(.97);
+
+    transform:
+        scale(.97);
 }
 
 .upgrade{
+
     background:
         linear-gradient(
             135deg,
@@ -281,6 +518,7 @@ body{
 ========================= */
 
 .status{
+
     min-height:22px;
 
     margin-top:18px;
@@ -295,29 +533,35 @@ body{
 ========================= */
 
 .coin{
+
     position:fixed;
 
     pointer-events:none;
 
     z-index:9999;
 
-    font-size:20px;
+    font-size:21px;
 
     font-weight:bold;
 
     color:#ffd700;
 
     text-shadow:
+
         0 0 8px #ffd700,
-        0 0 15px rgba(255,215,0,.5);
+
+        0 0 15px
+        rgba(255,215,0,.5);
 
     animation:
-        coinJump .85s ease-out forwards;
+        coinJump .85s ease-out
+        forwards;
 }
 
 @keyframes coinJump{
 
     0%{
+
         transform:
             translate(0,0)
             scale(.5)
@@ -327,6 +571,7 @@ body{
     }
 
     15%{
+
         opacity:1;
 
         transform:
@@ -360,48 +605,11 @@ body{
     }
 }
 
-/* button animation */
+.mine-button.disabled{
 
-.mine-hit{
-    animation:
-        mineHit .18s ease;
-}
+    opacity:.45;
 
-@keyframes mineHit{
-
-    0%{
-        transform:scale(1);
-    }
-
-    50%{
-        transform:scale(.94);
-    }
-
-    100%{
-        transform:scale(1);
-    }
-}
-
-/* map animation */
-
-.map-hit{
-    animation:
-        mapHit .22s ease;
-}
-
-@keyframes mapHit{
-
-    0%{
-        transform:scale(1);
-    }
-
-    50%{
-        transform:scale(1.08);
-    }
-
-    100%{
-        transform:scale(1);
-    }
+    cursor:not-allowed;
 }
 
 </style>
@@ -410,6 +618,8 @@ body{
 <body>
 
 <div class="container">
+
+    <!-- LOGO -->
 
     <div class="logo">
         ؋
@@ -423,6 +633,8 @@ body{
         Mine AFC and build your balance
     </div>
 
+    <!-- BALANCE -->
+
     <div
         class="balance"
         id="balance">
@@ -432,6 +644,8 @@ body{
     <div class="coin-name">
         AFC
     </div>
+
+    <!-- STATS -->
 
     <div class="stats">
 
@@ -465,9 +679,10 @@ body{
 
     </div>
 
-    <!-- =========================
+
+    <!-- ==================================
          MINE BUTTON
-    ========================== -->
+    =================================== -->
 
     <div class="mine-area">
 
@@ -476,203 +691,77 @@ body{
             class="mine-button"
             onclick="mine()">
 
-            <!-- Afghanistan map -->
+            <!--
+                کل دایره سه‌رنگ است.
+                دیگر نقشه وسط آن نیست.
+            -->
+
             <svg
-                id="afghanistanMap"
-                class="afghanistan"
+                class="flag-circle"
                 viewBox="0 0 220 220"
                 xmlns="http://www.w3.org/2000/svg">
 
                 <defs>
 
-                    <!-- Three-color Afghanistan -->
-                    <clipPath id="afghanClip">
+                    <clipPath id="circleClip">
 
-                        <!-- stylized Afghanistan geographic silhouette -->
-                        <path
-                            d="
-                            M42 28
-                            L62 18
-                            L83 25
-                            L101 18
-                            L119 28
-                            L137 23
-                            L157 37
-                            L174 39
-                            L180 55
-                            L193 67
-                            L181 79
-                            L187 94
-                            L176 106
-                            L181 120
-                            L168 130
-                            L166 148
-                            L151 153
-                            L144 170
-                            L126 169
-                            L114 181
-                            L97 176
-                            L82 187
-                            L68 177
-                            L51 181
-                            L44 166
-                            L30 158
-                            L36 143
-                            L25 131
-                            L33 116
-                            L25 102
-                            L37 91
-                            L31 76
-                            L43 65
-                            L37 49
-                            Z
-                            "
-                        />
+                        <circle
+                            cx="110"
+                            cy="110"
+                            r="106"/>
 
                     </clipPath>
 
-                    <linearGradient
-                        id="blackRedGreen"
-                        x1="0"
-                        y1="0"
-                        x2="1"
-                        y2="0">
-
-                        <stop
-                            offset="0%"
-                            stop-color="#111111"/>
-
-                        <stop
-                            offset="33.33%"
-                            stop-color="#111111"/>
-
-                        <stop
-                            offset="33.34%"
-                            stop-color="#c8102e"/>
-
-                        <stop
-                            offset="66.66%"
-                            stop-color="#c8102e"/>
-
-                        <stop
-                            offset="66.67%"
-                            stop-color="#007a3d"/>
-
-                        <stop
-                            offset="100%"
-                            stop-color="#007a3d"/>
-
-                    </linearGradient>
-
-                    <filter
-                        id="mapShadow"
-                        x="-30%"
-                        y="-30%"
-                        width="160%"
-                        height="160%">
-
-                        <feDropShadow
-                            dx="0"
-                            dy="5"
-                            stdDeviation="4"
-                            flood-opacity=".55"/>
-
-                    </filter>
-
                 </defs>
 
-                <!-- Afghan map -->
                 <g
-                    clip-path="url(#afghanClip)"
-                    filter="url(#mapShadow)">
+                    clip-path="url(#circleClip)">
+
+                    <!-- BLACK -->
 
                     <rect
-                        x="20"
-                        y="15"
-                        width="180"
-                        height="180"
-                        fill="url(#blackRedGreen)"/>
+                        x="0"
+                        y="0"
+                        width="73.33"
+                        height="220"
+                        fill="#111111"/>
 
-                    <!-- subtle shine -->
-                    <ellipse
-                        cx="105"
-                        cy="55"
-                        rx="65"
-                        ry="20"
-                        fill="white"
-                        opacity=".10"/>
+                    <!-- RED -->
+
+                    <rect
+                        x="73.33"
+                        y="0"
+                        width="73.34"
+                        height="220"
+                        fill="#c8102e"/>
+
+                    <!-- GREEN -->
+
+                    <rect
+                        x="146.67"
+                        y="0"
+                        width="73.33"
+                        height="220"
+                        fill="#007a3d"/>
 
                 </g>
 
-                <!-- map border -->
-                <path
-                    d="
-                    M42 28
-                    L62 18
-                    L83 25
-                    L101 18
-                    L119 28
-                    L137 23
-                    L157 37
-                    L174 39
-                    L180 55
-                    L193 67
-                    L181 79
-                    L187 94
-                    L176 106
-                    L181 120
-                    L168 130
-                    L166 148
-                    L151 153
-                    L144 170
-                    L126 169
-                    L114 181
-                    L97 176
-                    L82 187
-                    L68 177
-                    L51 181
-                    L44 166
-                    L30 158
-                    L36 143
-                    L25 131
-                    L33 116
-                    L25 102
-                    L37 91
-                    L31 76
-                    L43 65
-                    L37 49
-                    Z
-                    "
-                    fill="none"
-                    stroke="#ffd700"
-                    stroke-width="4"
-                    stroke-linejoin="round"/>
-
-                <!-- small central emblem -->
-                <circle
-                    cx="108"
-                    cy="103"
-                    r="12"
-                    fill="#ffd700"
-                    opacity=".9"/>
-
-                <text
-                    x="108"
-                    y="109"
-                    text-anchor="middle"
-                    font-size="13"
-                    font-weight="bold"
-                    fill="#07111f">
-                    ؋
-                </text>
-
             </svg>
 
-            <div class="mine-shine"></div>
+
+            <!-- ؋ -->
+
+            <div
+                class="afghani-symbol">
+
+                ؋
+
+            </div>
 
         </button>
 
     </div>
+
 
     <!-- ENERGY -->
 
@@ -684,7 +773,8 @@ body{
                 ⚡ Energy
             </span>
 
-            <span id="energyText">
+            <span
+                id="energyText">
                 100 / 100
             </span>
 
@@ -701,43 +791,59 @@ body{
 
     </div>
 
-    <!-- BUTTONS -->
+
+    <!-- ACTION BUTTONS -->
 
     <div class="buttons">
 
         <button
             class="action"
             onclick="showMessage('Tasks coming soon 🚀')">
+
             📋 Tasks
+
         </button>
+
 
         <button
             class="action"
             onclick="showMessage('Invite system coming soon 👥')">
+
             👥 Invite
+
         </button>
+
 
         <button
             class="action"
             onclick="showMessage('Wallet coming soon 💰')">
+
             💰 Wallet
+
         </button>
+
 
         <button
             class="action upgrade"
             onclick="upgrade()">
+
             ⬆️ Upgrade
+
         </button>
 
     </div>
 
+
     <div
         id="status"
         class="status">
+
         Connecting...
+
     </div>
 
 </div>
+
 
 <script>
 
@@ -749,7 +855,9 @@ const tg =
     window.Telegram.WebApp;
 
 tg.ready();
+
 tg.expand();
+
 
 /* ==================================
    API
@@ -757,6 +865,7 @@ tg.expand();
 
 const API_BASE =
     "https://afghanicoin.vercel.app";
+
 
 /* ==================================
    TELEGRAM USER
@@ -766,44 +875,64 @@ let telegramId =
     "123456789";
 
 if(
+
     tg &&
+
     tg.initDataUnsafe &&
+
     tg.initDataUnsafe.user &&
+
     tg.initDataUnsafe.user.id
+
 ){
+
     telegramId =
         String(
             tg.initDataUnsafe.user.id
         );
+
 }
+
 
 /* ==================================
    ELEMENTS
 ================================== */
 
 const balanceEl =
-    document.getElementById("balance");
+    document.getElementById(
+        "balance"
+    );
 
 const energyTextEl =
-    document.getElementById("energyText");
+    document.getElementById(
+        "energyText"
+    );
 
 const energyFillEl =
-    document.getElementById("energyFill");
+    document.getElementById(
+        "energyFill"
+    );
 
 const levelEl =
-    document.getElementById("level");
+    document.getElementById(
+        "level"
+    );
 
 const powerEl =
-    document.getElementById("power");
+    document.getElementById(
+        "power"
+    );
 
 const mineButton =
-    document.getElementById("mineButton");
+    document.getElementById(
+        "mineButton"
+    );
 
 const statusEl =
-    document.getElementById("status");
+    document.getElementById(
+        "status"
+    );
 
-const mapEl =
-    document.getElementById("afghanistanMap");
 
 /* ==================================
    USER
@@ -824,23 +953,6 @@ let user = {
 let mining =
     false;
 
-/* ==================================
-   STATUS
-================================== */
-
-function showMessage(message){
-
-    statusEl.innerText =
-        message;
-
-    setTimeout(() => {
-
-        statusEl.innerText =
-            "";
-
-    },2500);
-
-}
 
 /* ==================================
    SCREEN
@@ -866,19 +978,26 @@ function updateScreen(){
             user.power || 1
         );
 
+
     let energy =
         Number(
             user.energy || 0
         );
 
+
     energy =
         Math.max(
             0,
-            Math.min(100,energy)
+            Math.min(
+                100,
+                energy
+            )
         );
+
 
     energyFillEl.style.width =
         energy + "%";
+
 
     if(energy <= 0){
 
@@ -896,6 +1015,26 @@ function updateScreen(){
 
 }
 
+
+/* ==================================
+   MESSAGE
+================================== */
+
+function showMessage(message){
+
+    statusEl.innerText =
+        message;
+
+    setTimeout(() => {
+
+        statusEl.innerText =
+            "";
+
+    },2500);
+
+}
+
+
 /* ==================================
    LOAD USER
 ================================== */
@@ -906,12 +1045,17 @@ async function loadUser(){
 
         const response =
             await fetch(
+
                 `${API_BASE}/api/user?telegram_id=${encodeURIComponent(telegramId)}`,
+
                 {
                     method:"GET",
+
                     cache:"no-store"
                 }
+
             );
+
 
         if(!response.ok){
 
@@ -922,12 +1066,17 @@ async function loadUser(){
 
         }
 
+
         const data =
             await response.json();
 
+
         if(
+
             data.success &&
+
             data.user
+
         ){
 
             user =
@@ -938,12 +1087,14 @@ async function loadUser(){
             statusEl.innerText =
                 "Connected ✓";
 
+
             setTimeout(() => {
 
                 statusEl.innerText =
                     "";
 
             },1500);
+
 
         }else{
 
@@ -953,6 +1104,7 @@ async function loadUser(){
             );
 
         }
+
 
     }catch(error){
 
@@ -968,6 +1120,7 @@ async function loadUser(){
 
 }
 
+
 /* ==================================
    COIN JUMP
 ================================== */
@@ -979,19 +1132,26 @@ function createCoin(){
             "div"
         );
 
+
     coin.className =
         "coin";
+
 
     const amount =
         Number(
             user.power || 1
         );
 
+
     coin.innerText =
-        "+" + amount + " AFC";
+        "+" +
+        amount +
+        " AFC";
+
 
     const rect =
         mineButton.getBoundingClientRect();
+
 
     coin.style.left =
         (
@@ -1000,37 +1160,46 @@ function createCoin(){
             25
         ) + "px";
 
+
     coin.style.top =
         (
             rect.top +
             rect.height / 2
         ) + "px";
 
+
     const x =
         (
-            Math.random() * 100 -
+            Math.random() *
+            100 -
             50
         ) + "px";
 
+
     const x2 =
         (
-            Math.random() * 160 -
+            Math.random() *
+            160 -
             80
         ) + "px";
+
 
     coin.style.setProperty(
         "--x",
         x
     );
 
+
     coin.style.setProperty(
         "--x2",
         x2
     );
 
+
     document.body.appendChild(
         coin
     );
+
 
     setTimeout(() => {
 
@@ -1040,11 +1209,14 @@ function createCoin(){
 
 }
 
+
 /* ==================================
    SOUND
 ================================== */
 
-let audioContext = null;
+let audioContext =
+    null;
+
 
 function playMineSound(){
 
@@ -1060,6 +1232,7 @@ function playMineSound(){
 
         }
 
+
         if(
             audioContext.state ===
             "suspended"
@@ -1069,52 +1242,87 @@ function playMineSound(){
 
         }
 
+
         const oscillator =
             audioContext.createOscillator();
+
 
         const gain =
             audioContext.createGain();
 
+
         oscillator.type =
             "sine";
 
+
         oscillator.frequency.setValueAtTime(
+
             700,
+
             audioContext.currentTime
+
         );
+
 
         oscillator.frequency.exponentialRampToValueAtTime(
+
             1200,
-            audioContext.currentTime + 0.08
+
+            audioContext.currentTime +
+            0.08
+
         );
+
 
         gain.gain.setValueAtTime(
+
             0.0001,
+
             audioContext.currentTime
+
         );
 
+
         gain.gain.exponentialRampToValueAtTime(
+
             0.18,
-            audioContext.currentTime + 0.01
+
+            audioContext.currentTime +
+            0.01
+
         );
+
 
         gain.gain.exponentialRampToValueAtTime(
+
             0.0001,
-            audioContext.currentTime + 0.13
+
+            audioContext.currentTime +
+            0.13
+
         );
 
-        oscillator.connect(gain);
+
+        oscillator.connect(
+            gain
+        );
+
 
         gain.connect(
             audioContext.destination
         );
 
+
         oscillator.start();
 
+
         oscillator.stop(
+
             audioContext.currentTime +
             0.14
+
         );
+
 
     }catch(error){
 
@@ -1126,6 +1334,7 @@ function playMineSound(){
     }
 
 }
+
 
 /* ==================================
    MINE
@@ -1139,9 +1348,15 @@ async function mine(){
 
     }
 
+
     if(
+
         !user ||
-        Number(user.energy || 0) <= 0
+
+        Number(
+            user.energy || 0
+        ) <= 0
+
     ){
 
         showMessage(
@@ -1152,19 +1367,18 @@ async function mine(){
 
     }
 
+
     mining = true;
 
+
     /*
-    Visual
+      انیمیشن سکه
     */
 
     mineButton.classList.add(
         "mine-hit"
     );
 
-    mapEl.classList.add(
-        "map-hit"
-    );
 
     setTimeout(() => {
 
@@ -1172,35 +1386,39 @@ async function mine(){
             "mine-hit"
         );
 
-        mapEl.classList.remove(
-            "map-hit"
-        );
+    },250);
 
-    },220);
 
     /*
-    Sound
+      صدا
     */
 
     playMineSound();
 
+
     /*
-    Coin
+      پرش AFC
     */
 
     createCoin();
+
 
     try{
 
         const response =
             await fetch(
+
                 `${API_BASE}/api/mine`,
+
                 {
+
                     method:"POST",
 
                     headers:{
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:JSON.stringify({
@@ -1209,8 +1427,11 @@ async function mine(){
                             telegramId
 
                     })
+
                 }
+
             );
+
 
         if(!response.ok){
 
@@ -1221,17 +1442,23 @@ async function mine(){
 
         }
 
+
         const data =
             await response.json();
+
 
         console.log(
             "MINE:",
             data
         );
 
+
         if(
+
             data.success &&
+
             data.user
+
         ){
 
             user =
@@ -1242,11 +1469,14 @@ async function mine(){
         }else{
 
             throw new Error(
+
                 data.message ||
                 "Mining failed"
+
             );
 
         }
+
 
     }catch(error){
 
@@ -1261,11 +1491,13 @@ async function mine(){
 
     }finally{
 
-        mining = false;
+        mining =
+            false;
 
     }
 
 }
+
 
 /* ==================================
    UPGRADE
@@ -1277,13 +1509,18 @@ async function upgrade(){
 
         const response =
             await fetch(
+
                 `${API_BASE}/api/upgrade`,
+
                 {
+
                     method:"POST",
 
                     headers:{
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:JSON.stringify({
@@ -1292,8 +1529,11 @@ async function upgrade(){
                             telegramId
 
                     })
+
                 }
+
             );
+
 
         if(!response.ok){
 
@@ -1304,12 +1544,17 @@ async function upgrade(){
 
         }
 
+
         const data =
             await response.json();
 
+
         if(
+
             data.success &&
+
             data.user
+
         ){
 
             user =
@@ -1317,18 +1562,23 @@ async function upgrade(){
 
             updateScreen();
 
+
             showMessage(
                 "Upgrade successful 🚀"
             );
 
+
         }else{
 
             showMessage(
+
                 data.message ||
                 "Upgrade failed"
+
             );
 
         }
+
 
     }catch(error){
 
@@ -1345,11 +1595,13 @@ async function upgrade(){
 
 }
 
+
 /* ==================================
    START
 ================================== */
 
 loadUser();
+
 
 /* ==================================
    AUTO REFRESH
