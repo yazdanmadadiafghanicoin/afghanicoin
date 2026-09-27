@@ -16,6 +16,8 @@ if not TOKEN:
 
 API = f"https://api.telegram.org/bot{TOKEN}"
 
+BACKEND_URL = "https://afghanicoin.vercel.app"
+
 WEB_APP_URL = "https://afghanicoin.vercel.app/?v=3"
 
 
@@ -65,21 +67,311 @@ def send_message(chat_id, text, keyboard=None):
 
 
 # =========================
-# WEB APP BUTTON
+# CREATE / GET USER
 # =========================
 
-keyboard = {
-    "inline_keyboard": [
-        [
-            {
-                "text": "⛏️ استخراج Afghani Coin",
-                "web_app": {
-                    "url": WEB_APP_URL
+def create_user(telegram_id):
+
+    try:
+
+        url = (
+            f"{BACKEND_URL}/api/user"
+            f"?telegram_id={urllib.parse.quote(str(telegram_id))}"
+        )
+
+        request = urllib.request.Request(
+            url,
+            method="GET"
+        )
+
+        with urllib.request.urlopen(
+            request,
+            timeout=20
+        ) as response:
+
+            result = json.loads(
+                response.read().decode()
+            )
+
+            print(
+                "User API:",
+                result
+            )
+
+            return result
+
+    except Exception as error:
+
+        print(
+            "Create user error:",
+            error
+        )
+
+        return None
+
+
+# =========================
+# REGISTER REFERRAL
+# =========================
+
+def register_referral(
+    referrer_id,
+    invited_id
+):
+
+    try:
+
+        data = {
+            "referrer_telegram_id": str(referrer_id),
+            "invited_telegram_id": str(invited_id)
+        }
+
+        body = json.dumps(data).encode()
+
+        url = f"{BACKEND_URL}/api/invite"
+
+        request = urllib.request.Request(
+            url,
+            data=body,
+            headers={
+                "Content-Type": "application/json"
+            },
+            method="POST"
+        )
+
+        with urllib.request.urlopen(
+            request,
+            timeout=20
+        ) as response:
+
+            result = json.loads(
+                response.read().decode()
+            )
+
+            print(
+                "Referral API:",
+                result
+            )
+
+            return result
+
+    except Exception as error:
+
+        print(
+            "Referral error:",
+            error
+        )
+
+        return None
+
+
+# =========================
+# START COMMAND
+# =========================
+
+def start_command(
+    chat_id,
+    telegram_id,
+    referral_code=None
+):
+
+    # اول کاربر را در دیتابیس ایجاد می‌کنیم
+    create_user(telegram_id)
+
+
+    # =========================
+    # REFERRAL
+    # =========================
+
+    referral_result = None
+
+    if referral_code:
+
+        referral_code = str(
+            referral_code
+        ).strip()
+
+        # جلوگیری از دعوت خود
+        if referral_code != str(telegram_id):
+
+            referral_result = register_referral(
+                referral_code,
+                telegram_id
+            )
+
+
+    # =========================
+    # WEB APP BUTTON
+    # =========================
+
+    keyboard = {
+        "inline_keyboard": [
+            [
+                {
+                    "text": "⛏️ استخراج Afghani Coin",
+                    "web_app": {
+                        "url": WEB_APP_URL
+                    }
                 }
-            }
+            ]
         ]
-    ]
-}
+    }
+
+
+    # =========================
+    # MESSAGE
+    # =========================
+
+    message_text = (
+        "🪙 Afghani Coin V2\n\n"
+        "خوش آمدید به Afghani Coin!\n\n"
+        "⛏️ برای شروع استخراج روی دکمه زیر بزنید.\n\n"
+        "⚡ Mine\n"
+        "🚀 Upgrade\n"
+        "🎁 Daily Reward\n"
+        "👥 Invite Friends\n"
+        "🏆 Leaderboard"
+    )
+
+
+    # اگر دعوت موفق بود
+    if referral_result:
+
+        if referral_result.get("success"):
+
+            message_text += (
+                "\n\n"
+                "🎉 شما از طریق لینک دعوت وارد شدید!\n"
+                "🎁 پاداش شما: 100 AFC"
+            )
+
+        elif referral_result.get(
+            "already_invited"
+        ):
+
+            message_text += (
+                "\n\n"
+                "ℹ️ این حساب قبلاً با یک لینک دعوت ثبت شده است."
+            )
+
+
+    send_message(
+        chat_id,
+        message_text,
+        keyboard
+    )
+
+
+# =========================
+# HANDLE UPDATE
+# =========================
+
+def handle_update(update):
+
+    message = update.get(
+        "message"
+    )
+
+    if not message:
+        return
+
+
+    chat_id = message.get(
+        "chat",
+        {}
+    ).get("id")
+
+
+    if not chat_id:
+        return
+
+
+    telegram_user = message.get(
+        "from",
+        {}
+    )
+
+    telegram_id = telegram_user.get(
+        "id"
+    )
+
+
+    if not telegram_id:
+        return
+
+
+    text = message.get(
+        "text",
+        ""
+    ).strip()
+
+
+    # =========================
+    # START
+    # =========================
+
+    if text.startswith("/start"):
+
+        parts = text.split()
+
+        referral_code = None
+
+        if len(parts) > 1:
+
+            referral_code = parts[1]
+
+
+        start_command(
+            chat_id,
+            telegram_id,
+            referral_code
+        )
+
+        return
+
+
+    # =========================
+    # OTHER MESSAGES
+    # =========================
+
+    keyboard = {
+        "inline_keyboard": [
+            [
+                {
+                    "text": "⛏️ استخراج Afghani Coin",
+                    "web_app": {
+                        "url": WEB_APP_URL
+                    }
+                }
+            ]
+        ]
+    }
+
+
+    send_message(
+        chat_id,
+
+        "🪙 Afghani Coin V2\n\n"
+        "برای ورود به Afghani Coin "
+        "روی دکمه زیر بزنید:",
+
+        keyboard
+    )
+
+
+# =========================
+# GET UPDATES
+# =========================
+
+def get_updates(offset):
+
+    return telegram(
+        "getUpdates",
+        {
+            "offset": offset,
+            "timeout": 25
+        }
+    )
 
 
 # =========================
@@ -90,84 +382,42 @@ def main():
 
     offset = 0
 
-    print("Afghani Coin Bot V2 is running...")
+    print(
+        "Afghani Coin Bot V3 is running..."
+    )
+
 
     while True:
 
         try:
 
-            result = telegram(
-                "getUpdates",
-                {
-                    "offset": offset,
-                    "timeout": 25
-                }
+            result = get_updates(
+                offset
             )
 
-            updates = result.get("result", [])
+            updates = result.get(
+                "result",
+                []
+            )
+
 
             for update in updates:
 
-                offset = update["update_id"] + 1
+                offset = (
+                    update["update_id"] + 1
+                )
 
-                message = update.get("message")
+                handle_update(
+                    update
+                )
 
-                if not message:
-                    continue
-
-                chat_id = message.get(
-                    "chat",
-                    {}
-                ).get("id")
-
-                if not chat_id:
-                    continue
-
-                text = message.get(
-                    "text",
-                    ""
-                ).strip()
-
-                # =====================
-                # START
-                # =====================
-
-                if text == "/start":
-
-                    send_message(
-                        chat_id,
-
-                        "🪙 Afghani Coin V2\n\n"
-                        "خوش آمدید به Afghani Coin!\n\n"
-                        "⛏️ برای شروع استخراج روی دکمه زیر بزنید.\n\n"
-                        "⚡ Mine\n"
-                        "🚀 Upgrade\n"
-                        "🎁 Daily Reward\n"
-                        "👥 Invite Friends\n"
-                        "🏆 Leaderboard",
-
-                        keyboard
-                    )
-
-                # =====================
-                # OTHER MESSAGES
-                # =====================
-
-                else:
-
-                    send_message(
-                        chat_id,
-
-                        "🪙 Afghani Coin V2\n\n"
-                        "برای ورود به Afghani Coin "
-                        "روی دکمه زیر بزنید:",
-
-                        keyboard
-                    )
 
         except Exception as error:
 
-            print("Error:", error)
+            print(
+                "Bot Error:",
+                error
+            )
 
             time.sleep(5)
 
