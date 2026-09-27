@@ -1,202 +1,253 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07111f">
 
 <title>Afghani Coin</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-* {
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
 }
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #07111f, #102b45, #07111f);
-    color: white;
-    text-align: center;
-    min-height: 100vh;
-    overflow-x: hidden;
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    background:
+        radial-gradient(circle at top,#173b5f 0%,#07111f 45%,#030912 100%);
+    color:white;
+    text-align:center;
+    overflow-x:hidden;
 }
 
-.container {
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
+.container{
+    width:100%;
+    max-width:430px;
+    margin:auto;
+    padding:25px 18px 40px;
 }
 
-.logo {
-    width: 100px;
-    height: 100px;
-    margin: 10px auto 15px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(145deg, #ffd84d, #d99b00);
-    color: #111;
-    font-size: 60px;
-    font-weight: bold;
-    box-shadow: 0 0 30px rgba(255,210,60,.5);
-}
-
-.title {
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.subtitle {
-    opacity: .7;
-    margin: 6px 0 20px;
-}
-
-.balance-box {
-    background: rgba(255,255,255,.08);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 15px;
-}
-
-.balance {
-    font-size: 42px;
-    font-weight: bold;
-}
-
-.afc {
-    font-size: 20px;
-    opacity: .8;
-}
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.stat {
-    background: rgba(255,255,255,.08);
-    padding: 12px 5px;
-    border-radius: 15px;
-}
-
-.stat-title {
-    font-size: 13px;
-    opacity: .7;
-}
-
-.stat-value {
-    font-size: 20px;
-    font-weight: bold;
-    margin-top: 5px;
-}
-
-.mine-area {
-    position: relative;
-    height: 250px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mine-button {
-    width: 180px;
-    height: 180px;
-    border: none;
-    border-radius: 50%;
-    background: linear-gradient(145deg,#ffd84d,#d99b00);
-    color: #111;
-    font-size: 110px;
-    font-weight: bold;
-    cursor: pointer;
+.logo{
+    width:95px;
+    height:95px;
+    margin:5px auto 12px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:60px;
+    font-weight:bold;
+    background:linear-gradient(145deg,#ffd700,#d99b00);
+    color:#07111f;
     box-shadow:
-        0 15px 30px rgba(0,0,0,.35),
+        0 0 20px rgba(255,215,0,.5),
+        inset 0 0 12px rgba(255,255,255,.4);
+}
+
+.title{
+    font-size:28px;
+    font-weight:bold;
+    margin-bottom:4px;
+}
+
+.subtitle{
+    color:#a9b9c9;
+    font-size:14px;
+    margin-bottom:22px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin-bottom:25px;
+}
+
+.stat{
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:15px;
+    padding:14px 8px;
+}
+
+.stat-name{
+    color:#9eb0c1;
+    font-size:12px;
+    margin-bottom:6px;
+}
+
+.stat-value{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.balance{
+    font-size:42px;
+    font-weight:bold;
+    margin:10px 0 3px;
+}
+
+.coin-name{
+    color:#ffd700;
+    font-size:15px;
+    margin-bottom:25px;
+}
+
+.mine-area{
+    position:relative;
+    width:240px;
+    height:240px;
+    margin:0 auto 25px;
+}
+
+.mine-button{
+    position:absolute;
+    left:20px;
+    top:20px;
+    width:200px;
+    height:200px;
+    border:none;
+    border-radius:50%;
+    cursor:pointer;
+
+    background:
+        radial-gradient(circle at 35% 30%,
+        #fff3a0 0%,
+        #ffd700 30%,
+        #e5a900 65%,
+        #9e6c00 100%);
+
+    color:#07111f;
+    font-size:95px;
+    font-weight:bold;
+
+    box-shadow:
+        0 12px 0 #795300,
+        0 20px 35px rgba(0,0,0,.5),
         inset 0 5px 10px rgba(255,255,255,.5);
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
+
+    transition:.1s;
 }
 
-.mine-button:active {
-    transform: scale(.90);
+.mine-button:active{
+    transform:translateY(10px);
+    box-shadow:
+        0 3px 0 #795300,
+        0 10px 20px rgba(0,0,0,.4);
 }
 
-.mine-button.disabled {
-    opacity: .5;
+.mine-button.disabled{
+    opacity:.45;
+    cursor:not-allowed;
 }
 
-.coin {
-    position: absolute;
-    font-size: 32px;
-    font-weight: bold;
-    color: #ffd84d;
-    pointer-events: none;
-    animation: jump .9s ease-out forwards;
+.energy-box{
+    margin:10px 0 25px;
 }
 
-@keyframes jump {
-    0% {
-        transform: translateY(0) scale(.5);
-        opacity: 0;
+.energy-text{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    margin-bottom:7px;
+    color:#c8d5e0;
+}
+
+.energy-bar{
+    width:100%;
+    height:12px;
+    background:#172536;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.energy-fill{
+    height:100%;
+    width:100%;
+    background:linear-gradient(90deg,#00e5ff,#00ff88);
+    border-radius:20px;
+    transition:width .3s;
+}
+
+.buttons{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.action{
+    border:none;
+    border-radius:13px;
+    padding:15px 8px;
+    background:#12263b;
+    color:white;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+    border:1px solid #23445f;
+}
+
+.action:active{
+    transform:scale(.97);
+}
+
+.upgrade{
+    background:linear-gradient(135deg,#a66b00,#e0a800);
+    color:#07111f;
+}
+
+.status{
+    min-height:22px;
+    margin-top:18px;
+    color:#9eb0c1;
+    font-size:13px;
+}
+
+.coin{
+    position:fixed;
+    pointer-events:none;
+    z-index:9999;
+    font-size:20px;
+    font-weight:bold;
+    color:#ffd700;
+    text-shadow:0 0 8px #ffd700;
+
+    animation:coinJump 900ms ease-out forwards;
+}
+
+@keyframes coinJump{
+    0%{
+        transform:translate(0,0) scale(.6);
+        opacity:0;
     }
 
-    20% {
-        opacity: 1;
-        transform: translateY(-30px) scale(1);
+    15%{
+        opacity:1;
+        transform:translate(0,-20px) scale(1);
     }
 
-    100% {
-        transform: translateY(-180px) scale(1.2);
-        opacity: 0;
+    100%{
+        transform:translate(
+            var(--x),
+            -170px
+        ) scale(1.25);
+        opacity:0;
     }
 }
 
-.energy-bar {
-    width: 100%;
-    height: 15px;
-    background: rgba(255,255,255,.12);
-    border-radius: 20px;
-    overflow: hidden;
-    margin-top: 10px;
+.flash{
+    animation:flash .18s ease;
 }
 
-.energy-fill {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg,#ffd84d,#ffb300);
-    transition: width .3s;
-}
-
-.energy-text {
-    margin-top: 8px;
-    opacity: .8;
-}
-
-.message {
-    min-height: 25px;
-    margin-top: 15px;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.buttons {
-    display: grid;
-    grid-template-columns: repeat(2,1fr);
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.action-button {
-    border: none;
-    border-radius: 15px;
-    padding: 15px 10px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    background: rgba(255,255,255,.1);
+@keyframes flash{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.08);}
+    100%{transform:scale(1);}
 }
 </style>
 </head>
@@ -208,421 +259,423 @@ body {
     <div class="logo">؋</div>
 
     <div class="title">Afghani Coin</div>
+    <div class="subtitle">Mine AFC and build your balance</div>
 
-    <div class="subtitle">
-        Mine AFC and build your balance
-    </div>
-
-    <div class="balance-box">
-        <div id="balance" class="balance">0</div>
-        <div class="afc">AFC</div>
-    </div>
+    <div class="balance" id="balance">0</div>
+    <div class="coin-name">AFC</div>
 
     <div class="stats">
 
         <div class="stat">
-            <div class="stat-title">Energy</div>
-            <div id="energy" class="stat-value">100</div>
+            <div class="stat-name">LEVEL</div>
+            <div class="stat-value" id="level">1</div>
         </div>
 
         <div class="stat">
-            <div class="stat-title">Level</div>
-            <div id="level" class="stat-value">1</div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-title">Power</div>
-            <div id="power" class="stat-value">1</div>
+            <div class="stat-name">POWER</div>
+            <div class="stat-value" id="power">1</div>
         </div>
 
     </div>
 
-    <div id="mineArea" class="mine-area">
-
+    <div class="mine-area">
         <button
             id="mineButton"
             class="mine-button"
             onclick="mine()">
             ؋
         </button>
-
     </div>
 
-    <div class="energy-bar">
-        <div id="energyFill" class="energy-fill"></div>
-    </div>
+    <div class="energy-box">
 
-    <div class="energy-text">
-        ⚡ Energy:
-        <span id="energyText">100</span>/100
-    </div>
+        <div class="energy-text">
+            <span>⚡ Energy</span>
+            <span id="energyText">100 / 100</span>
+        </div>
 
-    <div id="message" class="message"></div>
+        <div class="energy-bar">
+            <div
+                id="energyFill"
+                class="energy-fill">
+            </div>
+        </div>
+
+    </div>
 
     <div class="buttons">
 
-        <button class="action-button" onclick="tasks()">
+        <button class="action" onclick="showMessage('Tasks coming soon 🚀')">
             📋 Tasks
         </button>
 
-        <button class="action-button" onclick="invite()">
+        <button class="action" onclick="showMessage('Invite system coming soon 👥')">
             👥 Invite
         </button>
 
-        <button class="action-button" onclick="wallet()">
+        <button class="action" onclick="showMessage('Wallet coming soon 💰')">
             💰 Wallet
         </button>
 
-        <button class="action-button" onclick="upgrade()">
-            🚀 Upgrade
+        <button
+            class="action upgrade"
+            onclick="upgrade()">
+            ⬆️ Upgrade
         </button>
 
+    </div>
+
+    <div
+        id="status"
+        class="status">
+        Connecting...
     </div>
 
 </div>
 
 <script>
 
-const tg =
-    window.Telegram
-        ? window.Telegram.WebApp
-        : null;
+const tg = window.Telegram.WebApp;
 
-if (tg) {
-    tg.ready();
-    tg.expand();
-}
+tg.ready();
+tg.expand();
 
-/* =========================
-   TELEGRAM ID
-========================= */
+/*
+========================================
+AFGHANI COIN API
+========================================
+*/
 
-let telegramId = null;
+const API_BASE = "https://afghanicoin.vercel.app";
 
-if (
+/*
+Telegram user ID
+*/
+
+let telegramId = "123456789";
+
+if(
     tg &&
     tg.initDataUnsafe &&
     tg.initDataUnsafe.user &&
     tg.initDataUnsafe.user.id
-) {
+){
     telegramId =
         String(tg.initDataUnsafe.user.id);
 }
 
 /*
-   فقط برای تست خارج از تلگرام
+========================================
+ELEMENTS
+========================================
 */
-if (!telegramId) {
-    telegramId = "123456789";
+
+const balanceEl =
+    document.getElementById("balance");
+
+const energyTextEl =
+    document.getElementById("energyText");
+
+const energyFillEl =
+    document.getElementById("energyFill");
+
+const levelEl =
+    document.getElementById("level");
+
+const powerEl =
+    document.getElementById("power");
+
+const mineButton =
+    document.getElementById("mineButton");
+
+const statusEl =
+    document.getElementById("status");
+
+/*
+========================================
+USER DATA
+========================================
+*/
+
+let user = {
+    balance:0,
+    energy:100,
+    level:1,
+    power:1
+};
+
+let mining = false;
+
+/*
+========================================
+SHOW STATUS
+========================================
+*/
+
+function showMessage(message){
+
+    statusEl.innerText = message;
+
+    setTimeout(() => {
+
+        statusEl.innerText = "";
+
+    },3000);
 }
 
-/* =========================
-   VARIABLES
-========================= */
+/*
+========================================
+UPDATE SCREEN
+========================================
+*/
 
-let balance = 0;
-let energy = 100;
-let level = 1;
-let power = 1;
+function updateScreen(){
 
-let loading = false;
+    balanceEl.innerText =
+        Number(user.balance || 0);
 
-const MAX_ENERGY = 100;
+    energyTextEl.innerText =
+        `${Number(user.energy || 0)} / 100`;
 
-/* =========================
-   UPDATE UI
-========================= */
+    levelEl.innerText =
+        Number(user.level || 1);
 
-function updateUI() {
+    powerEl.innerText =
+        Number(user.power || 1);
 
-    document.getElementById("balance").textContent =
-        balance;
+    let energy =
+        Number(user.energy || 0);
 
-    document.getElementById("energy").textContent =
-        energy;
+    if(energy < 0){
+        energy = 0;
+    }
 
-    document.getElementById("energyText").textContent =
-        energy;
+    if(energy > 100){
+        energy = 100;
+    }
 
-    document.getElementById("level").textContent =
-        level;
+    energyFillEl.style.width =
+        energy + "%";
 
-    document.getElementById("power").textContent =
-        power;
+    if(energy <= 0){
 
-    const percent =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                (energy / MAX_ENERGY) * 100
-            )
-        );
+        mineButton.classList.add("disabled");
 
-    document.getElementById("energyFill").style.width =
-        percent + "%";
+    }else{
 
-    const button =
-        document.getElementById("mineButton");
+        mineButton.classList.remove("disabled");
 
-    if (energy <= 0) {
-        button.classList.add("disabled");
-    } else {
-        button.classList.remove("disabled");
     }
 }
 
-/* =========================
-   MESSAGE
-========================= */
+/*
+========================================
+LOAD USER
+========================================
+*/
 
-function showMessage(message) {
+async function loadUser(){
 
-    document.getElementById("message").textContent =
-        message;
-}
+    try{
 
-/* =========================
-   LOAD USER
-========================= */
-
-async function loadUser() {
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/user?telegram_id=" +
-                encodeURIComponent(telegramId)
-            );
-
-        const text =
-            await response.text();
-
-        let data;
-
-        try {
-            data = JSON.parse(text);
-        } catch {
-            showMessage(
-                "پاسخ سرور JSON نیست: " +
-                text.substring(0,150)
-            );
-            return;
-        }
-
-        console.log(
-            "USER RESPONSE:",
-            data
+        const response = await fetch(
+            `${API_BASE}/api/user?telegram_id=${encodeURIComponent(telegramId)}`,
+            {
+                method:"GET",
+                cache:"no-store"
+            }
         );
 
-        if (!response.ok || !data.success) {
+        if(!response.ok){
 
-            showMessage(
-                "خطای User API: " +
-                (data.message || response.status)
+            throw new Error(
+                "HTTP " + response.status
             );
 
-            return;
         }
 
-        if (data.user) {
+        const data =
+            await response.json();
 
-            balance =
-                Number(data.user.balance);
+        if(
+            data.success &&
+            data.user
+        ){
 
-            energy =
-                Number(data.user.energy);
+            user = data.user;
 
-            level =
-                Number(data.user.level);
+            updateScreen();
 
-            power =
-                Number(data.user.power);
+            statusEl.innerText =
+                "Connected ✓";
 
-            updateUI();
+            setTimeout(() => {
+
+                statusEl.innerText = "";
+
+            },2000);
+
+        }else{
+
+            throw new Error(
+                data.message ||
+                "User data error"
+            );
+
         }
 
-    } catch (error) {
+    }catch(error){
 
         console.error(
-            "USER ERROR:",
+            "LOAD USER ERROR:",
             error
         );
 
-        showMessage(
-            "خطای اتصال User: " +
-            error.message
-        );
+        statusEl.innerText =
+            "Connection error";
+
     }
 }
 
-/* =========================
-   COIN ANIMATION
-========================= */
+/*
+========================================
+COIN ANIMATION
+========================================
+*/
 
-function createCoin() {
-
-    const area =
-        document.getElementById("mineArea");
+function createCoin(){
 
     const coin =
         document.createElement("div");
 
     coin.className = "coin";
 
-    coin.textContent =
-        "+" + power + " AFC";
+    coin.innerText =
+        "+" + Number(user.power || 1) + " AFC";
+
+    const rect =
+        mineButton.getBoundingClientRect();
 
     coin.style.left =
-        (43 + Math.random() * 14) + "%";
+        (rect.left + rect.width / 2 - 25) + "px";
 
     coin.style.top =
-        "50%";
+        (rect.top + rect.height / 2) + "px";
 
-    area.appendChild(coin);
+    const randomX =
+        (Math.random() * 100 - 50) + "px";
+
+    coin.style.setProperty(
+        "--x",
+        randomX
+    );
+
+    document.body.appendChild(coin);
 
     setTimeout(() => {
+
         coin.remove();
-    }, 900);
+
+    },900);
 }
 
-/* =========================
-   MINE
-========================= */
+/*
+========================================
+MINE
+========================================
+*/
 
-async function mine() {
+async function mine(){
 
-    if (loading) {
+    if(mining){
         return;
     }
 
-    if (energy <= 0) {
+    if(
+        !user ||
+        Number(user.energy || 0) <= 0
+    ){
 
         showMessage(
-            "⚡ انرژی شما تمام شده است"
+            "⚡ Energy تمام شده است"
         );
 
         return;
     }
 
-    loading = true;
+    mining = true;
 
-    const button =
-        document.getElementById("mineButton");
+    mineButton.classList.add("flash");
 
-    button.classList.add("disabled");
+    setTimeout(() => {
+
+        mineButton.classList.remove("flash");
+
+    },200);
+
+    /*
+    Show animation immediately
+    */
 
     createCoin();
 
-    try {
+    try{
 
         const response =
             await fetch(
-                "/api/mine",
+                `${API_BASE}/api/mine`,
                 {
-                    method: "POST",
+                    method:"POST",
 
-                    headers: {
+                    headers:{
                         "Content-Type":
                             "application/json"
                     },
 
-                    body: JSON.stringify({
+                    body:JSON.stringify({
+
                         telegram_id:
                             telegramId
+
                     })
                 }
             );
 
-        /*
-           پاسخ را اول به صورت text می‌گیریم
-           تا اگر Vercel HTML error داد،
-           خطای واقعی را ببینیم.
-        */
+        if(!response.ok){
 
-        const text =
-            await response.text();
-
-        console.log(
-            "MINE STATUS:",
-            response.status
-        );
-
-        console.log(
-            "MINE RAW RESPONSE:",
-            text
-        );
-
-        let data;
-
-        try {
-
-            data =
-                JSON.parse(text);
-
-        } catch {
-
-            showMessage(
-                "خطای سرور " +
-                response.status +
-                ": " +
-                text.substring(0,200)
+            throw new Error(
+                "HTTP " + response.status
             );
 
-            return;
         }
+
+        const data =
+            await response.json();
 
         console.log(
             "MINE RESPONSE:",
             data
         );
 
-        /* API error */
+        if(
+            data.success &&
+            data.user
+        ){
 
-        if (
-            !response.ok ||
-            !data.success
-        ) {
+            user = data.user;
 
-            showMessage(
-                "خطای استخراج: " +
-                (
-                    data.message ||
-                    "HTTP " +
-                    response.status
-                )
+            updateScreen();
+
+        }else{
+
+            throw new Error(
+                data.message ||
+                "Mining failed"
             );
 
-            return;
         }
 
-        /* موفق */
-
-        if (data.user) {
-
-            balance =
-                Number(data.user.balance);
-
-            energy =
-                Number(data.user.energy);
-
-            level =
-                Number(data.user.level);
-
-            power =
-                Number(data.user.power);
-
-            updateUI();
-
-            showMessage(
-                "✅ +" +
-                Number(data.mined || power) +
-                " AFC ذخیره شد"
-            );
-        }
-
-    } catch (error) {
+    }catch(error){
 
         console.error(
             "MINE ERROR:",
@@ -630,159 +683,121 @@ async function mine() {
         );
 
         showMessage(
-            "خطای اتصال Mine: " +
-            error.message
+            "خطا در استخراج"
         );
 
-    } finally {
+    }finally{
 
-        loading = false;
+        mining = false;
 
-        button.classList.remove(
-            "disabled"
-        );
-
-        updateUI();
     }
 }
 
-/* =========================
-   UPGRADE
-========================= */
+/*
+========================================
+UPGRADE
+========================================
+*/
 
-async function upgrade() {
+async function upgrade(){
 
-    if (loading) {
-        return;
-    }
-
-    loading = true;
-
-    try {
+    try{
 
         const response =
             await fetch(
-                "/api/upgrade",
+                `${API_BASE}/api/upgrade`,
                 {
-                    method: "POST",
+                    method:"POST",
 
-                    headers: {
+                    headers:{
                         "Content-Type":
                             "application/json"
                     },
 
-                    body: JSON.stringify({
+                    body:JSON.stringify({
+
                         telegram_id:
                             telegramId
+
                     })
                 }
             );
 
-        const text =
-            await response.text();
+        if(!response.ok){
 
-        let data;
-
-        try {
-            data = JSON.parse(text);
-        } catch {
-            showMessage(
-                "خطای سرور: " +
-                text.substring(0,150)
+            throw new Error(
+                "HTTP " + response.status
             );
-            return;
+
         }
 
-        if (
-            !response.ok ||
-            !data.success
-        ) {
+        const data =
+            await response.json();
+
+        console.log(
+            "UPGRADE RESPONSE:",
+            data
+        );
+
+        if(
+            data.success &&
+            data.user
+        ){
+
+            user = data.user;
+
+            updateScreen();
+
+            showMessage(
+                "Upgrade successful 🚀"
+            );
+
+        }else{
 
             showMessage(
                 data.message ||
                 "Upgrade failed"
             );
 
-            return;
         }
 
-        if (data.user) {
+    }catch(error){
 
-            balance =
-                Number(data.user.balance);
-
-            energy =
-                Number(data.user.energy);
-
-            level =
-                Number(data.user.level);
-
-            power =
-                Number(data.user.power);
-
-            updateUI();
-
-            showMessage(
-                "🚀 ارتقا موفق بود"
-            );
-        }
-
-    } catch (error) {
-
-        showMessage(
-            "خطای اتصال Upgrade: " +
-            error.message
+        console.error(
+            "UPGRADE ERROR:",
+            error
         );
 
-    } finally {
+        showMessage(
+            "خطا در Upgrade"
+        );
 
-        loading = false;
     }
 }
 
-/* =========================
-   BUTTONS
-========================= */
-
-function tasks() {
-
-    showMessage(
-        "📋 Tasks به‌زودی فعال می‌شود"
-    );
-}
-
-function invite() {
-
-    showMessage(
-        "👥 Invite به‌زودی فعال می‌شود"
-    );
-}
-
-function wallet() {
-
-    showMessage(
-        "💰 Wallet به‌زودی فعال می‌شود"
-    );
-}
-
-/* =========================
-   AUTO REFRESH
-========================= */
-
-setInterval(
-    loadUser,
-    10000
-);
-
-/* =========================
-   START
-========================= */
-
-updateUI();
+/*
+========================================
+AUTO LOAD
+========================================
+*/
 
 loadUser();
+
+/*
+Refresh user every 10 seconds
+*/
+
+setInterval(() => {
+
+    if(!mining){
+
+        loadUser();
+
+    }
+
+},10000);
 
 </script>
 
 </body>
-    </html>
+</html>
