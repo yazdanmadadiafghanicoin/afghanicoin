@@ -1,14 +1,21 @@
 import sql from "./db.js";
+import { logWalletTransaction } from "./wallet-log.js";
 
 const NEW_USER_REWARD = 100;
 const REFERRER_REWARD = 200;
 
 export default async function handler(req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
+
+    res.setHeader(
+        "Access-Control-Allow-Origin",
+        "*"
+    );
+
     res.setHeader(
         "Access-Control-Allow-Methods",
         "GET,POST,OPTIONS"
     );
+
     res.setHeader(
         "Access-Control-Allow-Headers",
         "Content-Type"
@@ -20,7 +27,6 @@ export default async function handler(req, res) {
 
     try {
 
-        // ساخت جدول دعوت‌ها
         await sql`
             CREATE TABLE IF NOT EXISTS referrals (
                 id SERIAL PRIMARY KEY,
@@ -32,17 +38,21 @@ export default async function handler(req, res) {
             )
         `;
 
+        // =========================
+        // GET INVITES
+        // =========================
 
-        // دریافت آمار دعوت
         if (req.method === "GET") {
 
             const telegramId =
                 req.query?.telegram_id;
 
             if (!telegramId) {
+
                 return res.status(400).json({
                     success: false,
-                    message: "telegram_id is required"
+                    message:
+                        "telegram_id is required"
                 });
             }
 
@@ -61,18 +71,29 @@ export default async function handler(req, res) {
                 invitedUsers.length;
 
             const totalReward =
-                totalInvites * REFERRER_REWARD;
+                totalInvites *
+                REFERRER_REWARD;
 
             return res.status(200).json({
+
                 success: true,
-                totalInvites: totalInvites,
-                totalReward: totalReward,
-                invitedUsers: invitedUsers
+
+                totalInvites:
+                    totalInvites,
+
+                totalReward:
+                    totalReward,
+
+                invitedUsers:
+                    invitedUsers
+
             });
         }
 
+        // =========================
+        // CREATE REFERRAL
+        // =========================
 
-        // ثبت دعوت جدید
         if (req.method === "POST") {
 
             const {
@@ -84,6 +105,7 @@ export default async function handler(req, res) {
                 !referrer_telegram_id ||
                 !invited_telegram_id
             ) {
+
                 return res.status(400).json({
                     success: false,
                     message:
@@ -92,14 +114,17 @@ export default async function handler(req, res) {
             }
 
             const referrer =
-                String(referrer_telegram_id);
+                String(
+                    referrer_telegram_id
+                );
 
             const invited =
-                String(invited_telegram_id);
+                String(
+                    invited_telegram_id
+                );
 
-
-            // جلوگیری از دعوت خود
             if (referrer === invited) {
+
                 return res.status(400).json({
                     success: false,
                     message:
@@ -107,16 +132,16 @@ export default async function handler(req, res) {
                 });
             }
 
-
-            // پیدا کردن دعوت‌کننده
             const referrerUser = await sql`
                 SELECT *
                 FROM users
-                WHERE telegram_id = ${referrer}
+                WHERE telegram_id =
+                    ${referrer}
                 LIMIT 1
             `;
 
             if (referrerUser.length === 0) {
+
                 return res.status(404).json({
                     success: false,
                     message:
@@ -124,16 +149,16 @@ export default async function handler(req, res) {
                 });
             }
 
-
-            // پیدا کردن کاربر جدید
             const invitedUser = await sql`
                 SELECT *
                 FROM users
-                WHERE telegram_id = ${invited}
+                WHERE telegram_id =
+                    ${invited}
                 LIMIT 1
             `;
 
             if (invitedUser.length === 0) {
+
                 return res.status(404).json({
                     success: false,
                     message:
@@ -141,16 +166,16 @@ export default async function handler(req, res) {
                 });
             }
 
-
-            // بررسی اینکه قبلاً دعوت شده یا نه
             const existing = await sql`
                 SELECT *
                 FROM referrals
-                WHERE invited_telegram_id = ${invited}
+                WHERE invited_telegram_id =
+                    ${invited}
                 LIMIT 1
             `;
 
             if (existing.length > 0) {
+
                 return res.status(400).json({
                     success: false,
                     already_invited: true,
@@ -159,16 +184,17 @@ export default async function handler(req, res) {
                 });
             }
 
-
-            // ثبت دعوت
+            // ثبت Referral
             await sql`
-                INSERT INTO referrals (
+                INSERT INTO referrals
+                (
                     referrer_telegram_id,
                     invited_telegram_id,
                     reward_referrer,
                     reward_invited
                 )
-                VALUES (
+                VALUES
+                (
                     ${referrer},
                     ${invited},
                     ${REFERRER_REWARD},
@@ -176,51 +202,88 @@ export default async function handler(req, res) {
                 )
             `;
 
+            // =========================
+            // REFERRER
+            // =========================
 
-            // پاداش دعوت‌کننده
-            const newReferrerBalance =
+            const oldReferrerBalance =
                 Number(
                     referrerUser[0].balance || 0
-                ) + REFERRER_REWARD;
+                );
+
+            const newReferrerBalance =
+                oldReferrerBalance +
+                REFERRER_REWARD;
 
             await sql`
                 UPDATE users
-                SET balance = ${newReferrerBalance}
-                WHERE telegram_id = ${referrer}
+                SET balance =
+                    ${newReferrerBalance}
+                WHERE telegram_id =
+                    ${referrer}
             `;
 
+            await logWalletTransaction(
+                referrer,
+                "invite",
+                REFERRER_REWARD,
+                newReferrerBalance,
+                "پاداش دعوت دوست"
+            );
 
-            // پاداش کاربر جدید
-            const newInvitedBalance =
+            // =========================
+            // INVITED USER
+            // =========================
+
+            const oldInvitedBalance =
                 Number(
                     invitedUser[0].balance || 0
-                ) + NEW_USER_REWARD;
+                );
+
+            const newInvitedBalance =
+                oldInvitedBalance +
+                NEW_USER_REWARD;
 
             const updatedInvited = await sql`
                 UPDATE users
-                SET balance = ${newInvitedBalance}
-                WHERE telegram_id = ${invited}
+                SET balance =
+                    ${newInvitedBalance}
+                WHERE telegram_id =
+                    ${invited}
                 RETURNING *
             `;
 
+            await logWalletTransaction(
+                invited,
+                "invite_bonus",
+                NEW_USER_REWARD,
+                newInvitedBalance,
+                "پاداش ورود با دعوت"
+            );
 
             return res.status(200).json({
+
                 success: true,
+
                 message:
                     "Referral registered successfully",
+
                 referrer_reward:
                     REFERRER_REWARD,
+
                 invited_reward:
                     NEW_USER_REWARD,
+
                 user:
                     updatedInvited[0]
+
             });
         }
 
-
         return res.status(405).json({
             success: false,
-            message: "Method not allowed"
+            message:
+                "Method not allowed"
         });
 
     } catch (error) {
@@ -231,11 +294,15 @@ export default async function handler(req, res) {
         );
 
         return res.status(500).json({
+
             success: false,
+
             message:
                 "Invite server error",
+
             error:
                 error.message
+
         });
     }
-}
+                    }
