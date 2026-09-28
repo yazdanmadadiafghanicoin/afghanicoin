@@ -18,7 +18,8 @@ API = f"https://api.telegram.org/bot{TOKEN}"
 
 BACKEND_URL = "https://afghanicoin.vercel.app"
 
-WEB_APP_URL = "https://afghanicoin.vercel.app/?v=3"
+# نسخه اصلی فعلی
+WEB_APP_URL = "https://afghanicoin.vercel.app/"
 
 
 # =========================
@@ -93,19 +94,13 @@ def create_user(telegram_id):
                 response.read().decode()
             )
 
-            print(
-                "User API:",
-                result
-            )
+            print("User API:", result)
 
             return result
 
     except Exception as error:
 
-        print(
-            "Create user error:",
-            error
-        )
+        print("Create user error:", error)
 
         return None
 
@@ -114,10 +109,7 @@ def create_user(telegram_id):
 # REGISTER REFERRAL
 # =========================
 
-def register_referral(
-    referrer_id,
-    invited_id
-):
+def register_referral(referrer_id, invited_id):
 
     try:
 
@@ -148,21 +140,35 @@ def register_referral(
                 response.read().decode()
             )
 
-            print(
-                "Referral API:",
-                result
-            )
+            print("Referral API:", result)
 
             return result
 
     except Exception as error:
 
-        print(
-            "Referral error:",
-            error
-        )
+        print("Referral error:", error)
 
         return None
+
+
+# =========================
+# WEB APP KEYBOARD
+# =========================
+
+def web_app_keyboard():
+
+    return {
+        "inline_keyboard": [
+            [
+                {
+                    "text": "🪙 ورود به Afghani Coin",
+                    "web_app": {
+                        "url": WEB_APP_URL
+                    }
+                }
+            ]
+        ]
+    }
 
 
 # =========================
@@ -175,9 +181,8 @@ def start_command(
     referral_code=None
 ):
 
-    # اول کاربر را در دیتابیس ایجاد می‌کنیم
+    # ایجاد کاربر در دیتابیس
     create_user(telegram_id)
-
 
     # =========================
     # REFERRAL
@@ -187,11 +192,8 @@ def start_command(
 
     if referral_code:
 
-        referral_code = str(
-            referral_code
-        ).strip()
+        referral_code = str(referral_code).strip()
 
-        # جلوگیری از دعوت خود
         if referral_code != str(telegram_id):
 
             referral_result = register_referral(
@@ -199,33 +201,14 @@ def start_command(
                 telegram_id
             )
 
-
-    # =========================
-    # WEB APP BUTTON
-    # =========================
-
-    keyboard = {
-        "inline_keyboard": [
-            [
-                {
-                    "text": "⛏️ استخراج Afghani Coin",
-                    "web_app": {
-                        "url": WEB_APP_URL
-                    }
-                }
-            ]
-        ]
-    }
-
-
     # =========================
     # MESSAGE
     # =========================
 
     message_text = (
-        "🪙 Afghani Coin V2\n\n"
+        "🪙 Afghani Coin\n\n"
         "خوش آمدید به Afghani Coin!\n\n"
-        "⛏️ برای شروع استخراج روی دکمه زیر بزنید.\n\n"
+        "برای شروع استخراج روی دکمه زیر بزنید.\n\n"
         "⚡ Mine\n"
         "🚀 Upgrade\n"
         "🎁 Daily Reward\n"
@@ -233,8 +216,7 @@ def start_command(
         "🏆 Leaderboard"
     )
 
-
-    # اگر دعوت موفق بود
+    # دعوت موفق
     if referral_result:
 
         if referral_result.get("success"):
@@ -245,20 +227,17 @@ def start_command(
                 "🎁 پاداش شما: 100 AFC"
             )
 
-        elif referral_result.get(
-            "already_invited"
-        ):
+        elif referral_result.get("already_invited"):
 
             message_text += (
                 "\n\n"
                 "ℹ️ این حساب قبلاً با یک لینک دعوت ثبت شده است."
             )
 
-
     send_message(
         chat_id,
         message_text,
-        keyboard
+        web_app_keyboard()
     )
 
 
@@ -268,43 +247,33 @@ def start_command(
 
 def handle_update(update):
 
-    message = update.get(
-        "message"
-    )
+    message = update.get("message")
 
     if not message:
         return
-
 
     chat_id = message.get(
         "chat",
         {}
     ).get("id")
 
-
     if not chat_id:
         return
-
 
     telegram_user = message.get(
         "from",
         {}
     )
 
-    telegram_id = telegram_user.get(
-        "id"
-    )
-
+    telegram_id = telegram_user.get("id")
 
     if not telegram_id:
         return
-
 
     text = message.get(
         "text",
         ""
     ).strip()
-
 
     # =========================
     # START
@@ -317,9 +286,7 @@ def handle_update(update):
         referral_code = None
 
         if len(parts) > 1:
-
             referral_code = parts[1]
-
 
         start_command(
             chat_id,
@@ -329,33 +296,18 @@ def handle_update(update):
 
         return
 
-
     # =========================
     # OTHER MESSAGES
     # =========================
 
-    keyboard = {
-        "inline_keyboard": [
-            [
-                {
-                    "text": "⛏️ استخراج Afghani Coin",
-                    "web_app": {
-                        "url": WEB_APP_URL
-                    }
-                }
-            ]
-        ]
-    }
-
-
     send_message(
         chat_id,
 
-        "🪙 Afghani Coin V2\n\n"
+        "🪙 Afghani Coin\n\n"
         "برای ورود به Afghani Coin "
         "روی دکمه زیر بزنید:",
 
-        keyboard
+        web_app_keyboard()
     )
 
 
@@ -383,23 +335,19 @@ def main():
     offset = 0
 
     print(
-        "Afghani Coin Bot V3 is running..."
+        "Afghani Coin Bot is running..."
     )
-
 
     while True:
 
         try:
 
-            result = get_updates(
-                offset
-            )
+            result = get_updates(offset)
 
             updates = result.get(
                 "result",
                 []
             )
-
 
             for update in updates:
 
@@ -407,10 +355,7 @@ def main():
                     update["update_id"] + 1
                 )
 
-                handle_update(
-                    update
-                )
-
+                handle_update(update)
 
         except Exception as error:
 
