@@ -235,7 +235,7 @@ button{
     }
     100%{
         opacity:0;
-        transform:translate(calc(-50% + var(--x)), -130px) scale(1.2);
+        transform:translate(calc(-50% + var(--x)),-130px) scale(1.2);
     }
 }
 
@@ -318,6 +318,151 @@ button{
     border-radius:10px;
 }
 
+/* =========================
+   PROFESSIONAL LEADERBOARD
+========================= */
+
+.leader-hero{
+    background:
+        radial-gradient(circle at 50% 0%,rgba(255,211,79,.15),transparent 45%),
+        linear-gradient(145deg,#173d5c,#091b2d);
+    border:1px solid rgba(255,211,79,.12);
+    border-radius:22px;
+    padding:18px 12px 15px;
+    margin-bottom:12px;
+    text-align:center;
+    overflow:hidden;
+}
+
+.leader-hero-title{
+    font-size:12px;
+    color:#9cb1c0;
+    margin-bottom:15px;
+}
+
+.podium{
+    display:grid;
+    grid-template-columns:1fr 1.18fr 1fr;
+    gap:6px;
+    align-items:end;
+}
+
+.podium-item{
+    position:relative;
+    background:#0d2539;
+    border-radius:17px;
+    padding:12px 5px;
+    border:1px solid rgba(255,255,255,.05);
+}
+
+.podium-item.first{
+    padding-top:18px;
+    background:linear-gradient(180deg,#493c19,#0d2539);
+    border-color:rgba(255,211,79,.25);
+}
+
+.podium-medal{
+    font-size:27px;
+}
+
+.podium-avatar{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    margin:6px auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#173c57;
+    font-size:20px;
+    border:2px solid rgba(255,255,255,.08);
+}
+
+.podium-item.first .podium-avatar{
+    width:55px;
+    height:55px;
+    font-size:24px;
+}
+
+.podium-name{
+    font-size:10px;
+    font-weight:bold;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.podium-balance{
+    color:#ffd34f;
+    font-size:10px;
+    font-weight:bold;
+    margin-top:5px;
+    direction:ltr;
+}
+
+.podium-meta{
+    color:#71899c;
+    font-size:8px;
+    margin-top:4px;
+}
+
+.my-rank-card{
+    background:linear-gradient(135deg,#153b35,#0c2928);
+    border:1px solid rgba(112,239,162,.18);
+    border-radius:18px;
+    padding:14px;
+    margin-bottom:12px;
+}
+
+.my-rank-title{
+    color:#70efa2;
+    font-size:10px;
+    margin-bottom:7px;
+}
+
+.my-rank-number{
+    font-size:27px;
+    font-weight:900;
+}
+
+.my-rank-name{
+    font-size:11px;
+    font-weight:bold;
+}
+
+.my-rank-balance{
+    color:#ffd34f;
+    font-size:11px;
+    margin-top:4px;
+    direction:ltr;
+}
+
+.leader-list-title{
+    font-size:13px;
+    font-weight:bold;
+    margin:16px 2px 9px;
+}
+
+.leader-card{
+    background:#0d2133;
+    border:1px solid rgba(255,255,255,.05);
+    border-radius:16px;
+    padding:11px;
+    margin-bottom:7px;
+    animation:leaderIn .3s ease both;
+}
+
+@keyframes leaderIn{
+    from{
+        opacity:0;
+        transform:translateY(8px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
 .leader{
     display:flex;
     align-items:center;
@@ -328,6 +473,8 @@ button{
     width:30px;
     text-align:center;
     font-weight:bold;
+    color:#8da5b6;
+    font-size:12px;
 }
 
 .avatar{
@@ -342,11 +489,15 @@ button{
 
 .leader-main{
     flex:1;
+    min-width:0;
 }
 
 .name{
     font-size:12px;
     font-weight:bold;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .meta{
@@ -360,6 +511,14 @@ button{
     font-size:11px;
     font-weight:bold;
     direction:ltr;
+    white-space:nowrap;
+}
+
+.leader-total{
+    text-align:center;
+    color:#71899c;
+    font-size:9px;
+    padding:8px;
 }
 
 .task{
@@ -629,20 +788,18 @@ button{
 
 <header class="header">
 
-    <div class="logo-area">
+<div class="logo-area">
+<div class="logo">؋</div>
 
-        <div class="logo">؋</div>
+<div>
+<div class="title">Afghani Coin</div>
+<div class="subtitle">AFC Mining Platform</div>
+</div>
+</div>
 
-        <div>
-            <div class="title">Afghani Coin</div>
-            <div class="subtitle">AFC Mining Platform</div>
-        </div>
-
-    </div>
-
-    <div id="status" class="status">
-        ● Connecting
-    </div>
+<div id="status" class="status">
+● Connecting
+</div>
 
 </header>
 
@@ -651,139 +808,155 @@ button{
 
 <section id="homePage" class="page active">
 
-    <div class="balance-card">
+<div class="balance-card">
 
-        <div class="label">
-            موجودی شما
-        </div>
+<div class="label">موجودی شما</div>
 
-        <div class="balance">
-            <span id="balance">0</span>
-            <span class="afc">AFC</span>
-        </div>
+<div class="balance">
+<span id="balance">0</span>
+<span class="afc">AFC</span>
+</div>
 
-        <div class="label">
-            Afghani Coin
-        </div>
+<div class="label">Afghani Coin</div>
 
-    </div>
+</div>
 
 
-    <div class="stats">
+<div class="stats">
 
-        <div class="stat">
-            <div class="stat-icon">⚡</div>
-            <div class="stat-name">POWER</div>
-            <div id="power" class="stat-value">1</div>
-        </div>
+<div class="stat">
+<div class="stat-icon">⚡</div>
+<div class="stat-name">POWER</div>
+<div id="power" class="stat-value">1</div>
+</div>
 
-        <div class="stat">
-            <div class="stat-icon">⭐</div>
-            <div class="stat-name">LEVEL</div>
-            <div id="level" class="stat-value">1</div>
-        </div>
+<div class="stat">
+<div class="stat-icon">⭐</div>
+<div class="stat-name">LEVEL</div>
+<div id="level" class="stat-value">1</div>
+</div>
 
-        <div class="stat">
-            <div class="stat-icon">⛏️</div>
-            <div class="stat-name">MINED</div>
-            <div id="mined" class="stat-value">0</div>
-        </div>
+<div class="stat">
+<div class="stat-icon">⛏️</div>
+<div class="stat-name">MINED</div>
+<div id="mined" class="stat-value">0</div>
+</div>
 
-    </div>
-
-
-    <div class="energy">
-
-        <div class="energy-top">
-            <span>🔋 Energy</span>
-            <span id="energyText">100 / 100</span>
-        </div>
-
-        <div class="energy-bar">
-            <div id="energyFill" class="energy-fill"></div>
-        </div>
-
-    </div>
+</div>
 
 
-    <div id="mineArea" class="mine-area">
+<div class="energy">
 
-        <button
-            id="mineButton"
-            class="mine-button"
-            type="button">
-            ؋
-        </button>
+<div class="energy-top">
+<span>🔋 Energy</span>
+<span id="energyText">100 / 100</span>
+</div>
 
-        <div class="mine-hint">
-            برای استخراج روی ؋ کلیک کن
-        </div>
+<div class="energy-bar">
+<div id="energyFill" class="energy-fill"></div>
+</div>
 
-    </div>
+</div>
 
 
-    <div class="actions">
+<div id="mineArea" class="mine-area">
 
-        <button id="dailyButton"
-                class="action"
-                type="button">
+<button id="mineButton"
+class="mine-button"
+type="button">؋</button>
 
-            <div class="action-icon">🎁</div>
-            <div class="action-title">
-                Daily Reward
-            </div>
-            <div class="action-sub">
-                پاداش روزانه
-            </div>
+<div class="mine-hint">
+برای استخراج روی ؋ کلیک کن
+</div>
 
-        </button>
+</div>
 
 
-        <button id="upgradeButton"
-                class="action"
-                type="button">
+<div class="actions">
 
-            <div class="action-icon">⚡</div>
-            <div class="action-title">
-                Upgrade
-            </div>
-            <div id="upgradeText" class="action-sub">
-                Cost: 100 AFC
-            </div>
+<button id="dailyButton"
+class="action"
+type="button">
 
-        </button>
+<div class="action-icon">🎁</div>
+<div class="action-title">Daily Reward</div>
+<div class="action-sub">پاداش روزانه</div>
 
-    </div>
+</button>
+
+<button id="upgradeButton"
+class="action"
+type="button">
+
+<div class="action-icon">⚡</div>
+<div class="action-title">Upgrade</div>
+<div id="upgradeText" class="action-sub">
+Cost: 100 AFC
+</div>
+
+</button>
+
+</div>
 
 </section>
 
 
-<!-- LEADERBOARD -->
+<!-- PROFESSIONAL LEADERBOARD -->
 
 <section id="leaderboardPage" class="page">
 
-    <div class="row">
+<div class="row">
 
-        <div class="section-title">
-            🏆 Leaderboard
-        </div>
+<div class="section-title">
+🏆 Leaderboard
+</div>
 
-        <button
-            id="leaderRefresh"
-            class="refresh"
-            type="button">
-            ↻
-        </button>
+<button id="leaderRefresh"
+class="refresh"
+type="button">
+↻
+</button>
 
-    </div>
+</div>
 
-    <div id="myRank"></div>
 
-    <div id="leaderboardList">
-        <div class="loading">
-            ⏳ در حال دریافت...
-        </div>
-    </div>
+<div class="leader-hero">
+
+<div class="leader-hero-title">
+🏆 برترین Minerهای Afghani Coin
+</div>
+
+<div id="podium"
+class="podium">
+
+<div class="loading">
+⏳
+</div>
+
+</div>
+
+</div>
+
+
+<div id="myRank"></div>
+
+
+<div class="leader-list-title">
+📊 رتبه‌بندی Minerها
+</div>
+
+
+<div id="leaderboardList">
+
+<div class="loading">
+⏳ در حال دریافت...
+</div>
+
+</div>
+
+
+<div id="leaderTotal"
+class="leader-total"></div>
 
 </section>
 
@@ -792,26 +965,25 @@ button{
 
 <section id="tasksPage" class="page">
 
-    <div class="row">
+<div class="row">
 
-        <div class="section-title">
-            🎯 Tasks
-        </div>
+<div class="section-title">
+🎯 Tasks
+</div>
 
-        <button
-            id="taskRefresh"
-            class="refresh"
-            type="button">
-            ↻
-        </button>
+<button id="taskRefresh"
+class="refresh"
+type="button">
+↻
+</button>
 
-    </div>
+</div>
 
-    <div id="tasksList">
-        <div class="loading">
-            ⏳ در حال دریافت...
-        </div>
-    </div>
+<div id="tasksList">
+<div class="loading">
+⏳ در حال دریافت...
+</div>
+</div>
 
 </section>
 
@@ -820,77 +992,73 @@ button{
 
 <section id="invitePage" class="page">
 
-    <div class="section-title">
-        👥 Invite Friends
-    </div>
+<div class="section-title">
+👥 Invite Friends
+</div>
 
-    <div class="invite-box">
+<div class="invite-box">
 
-        <div class="invite-icon">
-            👥
-        </div>
+<div class="invite-icon">👥</div>
 
-        <div class="invite-title">
-            دوستانت را دعوت کن
-        </div>
+<div class="invite-title">
+دوستانت را دعوت کن
+</div>
 
-        <div class="invite-desc">
-            دوستان خود را به Afghani Coin دعوت کن
-            و از سیستم Referral پاداش بگیر.
-        </div>
+<div class="invite-desc">
+دوستان خود را به Afghani Coin دعوت کن
+و از سیستم Referral پاداش بگیر.
+</div>
 
-        <div class="invite-link">
+<div class="invite-link">
 
-            <input
-                id="inviteLink"
-                readonly>
+<input id="inviteLink" readonly>
 
-            <button
-                id="copyButton"
-                class="copy"
-                type="button">
-                کپی
-            </button>
+<button id="copyButton"
+class="copy"
+type="button">
+کپی
+</button>
 
-        </div>
+</div>
 
-    </div>
+</div>
 
 
-    <div class="invite-stats">
+<div class="invite-stats">
 
-        <div class="invite-stat">
-            <div id="inviteCount"
-                 class="invite-number">
-                0
-            </div>
+<div class="invite-stat">
 
-            <div class="invite-label">
-                دعوت‌شده
-            </div>
-        </div>
+<div id="inviteCount"
+class="invite-number">0</div>
 
-        <div class="invite-stat">
-            <div id="inviteReward"
-                 class="invite-number">
-                0
-            </div>
+<div class="invite-label">
+دعوت‌شده
+</div>
 
-            <div class="invite-label">
-                AFC دریافتی
-            </div>
-        </div>
+</div>
 
-    </div>
+<div class="invite-stat">
+
+<div id="inviteReward"
+class="invite-number">0</div>
+
+<div class="invite-label">
+AFC دریافتی
+</div>
+
+</div>
+
+</div>
 
 
-    <div style="margin-top:18px"
-         class="section-title"
-         id="inviteTitle">
-        👤 دعوت‌شده‌ها
-    </div>
+<div style="margin-top:18px"
+class="section-title">
 
-    <div id="invitedList"></div>
+👤 دعوت‌شده‌ها
+
+</div>
+
+<div id="invitedList"></div>
 
 </section>
 
@@ -899,88 +1067,79 @@ button{
 
 <section id="walletPage" class="page">
 
-    <div class="section-title">
-        💰 Wallet
-    </div>
+<div class="section-title">
+💰 Wallet
+</div>
 
-    <div class="balance-card">
+<div class="balance-card">
 
-        <div class="label">
-            موجودی Wallet
-        </div>
+<div class="label">
+موجودی Wallet
+</div>
 
-        <div class="balance">
-            <span id="walletBalance">0</span>
-            <span class="afc">AFC</span>
-        </div>
+<div class="balance">
+<span id="walletBalance">0</span>
+<span class="afc">AFC</span>
+</div>
 
-    </div>
-
-
-    <div class="wallet-grid">
-
-        <div class="wallet-card">
-            <div class="wallet-icon">⭐</div>
-            <div class="wallet-label">LEVEL</div>
-            <div id="walletLevel"
-                 class="wallet-value">
-                1
-            </div>
-        </div>
-
-        <div class="wallet-card">
-            <div class="wallet-icon">⚡</div>
-            <div class="wallet-label">POWER</div>
-            <div id="walletPower"
-                 class="wallet-value">
-                1
-            </div>
-        </div>
-
-        <div class="wallet-card">
-            <div class="wallet-icon">🔋</div>
-            <div class="wallet-label">ENERGY</div>
-            <div id="walletEnergy"
-                 class="wallet-value">
-                100
-            </div>
-        </div>
-
-        <div class="wallet-card">
-            <div class="wallet-icon">👤</div>
-            <div class="wallet-label">USER</div>
-            <div id="walletUser"
-                 class="wallet-value"
-                 style="font-size:11px">
-                AFC Miner
-            </div>
-        </div>
-
-    </div>
+</div>
 
 
-    <div style="margin-top:18px"
-         class="section-title">
-        📜 تاریخچه Wallet
-    </div>
+<div class="wallet-grid">
 
-    <div id="walletTransactions">
-        <div class="loading">
-            ⏳ در حال دریافت...
-        </div>
-    </div>
+<div class="wallet-card">
+<div class="wallet-icon">⭐</div>
+<div class="wallet-label">LEVEL</div>
+<div id="walletLevel" class="wallet-value">1</div>
+</div>
+
+<div class="wallet-card">
+<div class="wallet-icon">⚡</div>
+<div class="wallet-label">POWER</div>
+<div id="walletPower" class="wallet-value">1</div>
+</div>
+
+<div class="wallet-card">
+<div class="wallet-icon">🔋</div>
+<div class="wallet-label">ENERGY</div>
+<div id="walletEnergy" class="wallet-value">100</div>
+</div>
+
+<div class="wallet-card">
+<div class="wallet-icon">👤</div>
+<div class="wallet-label">USER</div>
+<div id="walletUser"
+class="wallet-value"
+style="font-size:11px">
+AFC Miner
+</div>
+</div>
+
+</div>
 
 
-    <div style="margin-top:18px"
-         class="section-title">
-        ⛏️ آخرین استخراج‌ها
-    </div>
+<div style="margin-top:18px"
+class="section-title">
+📜 تاریخچه Wallet
+</div>
 
-    <div id="miningHistory">
-        <div class="loading">
-            ⏳ در حال دریافت...
-        </div>
-    </div>
+<div id="walletTransactions">
+<div class="loading">
+⏳ در حال دریافت...
+</div>
+</div>
+
+
+<div style="margin-top:18px"
+class="section-title">
+⛏️ آخرین استخراج‌ها
+</div>
+
+<div id="miningHistory">
+<div class="loading">
+⏳ در حال دریافت...
+</div>
+</div>
 
 </section>
 
@@ -991,50 +1150,46 @@ button{
 
 <nav class="nav">
 
-    <button id="navHome"
-            class="active"
-            type="button">
+<button id="navHome"
+class="active"
+type="button">
 
-        <span class="nav-icon">⛏️</span>
-        Mine
+<span class="nav-icon">⛏️</span>
+Mine
 
-    </button>
+</button>
 
+<button id="navLeaderboard"
+type="button">
 
-    <button id="navLeaderboard"
-            type="button">
+<span class="nav-icon">🏆</span>
+Leaderboard
 
-        <span class="nav-icon">🏆</span>
-        Leaderboard
+</button>
 
-    </button>
+<button id="navTasks"
+type="button">
 
+<span class="nav-icon">🎯</span>
+Tasks
 
-    <button id="navTasks"
-            type="button">
+</button>
 
-        <span class="nav-icon">🎯</span>
-        Tasks
+<button id="navInvite"
+type="button">
 
-    </button>
+<span class="nav-icon">👥</span>
+Invite
 
+</button>
 
-    <button id="navInvite"
-            type="button">
+<button id="navWallet"
+type="button">
 
-        <span class="nav-icon">👥</span>
-        Invite
+<span class="nav-icon">💰</span>
+Wallet
 
-    </button>
-
-
-    <button id="navWallet"
-            type="button">
-
-        <span class="nav-icon">💰</span>
-        Wallet
-
-    </button>
+</button>
 
 </nav>
 
@@ -1046,903 +1201,832 @@ button{
 
 <script>
 
-/* ==========================
-   AFC CONFIG
-========================== */
+const API="https://afghanicoin.vercel.app";
 
-const API =
-    "https://afghanicoin.vercel.app";
-
-
-/* ==========================
-   TELEGRAM
-========================== */
-
-let tg = null;
+let tg=null;
 
 try{
 
-    if(
-        window.Telegram &&
-        window.Telegram.WebApp
-    ){
+if(
+window.Telegram &&
+window.Telegram.WebApp
+){
 
-        tg =
-            window.Telegram.WebApp;
+tg=window.Telegram.WebApp;
+tg.ready();
+tg.expand();
 
-        tg.ready();
-        tg.expand();
-
-    }
+}
 
 }catch(error){
 
-    console.log(error);
+console.log(error);
 
 }
 
-
-/* ==========================
-   TELEGRAM USER
-========================== */
 
 function getUserId(){
 
-    try{
+try{
 
-        if(
-            tg &&
-            tg.initDataUnsafe &&
-            tg.initDataUnsafe.user &&
-            tg.initDataUnsafe.user.id
-        ){
+if(
+tg &&
+tg.initDataUnsafe &&
+tg.initDataUnsafe.user &&
+tg.initDataUnsafe.user.id
+){
 
-            return String(
-                tg.initDataUnsafe.user.id
-            );
+return String(
+tg.initDataUnsafe.user.id
+);
 
-        }
+}
 
-    }catch(error){}
-
-
-    let id =
-        localStorage.getItem(
-            "AFC_USER_ID"
-        );
+}catch(error){}
 
 
-    if(!id){
+let id=
+localStorage.getItem(
+"AFC_USER_ID"
+);
 
-        id = "123456789";
+if(!id){
 
-        localStorage.setItem(
-            "AFC_USER_ID",
-            id
-        );
+id="123456789";
 
-    }
+localStorage.setItem(
+"AFC_USER_ID",
+id
+);
 
+}
 
-    return id;
+return id;
 
 }
 
 
-const TELEGRAM_ID =
-    getUserId();
+const TELEGRAM_ID=getUserId();
 
 
-/* ==========================
-   STATE
-========================== */
-
-let user = {
-
-    balance:0,
-    energy:100,
-    level:1,
-    power:1,
-    username:null
-
+let user={
+balance:0,
+energy:100,
+level:1,
+power:1,
+username:null
 };
 
-let minedCount = 0;
+let minedCount=0;
+let mining=false;
 
-let mining = false;
-
-
-/* ==========================
-   ELEMENT HELPER
-========================== */
 
 function $(id){
-
-    return document.getElementById(id);
-
+return document.getElementById(id);
 }
 
-
-/* ==========================
-   TOAST
-========================== */
 
 let toastTimer;
 
-function toast(
-    message,
-    error=false
-){
+function toast(message,error=false){
 
-    const box =
-        $("toast");
+const box=$("toast");
 
-    box.textContent =
-        message;
+box.textContent=message;
 
-    box.style.background =
-        error
-        ? "#4a2024"
-        : "#173b38";
+box.style.background=
+error ? "#4a2024" : "#173b38";
 
-    box.classList.add(
-        "show"
-    );
+box.classList.add("show");
 
-    clearTimeout(
-        toastTimer
-    );
+clearTimeout(toastTimer);
 
-    toastTimer =
-        setTimeout(
-            ()=>{
-                box.classList.remove(
-                    "show"
-                );
-            },
-            2500
-        );
+toastTimer=setTimeout(
+()=>{
+box.classList.remove("show");
+},
+2500
+);
 
 }
 
 
-/* ==========================
-   API
-========================== */
+async function api(path,options={}){
 
-async function api(
-    path,
-    options={}
-){
+const config={
+method:options.method || "GET",
+headers:{}
+};
 
-    const config = {
-        method:
-            options.method || "GET",
-        headers:
-            {}
-    };
+if(config.method==="POST"){
 
+config.headers["Content-Type"]=
+"application/json";
 
-    if(
-        config.method === "POST"
-    ){
-
-        config.headers[
-            "Content-Type"
-        ] =
-            "application/json";
-
-        config.body =
-            options.body;
-
-    }
-
-
-    const response =
-        await fetch(
-            API + path,
-            config
-        );
-
-
-    let data;
-
-    try{
-
-        data =
-            await response.json();
-
-    }catch(error){
-
-        throw new Error(
-            "پاسخ سرور درست نیست"
-        );
-
-    }
-
-
-    if(!response.ok){
-
-        throw new Error(
-            data.message ||
-            "Server Error"
-        );
-
-    }
-
-
-    return data;
+config.body=options.body;
 
 }
 
+const response=
+await fetch(
+API+path,
+config
+);
 
-/* ==========================
-   STATUS
-========================== */
+let data;
+
+try{
+
+data=await response.json();
+
+}catch(error){
+
+throw new Error(
+"پاسخ سرور درست نیست"
+);
+
+}
+
+if(!response.ok){
+
+throw new Error(
+data.message || "Server Error"
+);
+
+}
+
+return data;
+
+}
+
 
 function connected(){
 
-    $("status").textContent =
-        "● Connected";
+$("status").textContent=
+"● Connected";
 
-    $("status").style.color =
-        "#70efa2";
+$("status").style.color=
+"#70efa2";
 
 }
 
-
-/* ==========================
-   HOME
-========================== */
 
 function updateUI(){
 
-    const balance =
-        Number(
-            user.balance || 0
-        );
+const balance=
+Number(user.balance || 0);
 
-    const energy =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                Number(
-                    user.energy || 0
-                )
-            )
-        );
+const energy=
+Math.max(
+0,
+Math.min(
+100,
+Number(user.energy || 0)
+)
+);
 
-    const level =
-        Number(
-            user.level || 1
-        );
+const level=
+Number(user.level || 1);
 
-    const power =
-        Number(
-            user.power || 1
-        );
+const power=
+Number(user.power || 1);
 
+$("balance").textContent=
+balance.toLocaleString();
 
-    $("balance").textContent =
-        balance.toLocaleString();
+$("power").textContent=power;
 
+$("level").textContent=level;
 
-    $("power").textContent =
-        power;
+$("mined").textContent=
+minedCount.toLocaleString();
 
+$("energyText").textContent=
+energy+" / 100";
 
-    $("level").textContent =
-        level;
+$("energyFill").style.width=
+energy+"%";
 
+$("upgradeText").textContent=
+"Cost: "+
+(level*100).toLocaleString()+
+" AFC";
 
-    $("mined").textContent =
-        minedCount.toLocaleString();
+if(energy<=0){
 
+$("mineButton")
+.classList.add("disabled");
 
-    $("energyText").textContent =
-        energy + " / 100";
+}else{
 
-
-    $("energyFill").style.width =
-        energy + "%";
-
-
-    $("upgradeText").textContent =
-        "Cost: " +
-        (level * 100).toLocaleString() +
-        " AFC";
-
-
-    if(energy <= 0){
-
-        $("mineButton")
-            .classList.add(
-                "disabled"
-            );
-
-    }else{
-
-        $("mineButton")
-            .classList.remove(
-                "disabled"
-            );
-
-    }
+$("mineButton")
+.classList.remove("disabled");
 
 }
 
+}
 
-/* ==========================
-   LOAD USER
-========================== */
 
 async function loadUser(){
 
-    try{
+try{
 
-        const data =
-            await api(
-                "/api/user?telegram_id=" +
-                encodeURIComponent(
-                    TELEGRAM_ID
-                )
-            );
+const data=
+await api(
+"/api/user?telegram_id="+
+encodeURIComponent(
+TELEGRAM_ID
+)
+);
 
+if(
+data.success &&
+data.user
+){
 
-        if(
-            data.success &&
-            data.user
-        ){
+user=data.user;
 
-            user =
-                data.user;
+updateUI();
 
-            updateUI();
-
-            connected();
-
-        }
-
-    }catch(error){
-
-        console.log(
-            "USER ERROR",
-            error
-        );
-
-        $("status").textContent =
-            "● Offline";
-
-        $("status").style.color =
-            "#ff8888";
-
-        toast(
-            "اتصال به سرور مشکل دارد",
-            true
-        );
-
-    }
+connected();
 
 }
 
+}catch(error){
 
-/* ==========================
-   MINING
-========================== */
+console.log(
+"USER ERROR",
+error
+);
+
+$("status").textContent=
+"● Offline";
+
+$("status").style.color=
+"#ff8888";
+
+}
+
+}
+
 
 async function mine(){
 
-    if(mining){
+if(mining)return;
 
-        return;
+if(
+Number(user.energy || 0)<=0
+){
 
-    }
+toast(
+"⚡ انرژی تمام شده است",
+true
+);
 
-
-    if(
-        Number(user.energy || 0)
-        <= 0
-    ){
-
-        toast(
-            "⚡ انرژی تمام شده است",
-            true
-        );
-
-        return;
-
-    }
-
-
-    mining = true;
-
-
-    createCoin();
-
-
-    $("mineButton").style.transform =
-        "scale(.9)";
-
-
-    setTimeout(
-        ()=>{
-            $("mineButton").style.transform =
-                "";
-        },
-        100
-    );
-
-
-    try{
-
-        const data =
-            await api(
-                "/api/mine",
-                {
-                    method:"POST",
-                    body:JSON.stringify({
-                        telegram_id:
-                            TELEGRAM_ID
-                    })
-                }
-            );
-
-
-        if(
-            data.success &&
-            data.user
-        ){
-
-            user =
-                data.user;
-
-            minedCount++;
-
-            updateUI();
-
-        }else{
-
-            throw new Error(
-                data.message ||
-                "Mining error"
-            );
-
-        }
-
-    }catch(error){
-
-        toast(
-            error.message ||
-            "Mining انجام نشد",
-            true
-        );
-
-    }
-
-
-    mining = false;
+return;
 
 }
 
+mining=true;
 
-/* ==========================
-   COIN
-========================== */
+createCoin();
+
+$("mineButton").style.transform=
+"scale(.9)";
+
+setTimeout(
+()=>{
+$("mineButton").style.transform="";
+},
+100
+);
+
+try{
+
+const data=
+await api(
+"/api/mine",
+{
+method:"POST",
+body:JSON.stringify({
+telegram_id:
+TELEGRAM_ID
+})
+}
+);
+
+if(
+data.success &&
+data.user
+){
+
+user=data.user;
+
+minedCount++;
+
+updateUI();
+
+}else{
+
+throw new Error(
+data.message ||
+"Mining error"
+);
+
+}
+
+}catch(error){
+
+toast(
+error.message ||
+"Mining انجام نشد",
+true
+);
+
+}
+
+mining=false;
+
+}
+
 
 function createCoin(){
 
-    const area =
-        $("mineArea");
+const area=$("mineArea");
 
+const coin=
+document.createElement("div");
 
-    const coin =
-        document.createElement(
-            "div"
-        );
+coin.className="coin";
 
+coin.textContent=
+"+"+
+Number(user.power || 1)+
+" AFC";
 
-    coin.className =
-        "coin";
+coin.style.setProperty(
+"--x",
+(Math.random()*100-50)+"px"
+);
 
+area.appendChild(coin);
 
-    coin.textContent =
-        "+" +
-        Number(
-            user.power || 1
-        ) +
-        " AFC";
-
-
-    coin.style.setProperty(
-        "--x",
-        (
-            Math.random()*100-50
-        ) +
-        "px"
-    );
-
-
-    area.appendChild(
-        coin
-    );
-
-
-    setTimeout(
-        ()=>{
-            coin.remove();
-        },
-        850
-    );
+setTimeout(
+()=>{
+coin.remove();
+},
+850
+);
 
 }
 
-
-/* ==========================
-   DAILY
-========================== */
 
 async function dailyReward(){
 
-    try{
+try{
 
-        const data =
-            await api(
-                "/api/daily-reward",
-                {
-                    method:"POST",
-                    body:JSON.stringify({
-                        telegram_id:
-                            TELEGRAM_ID
-                    })
-                }
-            );
+const data=
+await api(
+"/api/daily-reward",
+{
+method:"POST",
+body:JSON.stringify({
+telegram_id:
+TELEGRAM_ID
+})
+}
+);
 
+if(data.success){
 
-        if(
-            data.success
-        ){
+if(data.user){
+user=data.user;
+}
 
-            if(data.user){
+updateUI();
 
-                user =
-                    data.user;
+toast(
+"🎁 +"+
+Number(
+data.reward || 0
+).toLocaleString()+
+" AFC"
+);
 
-            }
+}else{
 
-            updateUI();
-
-            toast(
-                "🎁 +" +
-                Number(
-                    data.reward || 0
-                ).toLocaleString() +
-                " AFC"
-            );
-
-        }else{
-
-            throw new Error(
-                data.message ||
-                "Reward error"
-            );
-
-        }
-
-    }catch(error){
-
-        toast(
-            error.message,
-            true
-        );
-
-    }
+throw new Error(
+data.message ||
+"Reward error"
+);
 
 }
 
+}catch(error){
 
-/* ==========================
-   UPGRADE
-========================== */
+toast(
+error.message,
+true
+);
+
+}
+
+}
+
 
 async function upgrade(){
 
-    const cost =
-        Number(
-            user.level || 1
-        ) * 100;
+const cost=
+Number(user.level || 1)*100;
 
-
-    if(
-        Number(user.balance || 0)
-        < cost
-    ){
-
-        toast(
-            "برای Upgrade موجودی کافی نیست",
-            true
-        );
-
-        return;
-
-    }
-
-
-    try{
-
-        const data =
-            await api(
-                "/api/upgrade",
-                {
-                    method:"POST",
-                    body:JSON.stringify({
-                        telegram_id:
-                            TELEGRAM_ID
-                    })
-                }
-            );
-
-
-        if(
-            data.success &&
-            data.user
-        ){
-
-            user =
-                data.user;
-
-            updateUI();
-
-            toast(
-                "⚡ Upgrade موفق شد"
-            );
-
-        }else{
-
-            throw new Error(
-                data.message ||
-                "Upgrade error"
-            );
-
-        }
-
-    }catch(error){
-
-        toast(
-            error.message,
-            true
-        );
-
-    }
-
-}
-
-
-/* ==========================
-   PAGE SYSTEM
-========================== */
-
-function page(
-    pageId,
-    navId
+if(
+Number(user.balance || 0)<cost
 ){
 
-    document
-        .querySelectorAll(
-            ".page"
-        )
-        .forEach(
-            p=>{
-                p.classList.remove(
-                    "active"
-                );
-            }
-        );
+toast(
+"برای Upgrade موجودی کافی نیست",
+true
+);
 
+return;
 
-    document
-        .querySelectorAll(
-            ".nav button"
-        )
-        .forEach(
-            b=>{
-                b.classList.remove(
-                    "active"
-                );
-            }
-        );
+}
 
+try{
 
-    $(pageId)
-        .classList.add(
-            "active"
-        );
+const data=
+await api(
+"/api/upgrade",
+{
+method:"POST",
+body:JSON.stringify({
+telegram_id:
+TELEGRAM_ID
+})
+}
+);
 
+if(
+data.success &&
+data.user
+){
 
-    $(navId)
-        .classList.add(
-            "active"
-        );
+user=data.user;
 
+updateUI();
 
-    window.scrollTo(
-        0,
-        0
-    );
+toast(
+"⚡ Upgrade موفق شد"
+);
 
+}else{
 
-    if(pageId === "leaderboardPage"){
-        loadLeaderboard();
-    }
+throw new Error(
+data.message ||
+"Upgrade error"
+);
 
-    if(pageId === "tasksPage"){
-        loadTasks();
-    }
+}
 
-    if(pageId === "invitePage"){
-        loadInvite();
-    }
+}catch(error){
 
-    if(pageId === "walletPage"){
-        loadWallet();
-    }
+toast(
+error.message,
+true
+);
+
+}
 
 }
 
 
-/* ==========================
-   LEADERBOARD
-========================== */
+function page(pageId,navId){
+
+document
+.querySelectorAll(".page")
+.forEach(
+p=>{
+p.classList.remove("active");
+}
+);
+
+document
+.querySelectorAll(".nav button")
+.forEach(
+b=>{
+b.classList.remove("active");
+}
+);
+
+$(pageId)
+.classList.add("active");
+
+$(navId)
+.classList.add("active");
+
+window.scrollTo(0,0);
+
+if(pageId==="leaderboardPage")
+loadLeaderboard();
+
+if(pageId==="tasksPage")
+loadTasks();
+
+if(pageId==="invitePage")
+loadInvite();
+
+if(pageId==="walletPage")
+loadWallet();
+
+}
+
+
+/* ==========================================
+   PROFESSIONAL LEADERBOARD SYSTEM
+========================================== */
 
 async function loadLeaderboard(){
 
-    const box =
-        $("leaderboardList");
+const podium=$("podium");
+const box=$("leaderboardList");
+
+podium.innerHTML=
+`<div class="loading">
+⏳ در حال دریافت...
+</div>`;
+
+box.innerHTML=
+`<div class="loading">
+⏳ در حال دریافت...
+</div>`;
+
+$("myRank").innerHTML="";
+$("leaderTotal").textContent="";
 
 
-    box.innerHTML =
-        `<div class="loading">
-            ⏳ در حال دریافت...
-        </div>`;
+try{
+
+const data=
+await api(
+"/api/leaderboard?telegram_id="+
+encodeURIComponent(
+TELEGRAM_ID
+)
+);
+
+const list=
+data.leaderboard || [];
 
 
-    try{
+/* ==========================
+   PODIUM
+========================== */
 
-        const data =
-            await api(
-                "/api/leaderboard?telegram_id=" +
-                encodeURIComponent(
-                    TELEGRAM_ID
-                )
-            );
+const first=list[0];
+const second=list[1];
+const third=list[2];
 
+function podiumUser(u,place,medal,firstClass=""){
 
-        if(
-            data.myRank &&
-            data.myUser
-        ){
+if(!u){
 
-            $("myRank").innerHTML = `
+return `
+<div class="podium-item ${firstClass}">
+<div class="podium-medal">${medal}</div>
+<div class="podium-avatar">👤</div>
+<div class="podium-name">---</div>
+<div class="podium-balance">0 AFC</div>
+<div class="podium-meta">No Miner</div>
+</div>
+`;
 
-                <div class="card">
+}
 
-                    <div class="row">
+return `
+<div class="podium-item ${firstClass}">
 
-                        <div>
-                            <div class="label">
-                                رتبه شما
-                            </div>
+<div class="podium-medal">
+${medal}
+</div>
 
-                            <div style="font-size:25px;font-weight:bold">
-                                #${data.myRank}
-                            </div>
-                        </div>
+<div class="podium-avatar">
+👤
+</div>
 
-                        <div style="text-align:left">
+<div class="podium-name">
+${safe(u.username || "AFC Miner")}
+</div>
 
-                            <div class="name">
-                                ${safe(
-                                    data.myUser.username ||
-                                    "AFC Miner"
-                                )}
-                            </div>
+<div class="podium-balance">
+${Number(u.balance || 0).toLocaleString()} AFC
+</div>
 
-                            <div class="leader-balance">
-                                ${Number(
-                                    data.myUser.balance || 0
-                                ).toLocaleString()}
-                                AFC
-                            </div>
+<div class="podium-meta">
+Level ${Number(u.level || 1)}
+ · Power ${Number(u.power || 1)}
+</div>
 
-                        </div>
+</div>
+`;
 
-                    </div>
-
-                </div>
-
-            `;
-
-        }else{
-
-            $("myRank").innerHTML =
-                "";
-
-        }
+}
 
 
-        const list =
-            data.leaderboard || [];
+/*
+ترتیب بصری:
+نفر دوم | نفر اول | نفر سوم
+*/
+
+podium.innerHTML=
+podiumUser(
+second,
+2,
+"🥈"
+)+
+podiumUser(
+first,
+1,
+"🥇",
+"first"
+)+
+podiumUser(
+third,
+3,
+"🥉"
+);
 
 
-        if(!list.length){
+/* ==========================
+   MY RANK
+========================== */
 
-            box.innerHTML =
-                `<div class="loading">
-                    هنوز Miner وجود ندارد.
-                </div>`;
+if(
+data.myRank &&
+data.myUser
+){
 
-            return;
+$("myRank").innerHTML=`
 
-        }
+<div class="my-rank-card">
+
+<div class="my-rank-title">
+📍 رتبه فعلی شما
+</div>
+
+<div class="row">
+
+<div>
+
+<div class="my-rank-number">
+#${Number(data.myRank)}
+</div>
+
+<div class="my-rank-name">
+${safe(
+data.myUser.username ||
+"AFC Miner"
+)}
+</div>
+
+</div>
+
+<div style="text-align:left">
+
+<div class="my-rank-balance">
+${Number(
+data.myUser.balance || 0
+).toLocaleString()} AFC
+</div>
+
+<div class="meta">
+Level ${Number(
+data.myUser.level || 1
+)}
+ · Power ${Number(
+data.myUser.power || 1
+)}
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+}
 
 
-        box.innerHTML =
-            list.map(
-                u=>`
+/* ==========================
+   OTHER RANKS
+========================== */
 
-                    <div class="card">
+if(!list.length){
 
-                        <div class="leader">
+box.innerHTML=
+`<div class="loading">
+هنوز Miner وجود ندارد.
+</div>`;
 
-                            <div class="rank">
-                                ${u.medal || "#" + u.rank}
-                            </div>
+return;
 
-                            <div class="avatar">
-                                👤
-                            </div>
-
-                            <div class="leader-main">
-
-                                <div class="name">
-                                    ${safe(
-                                        u.username ||
-                                        "AFC Miner"
-                                    )}
-                                </div>
-
-                                <div class="meta">
-                                    Level ${Number(u.level || 1)}
-                                    · Power ${Number(u.power || 1)}
-                                </div>
-
-                            </div>
-
-                            <div class="leader-balance">
-                                ${Number(
-                                    u.balance || 0
-                                ).toLocaleString()}
-                                AFC
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                `
-            ).join("");
+}
 
 
-    }catch(error){
+/*
+سه نفر اول در Podium هستند،
+پس در لیست اصلی از رتبه 4 شروع می‌کنیم.
+*/
 
-        box.innerHTML =
-            `<div class="error">
-                ${safe(
-                    error.message
-                )}
-            </div>`;
+const remaining=
+list.slice(3);
 
-    }
+
+if(!remaining.length){
+
+box.innerHTML=
+`<div class="loading">
+🥇🥈🥉 فعلاً همین Minerها در جدول هستند.
+</div>`;
+
+}else{
+
+box.innerHTML=
+remaining.map(
+(u,index)=>`
+
+<div class="leader-card"
+style="animation-delay:${index*35}ms">
+
+<div class="leader">
+
+<div class="rank">
+#${Number(u.rank)}
+</div>
+
+<div class="avatar">
+👤
+</div>
+
+<div class="leader-main">
+
+<div class="name">
+${safe(
+u.username ||
+"AFC Miner"
+)}
+</div>
+
+<div class="meta">
+⭐ Level ${Number(u.level || 1)}
+ · ⚡ Power ${Number(u.power || 1)}
+</div>
+
+</div>
+
+<div class="leader-balance">
+${Number(
+u.balance || 0
+).toLocaleString()}
+ AFC
+</div>
+
+</div>
+
+</div>
+
+`
+).join("");
+
+}
+
+
+/* ==========================
+   TOTAL USERS
+========================== */
+
+$("leaderTotal").textContent=
+"👥 مجموع Minerها: "+
+Number(
+data.totalUsers || list.length
+).toLocaleString();
+
+
+}catch(error){
+
+podium.innerHTML=
+`<div class="error">
+${safe(error.message)}
+</div>`;
+
+box.innerHTML=
+"";
+
+$("myRank").innerHTML=
+"";
+
+}
 
 }
 
@@ -1953,215 +2037,192 @@ async function loadLeaderboard(){
 
 async function loadTasks(){
 
-    const box =
-        $("tasksList");
+const box=$("tasksList");
 
+box.innerHTML=
+`<div class="loading">
+⏳ در حال دریافت...
+</div>`;
 
-    box.innerHTML =
-        `<div class="loading">
-            ⏳ در حال دریافت...
-        </div>`;
+try{
 
+const data=
+await api(
+"/api/tasks?telegram_id="+
+encodeURIComponent(
+TELEGRAM_ID
+)
+);
 
-    try{
+const tasks=data.tasks || [];
 
-        const data =
-            await api(
-                "/api/tasks?telegram_id=" +
-                encodeURIComponent(
-                    TELEGRAM_ID
-                )
-            );
+if(!tasks.length){
 
+box.innerHTML=
+`<div class="loading">
+Task موجود نیست.
+</div>`;
 
-        const tasks =
-            data.tasks || [];
+return;
 
+}
 
-        if(!tasks.length){
+box.innerHTML=
+tasks.map(
+task=>`
 
-            box.innerHTML =
-                `<div class="loading">
-                    Task موجود نیست.
-                </div>`;
+<div class="card">
 
-            return;
+<div class="task">
 
-        }
+<div class="task-icon">
+${task.icon || "🎯"}
+</div>
 
+<div class="task-main">
 
-        box.innerHTML =
-            tasks.map(
-                task=>`
+<div class="task-title">
+${safe(task.title)}
+</div>
 
-                    <div class="card">
+<div class="task-desc">
+${safe(task.description)}
+</div>
 
-                        <div class="task">
+<div class="task-reward">
++${Number(
+task.reward || 0
+).toLocaleString()} AFC
+</div>
 
-                            <div class="task-icon">
-                                ${task.icon || "🎯"}
-                            </div>
+</div>
 
-                            <div class="task-main">
+${
+task.completed
+?
+`<button
+class="task-btn task-done"
+disabled>✓</button>`
+:
+`<button
+class="task-btn"
+onclick="completeTask(
+'${safeAttr(task.id)}',
+'${safeAttr(task.url || "")}'
+)">
+انجام
+</button>`
+}
 
-                                <div class="task-title">
-                                    ${safe(task.title)}
-                                </div>
+</div>
 
-                                <div class="task-desc">
-                                    ${safe(task.description)}
-                                </div>
+</div>
 
-                                <div class="task-reward">
-                                    +${Number(task.reward || 0).toLocaleString()} AFC
-                                </div>
+`
+).join("");
 
-                            </div>
+}catch(error){
 
-                            ${
-                                task.completed
-                                ?
-                                `<button class="task-btn task-done" disabled>
-                                    ✓
-                                </button>`
-                                :
-                                `<button
-                                    class="task-btn"
-                                    onclick="completeTask('${safeAttr(task.id)}','${safeAttr(task.url || "")}')">
-                                    انجام
-                                </button>`
-                            }
+box.innerHTML=
+`<div class="error">
+${safe(error.message)}
+</div>`;
 
-                        </div>
-
-                    </div>
-
-                `
-            ).join("");
-
-
-    }catch(error){
-
-        box.innerHTML =
-            `<div class="error">
-                ${safe(error.message)}
-            </div>`;
-
-    }
+}
 
 }
 
 
-/* ==========================
-   TASK COMPLETE
-========================== */
+async function completeTask(taskId,url){
 
-async function completeTask(
-    taskId,
-    url
+if(url){
+
+try{
+
+if(
+tg &&
+typeof tg.openLink==="function"
 ){
 
-    if(url){
+tg.openLink(url);
 
-        try{
+}else{
 
-            if(
-                tg &&
-                typeof tg.openLink ===
-                "function"
-            ){
+window.open(
+url,
+"_blank"
+);
 
-                tg.openLink(url);
+}
 
-            }else{
+}catch(error){}
 
-                window.open(
-                    url,
-                    "_blank"
-                );
+}
 
-            }
+setTimeout(
+async ()=>{
 
-        }catch(error){}
+const ok=
+confirm(
+"اگر Task را انجام دادی OK بزن."
+);
 
-    }
+if(!ok)return;
 
+try{
 
-    setTimeout(
-        async ()=>{
+const data=
+await api(
+"/api/tasks",
+{
+method:"POST",
+body:JSON.stringify({
+telegram_id:
+TELEGRAM_ID,
+task_id:
+taskId
+})
+}
+);
 
-            const ok =
-                confirm(
-                    "اگر Task را انجام دادی OK بزن."
-                );
+if(data.success){
 
+if(data.user)
+user=data.user;
 
-            if(!ok){
-                return;
-            }
+updateUI();
 
+toast(
+"🎁 +"+
+Number(
+data.reward || 0
+).toLocaleString()+
+" AFC"
+);
 
-            try{
+loadTasks();
 
-                const data =
-                    await api(
-                        "/api/tasks",
-                        {
-                            method:"POST",
-                            body:JSON.stringify({
-                                telegram_id:
-                                    TELEGRAM_ID,
-                                task_id:
-                                    taskId
-                            })
-                        }
-                    );
+}else{
 
+throw new Error(
+data.message ||
+"Task error"
+);
 
-                if(
-                    data.success
-                ){
+}
 
-                    if(data.user){
+}catch(error){
 
-                        user =
-                            data.user;
+toast(
+error.message,
+true
+);
 
-                    }
+}
 
-                    updateUI();
-
-                    toast(
-                        "🎁 +" +
-                        Number(
-                            data.reward || 0
-                        ).toLocaleString() +
-                        " AFC"
-                    );
-
-                    loadTasks();
-
-                }else{
-
-                    throw new Error(
-                        data.message ||
-                        "Task error"
-                    );
-
-                }
-
-            }catch(error){
-
-                toast(
-                    error.message,
-                    true
-                );
-
-            }
-
-        },
-        400
-    );
+},
+400
+);
 
 }
 
@@ -2172,141 +2233,121 @@ async function completeTask(
 
 function createInvite(){
 
-    const link =
-        "https://t.me/afghani_coin_bot?start=ref_" +
-        TELEGRAM_ID;
-
-
-    $("inviteLink").value =
-        link;
+$("inviteLink").value=
+"https://t.me/afghani_coin_bot?start=ref_"+
+TELEGRAM_ID;
 
 }
 
 
 async function loadInvite(){
 
-    createInvite();
+createInvite();
 
+$("invitedList").innerHTML=
+`<div class="loading">
+⏳ در حال دریافت...
+</div>`;
 
-    $("invitedList").innerHTML =
-        `<div class="loading">
-            ⏳ در حال دریافت...
-        </div>`;
+try{
 
+const data=
+await api(
+"/api/invite?telegram_id="+
+encodeURIComponent(
+TELEGRAM_ID
+)
+);
 
-    try{
+$("inviteCount").textContent=
+Number(
+data.totalInvites || 0
+).toLocaleString();
 
-        const data =
-            await api(
-                "/api/invite?telegram_id=" +
-                encodeURIComponent(
-                    TELEGRAM_ID
-                )
-            );
+$("inviteReward").textContent=
+Number(
+data.totalReward || 0
+).toLocaleString();
 
+const list=
+data.invitedUsers || [];
 
-        $("inviteCount").textContent =
-            Number(
-                data.totalInvites || 0
-            ).toLocaleString();
+if(!list.length){
 
+$("invitedList").innerHTML=
+`<div class="loading">
+هنوز کسی دعوت نشده است.
+</div>`;
 
-        $("inviteReward").textContent =
-            Number(
-                data.totalReward || 0
-            ).toLocaleString();
+return;
 
+}
 
-        const list =
-            data.invitedUsers || [];
+$("invitedList").innerHTML=
+list.map(
+(x,i)=>`
 
+<div class="card">
 
-        if(!list.length){
+<div class="row">
 
-            $("invitedList").innerHTML =
-                `<div class="loading">
-                    هنوز کسی دعوت نشده است.
-                </div>`;
+<div>
 
-            return;
+<div class="name">
+👤 Miner ${i+1}
+</div>
 
-        }
+<div class="meta">
+${formatDate(x.created_at)}
+</div>
 
+</div>
 
-        $("invitedList").innerHTML =
-            list.map(
-                (x,i)=>`
+<div class="leader-balance">
++${Number(
+x.reward_invited || 100
+).toLocaleString()}
+ AFC
+</div>
 
-                    <div class="card">
+</div>
 
-                        <div class="row">
+</div>
 
-                            <div>
-                                <div class="name">
-                                    👤 Miner ${i+1}
-                                </div>
+`
+).join("");
 
-                                <div class="meta">
-                                    ${formatDate(x.created_at)}
-                                </div>
-                            </div>
+}catch(error){
 
-                            <div class="leader-balance">
-                                +${Number(
-                                    x.reward_invited || 100
-                                ).toLocaleString()}
-                                AFC
-                            </div>
+$("invitedList").innerHTML=
+`<div class="error">
+${safe(error.message)}
+</div>`;
 
-                        </div>
-
-                    </div>
-
-                `
-            ).join("");
-
-
-    }catch(error){
-
-        $("invitedList").innerHTML =
-            `<div class="error">
-                ${safe(error.message)}
-            </div>`;
-
-    }
+}
 
 }
 
 
-/* ==========================
-   COPY
-========================== */
-
 async function copyInvite(){
 
-    try{
+try{
 
-        await navigator.clipboard.writeText(
-            $("inviteLink").value
-        );
+await navigator.clipboard.writeText(
+$("inviteLink").value
+);
 
-        toast(
-            "🔗 لینک کپی شد"
-        );
+toast("🔗 لینک کپی شد");
 
-    }catch(error){
+}catch(error){
 
-        $("inviteLink").select();
+$("inviteLink").select();
 
-        document.execCommand(
-            "copy"
-        );
+document.execCommand("copy");
 
-        toast(
-            "🔗 لینک کپی شد"
-        );
+toast("🔗 لینک کپی شد");
 
-    }
+}
 
 }
 
@@ -2317,307 +2358,253 @@ async function copyInvite(){
 
 async function loadWallet(){
 
-    $("walletTransactions").innerHTML =
-        `<div class="loading">
-            ⏳ در حال دریافت...
-        </div>`;
+$("walletTransactions").innerHTML=
+`<div class="loading">
+⏳ در حال دریافت...
+</div>`;
 
+$("miningHistory").innerHTML=
+`<div class="loading">
+⏳ در حال دریافت...
+</div>`;
 
-    $("miningHistory").innerHTML =
-        `<div class="loading">
-            ⏳ در حال دریافت...
-        </div>`;
+try{
 
+const wallet=
+await api(
+"/api/wallet?telegram_id="+
+encodeURIComponent(
+TELEGRAM_ID
+)
+);
 
-    try{
+const freshUser=
+await api(
+"/api/user?telegram_id="+
+encodeURIComponent(
+TELEGRAM_ID
+)
+);
 
-        const wallet =
-            await api(
-                "/api/wallet?telegram_id=" +
-                encodeURIComponent(
-                    TELEGRAM_ID
-                )
-            );
+const history=
+await api(
+"/api/mining-history?telegram_id="+
+encodeURIComponent(
+TELEGRAM_ID
+)
+);
 
+if(
+freshUser.success &&
+freshUser.user
+){
 
-        const freshUser =
-            await api(
-                "/api/user?telegram_id=" +
-                encodeURIComponent(
-                    TELEGRAM_ID
-                )
-            );
+user=freshUser.user;
 
+updateUI();
 
-        const history =
-            await api(
-                "/api/mining-history?telegram_id=" +
-                encodeURIComponent(
-                    TELEGRAM_ID
-                )
-            );
+}
 
+const w=
+wallet.wallet || {};
 
-        if(
-            freshUser.success &&
-            freshUser.user
-        ){
+$("walletBalance").textContent=
+Number(
+user.balance ||
+w.balance ||
+0
+).toLocaleString();
 
-            user =
-                freshUser.user;
+$("walletLevel").textContent=
+Number(
+user.level ||
+w.level ||
+1
+);
 
-            updateUI();
+$("walletPower").textContent=
+Number(
+user.power ||
+w.power ||
+1
+);
 
-        }
+$("walletEnergy").textContent=
+Number(
+user.energy || 0
+);
 
+$("walletUser").textContent=
+user.username ||
+w.username ||
+"AFC Miner";
 
-        const w =
-            wallet.wallet || {};
+renderTransactions(
+wallet.transactions || []
+);
 
+renderMining(
+history.history || []
+);
 
-        $("walletBalance").textContent =
-            Number(
-                user.balance ||
-                w.balance ||
-                0
-            ).toLocaleString();
+}catch(error){
 
+$("walletTransactions").innerHTML=
+`<div class="error">
+${safe(error.message)}
+</div>`;
 
-        $("walletLevel").textContent =
-            Number(
-                user.level ||
-                w.level ||
-                1
-            );
+$("miningHistory").innerHTML="";
 
-
-        $("walletPower").textContent =
-            Number(
-                user.power ||
-                w.power ||
-                1
-            );
-
-
-        $("walletEnergy").textContent =
-            Number(
-                user.energy || 0
-            );
-
-
-        $("walletUser").textContent =
-            user.username ||
-            w.username ||
-            "AFC Miner";
-
-
-        renderTransactions(
-            wallet.transactions || []
-        );
-
-
-        renderMining(
-            history.history || []
-        );
-
-
-    }catch(error){
-
-        $("walletTransactions").innerHTML =
-            `<div class="error">
-                ${safe(error.message)}
-            </div>`;
-
-        $("miningHistory").innerHTML =
-            "";
-
-    }
+}
 
 }
 
 
-/* ==========================
-   TRANSACTIONS
-========================== */
+function renderTransactions(list){
 
-function renderTransactions(
-    list
-){
+if(!list.length){
 
-    if(!list.length){
+$("walletTransactions").innerHTML=
+`<div class="loading">
+هنوز تراکنشی ثبت نشده است.
+</div>`;
 
-        $("walletTransactions").innerHTML =
-            `<div class="loading">
-                هنوز تراکنشی ثبت نشده است.
-            </div>`;
+return;
 
-        return;
+}
 
-    }
+$("walletTransactions").innerHTML=
+list.map(
+x=>`
 
+<div class="transaction">
 
-    $("walletTransactions").innerHTML =
-        list.map(
-            x=>`
+<div class="transaction-icon">
+💰
+</div>
 
-                <div class="transaction">
+<div class="transaction-main">
 
-                    <div class="transaction-icon">
-                        💰
-                    </div>
+<div class="transaction-title">
+${safe(
+x.description ||
+"تراکنش AFC"
+)}
+</div>
 
-                    <div class="transaction-main">
+<div class="transaction-date">
+${formatDate(x.created_at)}
+</div>
 
-                        <div class="transaction-title">
-                            ${safe(
-                                x.description ||
-                                "تراکنش AFC"
-                            )}
-                        </div>
+</div>
 
-                        <div class="transaction-date">
-                            ${formatDate(
-                                x.created_at
-                            )}
-                        </div>
+<div class="transaction-amount">
++${Number(
+x.amount || 0
+).toLocaleString()} AFC
+</div>
 
-                    </div>
+</div>
 
-                    <div class="transaction-amount">
-                        +${Number(
-                            x.amount || 0
-                        ).toLocaleString()}
-                        AFC
-                    </div>
-
-                </div>
-
-            `
-        ).join("");
+`
+).join("");
 
 }
 
 
-/* ==========================
-   MINING HISTORY
-========================== */
+function renderMining(list){
 
-function renderMining(
-    list
-){
+if(!list.length){
 
-    if(!list.length){
+$("miningHistory").innerHTML=
+`<div class="loading">
+هنوز استخراجی ثبت نشده است.
+</div>`;
 
-        $("miningHistory").innerHTML =
-            `<div class="loading">
-                هنوز استخراجی ثبت نشده است.
-            </div>`;
+return;
 
-        return;
+}
 
-    }
+$("miningHistory").innerHTML=
+list.slice(0,30).map(
+x=>`
 
+<div class="transaction">
 
-    $("miningHistory").innerHTML =
-        list.slice(0,30).map(
-            x=>`
+<div class="transaction-icon">
+⛏️
+</div>
 
-                <div class="transaction">
+<div class="transaction-main">
 
-                    <div class="transaction-icon">
-                        ⛏️
-                    </div>
+<div class="transaction-title">
+استخراج AFC
+</div>
 
-                    <div class="transaction-main">
+<div class="transaction-date">
+${formatDate(x.created_at)}
+</div>
 
-                        <div class="transaction-title">
-                            استخراج AFC
-                        </div>
+</div>
 
-                        <div class="transaction-date">
-                            ${formatDate(
-                                x.created_at
-                            )}
-                        </div>
+<div class="transaction-amount">
++${Number(
+x.mined || 0
+).toLocaleString()} AFC
+</div>
 
-                    </div>
+</div>
 
-                    <div class="transaction-amount">
-                        +${Number(
-                            x.mined || 0
-                        ).toLocaleString()}
-                        AFC
-                    </div>
-
-                </div>
-
-            `
-        ).join("");
+`
+).join("");
 
 }
 
 
-/* ==========================
-   HELPERS
-========================== */
+function formatDate(date){
 
-function formatDate(
-    date
-){
+if(!date)return"";
 
-    if(!date){
-        return "";
-    }
+try{
 
-    try{
+return new Date(date).toLocaleString(
+"fa-AF",
+{
+year:"numeric",
+month:"short",
+day:"numeric",
+hour:"2-digit",
+minute:"2-digit"
+}
+);
 
-        return new Date(
-            date
-        ).toLocaleString(
-            "fa-AF",
-            {
-                year:"numeric",
-                month:"short",
-                day:"numeric",
-                hour:"2-digit",
-                minute:"2-digit"
-            }
-        );
+}catch(error){
 
-    }catch(error){
+return"";
 
-        return "";
-
-    }
+}
 
 }
 
 
-function safe(
-    text
-){
+function safe(text){
 
-    return String(
-        text || ""
-    )
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+return String(text || "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
 }
 
 
-function safeAttr(
-    text
-){
+function safeAttr(text){
 
-    return String(
-        text || ""
-    )
-    .replace(/\\/g,"\\\\")
-    .replace(/'/g,"\\'");
+return String(text || "")
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'");
 
 }
 
@@ -2627,114 +2614,104 @@ function safeAttr(
 ========================== */
 
 $("mineButton")
-    .addEventListener(
-        "click",
-        mine
-    );
-
+.addEventListener(
+"click",
+mine
+);
 
 $("dailyButton")
-    .addEventListener(
-        "click",
-        dailyReward
-    );
-
+.addEventListener(
+"click",
+dailyReward
+);
 
 $("upgradeButton")
-    .addEventListener(
-        "click",
-        upgrade
-    );
-
+.addEventListener(
+"click",
+upgrade
+);
 
 $("navHome")
-    .addEventListener(
-        "click",
-        ()=>{
-            page(
-                "homePage",
-                "navHome"
-            );
-        }
-    );
-
+.addEventListener(
+"click",
+()=>{
+page(
+"homePage",
+"navHome"
+);
+}
+);
 
 $("navLeaderboard")
-    .addEventListener(
-        "click",
-        ()=>{
-            page(
-                "leaderboardPage",
-                "navLeaderboard"
-            );
-        }
-    );
-
+.addEventListener(
+"click",
+()=>{
+page(
+"leaderboardPage",
+"navLeaderboard"
+);
+}
+);
 
 $("navTasks")
-    .addEventListener(
-        "click",
-        ()=>{
-            page(
-                "tasksPage",
-                "navTasks"
-            );
-        }
-    );
-
+.addEventListener(
+"click",
+()=>{
+page(
+"tasksPage",
+"navTasks"
+);
+}
+);
 
 $("navInvite")
-    .addEventListener(
-        "click",
-        ()=>{
-            page(
-                "invitePage",
-                "navInvite"
-            );
-        }
-    );
-
+.addEventListener(
+"click",
+()=>{
+page(
+"invitePage",
+"navInvite"
+);
+}
+);
 
 $("navWallet")
-    .addEventListener(
-        "click",
-        ()=>{
-            page(
-                "walletPage",
-                "navWallet"
-            );
-        }
-    );
-
+.addEventListener(
+"click",
+()=>{
+page(
+"walletPage",
+"navWallet"
+);
+}
+);
 
 $("leaderRefresh")
-    .addEventListener(
-        "click",
-        loadLeaderboard
-    );
-
+.addEventListener(
+"click",
+loadLeaderboard
+);
 
 $("taskRefresh")
-    .addEventListener(
-        "click",
-        loadTasks
-    );
-
+.addEventListener(
+"click",
+loadTasks
+);
 
 $("copyButton")
-    .addEventListener(
-        "click",
-        copyInvite
-    );
+.addEventListener(
+"click",
+copyInvite
+);
 
 
 /* ==========================
-   ENERGY REFRESH
+   AUTO UPDATE
 ========================== */
 
 setInterval(
-    loadUser,
-    10000
+loadUser,
+10000
 );
 
 
@@ -2749,4 +2726,4 @@ createInvite();
 </script>
 
 </body>
-        </html>
+    </html>
