@@ -1,4 +1,5 @@
 import sql from "./db.js";
+import { logWalletTransaction } from "./wallet-log.js";
 
 const MAX_ENERGY = 100;
 const ENERGY_REGEN_SECONDS = 10;
@@ -7,9 +8,11 @@ const RATE_LIMIT_MS = 700;
 const lastRequests = new Map();
 
 function regenerateEnergy(user) {
+
     const now = Date.now();
 
-    const updatedAt = new Date(user.energy_updated_at).getTime();
+    const updatedAt =
+        new Date(user.energy_updated_at).getTime();
 
     const elapsedSeconds =
         Math.floor((now - updatedAt) / 1000);
@@ -20,30 +23,28 @@ function regenerateEnergy(user) {
         );
 
     if (regenerated <= 0) {
+
         return {
             energy: Number(user.energy),
-            energy_updated_at: user.energy_updated_at
+            energy_updated_at:
+                user.energy_updated_at
         };
     }
 
-    const newEnergy = Math.min(
-        MAX_ENERGY,
-        Number(user.energy) + regenerated
-    );
+    const newEnergy =
+        Math.min(
+            MAX_ENERGY,
+            Number(user.energy) + regenerated
+        );
 
     return {
         energy: newEnergy,
-        energy_updated_at: new Date(now).toISOString()
+        energy_updated_at:
+            new Date(now).toISOString()
     };
 }
 
 export default async function handler(req, res) {
-
-    /*
-    ================================
-    CORS
-    ================================
-    */
 
     res.setHeader(
         "Access-Control-Allow-Origin",
@@ -66,15 +67,25 @@ export default async function handler(req, res) {
 
     try {
 
-        /*
-        ================================
-        MAIN API
-        ================================
-        */
+        const requestUrl =
+            new URL(
+                req.url || "/",
+                "https://afghanicoin.vercel.app"
+            );
+
+        const pathname =
+            requestUrl.pathname;
+
+        // =========================
+        // API STATUS
+        // =========================
 
         if (
             req.method === "GET" &&
-            req.url === "/api"
+            (
+                pathname === "/api" ||
+                pathname === "/api/"
+            )
         ) {
 
             return res.status(200).json({
@@ -92,270 +103,112 @@ export default async function handler(req, res) {
             });
         }
 
-        /*
-        ================================
-        GET USER
-        ================================
-        */
+        // =========================
+        // USER
+        // =========================
 
         if (
             req.method === "GET" &&
-            req.url.startsWith("/api/user")
+            (
+                pathname === "/api/user" ||
+                pathname === "/api/user/"
+            )
         ) {
 
-            const url =
-                new URL(
-                    req.url,
-                    "https://afghanicoin.vercel.app"
-                );
-
             const telegramId =
-                url.searchParams.get(
+                requestUrl.searchParams.get(
                     "telegram_id"
                 );
 
             if (!telegramId) {
 
                 return res.status(400).json({
-
                     success: false,
-
                     message:
                         "telegram_id is required"
-
                 });
             }
 
-            let users =
-                await sql`
-                    SELECT *
-                    FROM users
-                    WHERE telegram_id = ${telegramId}
-                    LIMIT 1
-                `;
+            let users = await sql`
+                SELECT *
+                FROM users
+                WHERE telegram_id = ${telegramId}
+                LIMIT 1
+            `;
 
             if (users.length === 0) {
 
-                const created =
-                    await sql`
-                        INSERT INTO users
-                        (
-                            telegram_id,
-                            username,
-                            balance,
-                            energy,
-                            level,
-                            power,
-                            energy_updated_at
-                        )
-                        VALUES
-                        (
-                            ${telegramId},
-                            NULL,
-                            0,
-                            100,
-                            1,
-                            1,
-                            NOW()
-                        )
-                        RETURNING *
-                    `;
+                const created = await sql`
+                    INSERT INTO users
+                    (
+                        telegram_id,
+                        username,
+                        balance,
+                        energy,
+                        level,
+                        power,
+                        energy_updated_at
+                    )
+                    VALUES
+                    (
+                        ${telegramId},
+                        NULL,
+                        0,
+                        100,
+                        1,
+                        1,
+                        NOW()
+                    )
+                    RETURNING *
+                `;
 
                 users = created;
             }
 
-            return res.status(200).json({
+            const user = users[0];
 
-                success: true,
+            const regenerated =
+                regenerateEnergy(user);
 
-                user: users[0]
+            if (
+                regenerated.energy !==
+                Number(user.energy)
+            ) {
 
-            });
-        }
-
-        /*
-        ================================
-        LEADERBOARD
-        ================================
-        */
-
-        if (
-            req.method === "GET" &&
-            req.url.startsWith("/api/leaderboard")
-        ) {
-
-            const url =
-                new URL(
-                    req.url,
-                    "https://afghanicoin.vercel.app"
-                );
-
-            const telegramId =
-                url.searchParams.get(
-                    "telegram_id"
-                );
-
-            /*
-            Top 50 users
-            sorted by AFC balance
-            */
-
-            const leaderboard =
-                await sql`
-                    SELECT
-                        id,
-                        telegram_id,
-                        username,
-                        balance,
-                        level,
-                        power
-
-                    FROM users
-
-                    ORDER BY
-                        balance DESC,
-                        id ASC
-
-                    LIMIT 50
+                const updated = await sql`
+                    UPDATE users
+                    SET
+                        energy =
+                            ${regenerated.energy},
+                        energy_updated_at =
+                            ${regenerated.energy_updated_at}
+                    WHERE telegram_id =
+                        ${telegramId}
+                    RETURNING *
                 `;
 
-            /*
-            Add rank
-            */
-
-            const rankedUsers =
-                leaderboard.map(
-                    (user, index) => ({
-
-                        rank: index + 1,
-
-                        id: user.id,
-
-                        telegram_id:
-                            user.telegram_id,
-
-                        username:
-                            user.username ||
-                            "AFC Miner",
-
-                        balance:
-                            Number(
-                                user.balance || 0
-                            ),
-
-                        level:
-                            Number(
-                                user.level || 1
-                            ),
-
-                        power:
-                            Number(
-                                user.power || 1
-                            )
-
-                    })
-                );
-
-            /*
-            Find user's real rank
-            */
-
-            let myRank = null;
-            let myUser = null;
-
-            if (telegramId) {
-
-                const currentUser =
-                    await sql`
-                        SELECT
-                            id,
-                            telegram_id,
-                            username,
-                            balance,
-                            level,
-                            power
-
-                        FROM users
-
-                        WHERE telegram_id =
-                            ${telegramId}
-
-                        LIMIT 1
-                    `;
-
-                if (currentUser.length > 0) {
-
-                    myUser =
-                        currentUser[0];
-
-                    const rankResult =
-                        await sql`
-                            SELECT
-                                COUNT(*) + 1 AS rank
-
-                            FROM users
-
-                            WHERE balance >
-                                ${Number(
-                                    myUser.balance || 0
-                                )}
-                        `;
-
-                    myRank =
-                        Number(
-                            rankResult[0].rank
-                        );
-                }
+                return res.status(200).json({
+                    success: true,
+                    user: updated[0]
+                });
             }
 
             return res.status(200).json({
-
                 success: true,
-
-                leaderboard:
-                    rankedUsers,
-
-                myRank:
-
-                    myRank,
-
-                myUser:
-
-                    myUser
-                        ? {
-                            username:
-                                myUser.username ||
-                                "AFC Miner",
-
-                            balance:
-                                Number(
-                                    myUser.balance || 0
-                                ),
-
-                            level:
-                                Number(
-                                    myUser.level || 1
-                                ),
-
-                            power:
-                                Number(
-                                    myUser.power || 1
-                                )
-                        }
-                        : null
-
+                user: user
             });
         }
 
-        /*
-        ================================
-        MINE
-        ================================
-        */
+        // =========================
+        // MINE
+        // =========================
 
         if (
             req.method === "POST" &&
-            req.url === "/api/mine"
+            (
+                pathname === "/api/mine" ||
+                pathname === "/api/mine/"
+            )
         ) {
 
             const {
@@ -365,26 +218,21 @@ export default async function handler(req, res) {
             if (!telegram_id) {
 
                 return res.status(400).json({
-
                     success: false,
-
                     message:
                         "telegram_id is required"
-
                 });
             }
 
-            /*
-            Rate limit
-            */
+            const telegramKey =
+                String(telegram_id);
 
             const last =
                 lastRequests.get(
-                    String(telegram_id)
+                    telegramKey
                 );
 
-            const now =
-                Date.now();
+            const now = Date.now();
 
             if (
                 last &&
@@ -392,102 +240,72 @@ export default async function handler(req, res) {
             ) {
 
                 return res.status(429).json({
-
                     success: false,
-
                     message:
                         "Too many requests"
-
                 });
             }
 
             lastRequests.set(
-                String(telegram_id),
+                telegramKey,
                 now
             );
 
-            /*
-            Find user
-            */
-
-            let users =
-                await sql`
-                    SELECT *
-                    FROM users
-                    WHERE telegram_id =
-                        ${String(telegram_id)}
-                    LIMIT 1
-                `;
-
-            /*
-            Create user if not exists
-            */
+            let users = await sql`
+                SELECT *
+                FROM users
+                WHERE telegram_id =
+                    ${telegramKey}
+                LIMIT 1
+            `;
 
             if (users.length === 0) {
 
-                users =
-                    await sql`
-                        INSERT INTO users
-                        (
-                            telegram_id,
-                            username,
-                            balance,
-                            energy,
-                            level,
-                            power,
-                            energy_updated_at
-                        )
-                        VALUES
-                        (
-                            ${String(telegram_id)},
-                            NULL,
-                            0,
-                            100,
-                            1,
-                            1,
-                            NOW()
-                        )
-                        RETURNING *
-                    `;
+                users = await sql`
+                    INSERT INTO users
+                    (
+                        telegram_id,
+                        username,
+                        balance,
+                        energy,
+                        level,
+                        power,
+                        energy_updated_at
+                    )
+                    VALUES
+                    (
+                        ${telegramKey},
+                        NULL,
+                        0,
+                        100,
+                        1,
+                        1,
+                        NOW()
+                    )
+                    RETURNING *
+                `;
             }
 
-            const user =
-                users[0];
-
-            /*
-            Regenerate energy
-            */
+            const user = users[0];
 
             const regenerated =
                 regenerateEnergy(user);
 
-            let energy =
+            const energy =
                 regenerated.energy;
-
-            /*
-            No energy
-            */
 
             if (energy <= 0) {
 
                 return res.status(400).json({
-
                     success: false,
-
                     message:
                         "Not enough energy",
-
                     user: {
                         ...user,
                         energy: 0
                     }
-
                 });
             }
-
-            /*
-            Mining amount
-            */
 
             const power =
                 Number(user.power || 1);
@@ -499,31 +317,19 @@ export default async function handler(req, res) {
             const newEnergy =
                 energy - 1;
 
-            /*
-            Save user
-            */
-
-            const updated =
-                await sql`
-                    UPDATE users
-
-                    SET
-                        balance = ${newBalance},
-
-                        energy = ${newEnergy},
-
-                        energy_updated_at =
-                            ${regenerated.energy_updated_at}
-
-                    WHERE telegram_id =
-                        ${String(telegram_id)}
-
-                    RETURNING *
-                `;
-
-            /*
-            Mining history
-            */
+            const updated = await sql`
+                UPDATE users
+                SET
+                    balance =
+                        ${newBalance},
+                    energy =
+                        ${newEnergy},
+                    energy_updated_at =
+                        ${regenerated.energy_updated_at}
+                WHERE telegram_id =
+                    ${telegramKey}
+                RETURNING *
+            `;
 
             try {
 
@@ -540,15 +346,10 @@ export default async function handler(req, res) {
                     VALUES
                     (
                         ${updated[0].id},
-
-                        ${String(telegram_id)},
-
+                        ${telegramKey},
                         ${power},
-
                         ${power},
-
                         ${newBalance},
-
                         ${newEnergy}
                     )
                 `;
@@ -559,7 +360,25 @@ export default async function handler(req, res) {
                     "Mining history error:",
                     historyError
                 );
+            }
 
+            // ثبت در Wallet
+            try {
+
+                await logWalletTransaction(
+                    telegramKey,
+                    "mine",
+                    power,
+                    newBalance,
+                    "استخراج AFC"
+                );
+
+            } catch (walletError) {
+
+                console.error(
+                    "Wallet log error:",
+                    walletError
+                );
             }
 
             return res.status(200).json({
@@ -573,15 +392,16 @@ export default async function handler(req, res) {
             });
         }
 
-        /*
-        ================================
-        UPGRADE
-        ================================
-        */
+        // =========================
+        // UPGRADE
+        // =========================
 
         if (
             req.method === "POST" &&
-            req.url === "/api/upgrade"
+            (
+                pathname === "/api/upgrade" ||
+                pathname === "/api/upgrade/"
+            )
         ) {
 
             const {
@@ -591,40 +411,33 @@ export default async function handler(req, res) {
             if (!telegram_id) {
 
                 return res.status(400).json({
-
                     success: false,
-
                     message:
                         "telegram_id is required"
-
                 });
             }
 
-            const users =
-                await sql`
-                    SELECT *
-                    FROM users
+            const telegramId =
+                String(telegram_id);
 
-                    WHERE telegram_id =
-                        ${String(telegram_id)}
-
-                    LIMIT 1
-                `;
+            const users = await sql`
+                SELECT *
+                FROM users
+                WHERE telegram_id =
+                    ${telegramId}
+                LIMIT 1
+            `;
 
             if (users.length === 0) {
 
                 return res.status(404).json({
-
                     success: false,
-
                     message:
                         "User not found"
-
                 });
             }
 
-            const user =
-                users[0];
+            const user = users[0];
 
             const level =
                 Number(user.level || 1);
@@ -641,34 +454,47 @@ export default async function handler(req, res) {
             if (balance < cost) {
 
                 return res.status(400).json({
-
                     success: false,
-
                     message:
                         `Need ${cost} AFC to upgrade`
-
                 });
             }
 
-            const updated =
-                await sql`
-                    UPDATE users
+            const newBalance =
+                balance - cost;
 
-                    SET
-                        balance =
-                            ${balance - cost},
+            const updated = await sql`
+                UPDATE users
+                SET
+                    balance =
+                        ${newBalance},
+                    level =
+                        ${level + 1},
+                    power =
+                        ${power + 1}
+                WHERE telegram_id =
+                    ${telegramId}
+                RETURNING *
+            `;
 
-                        level =
-                            ${level + 1},
+            // ثبت هزینه Upgrade در Wallet
+            try {
 
-                        power =
-                            ${power + 1}
+                await logWalletTransaction(
+                    telegramId,
+                    "upgrade",
+                    -cost,
+                    newBalance,
+                    "ارتقای قدرت استخراج"
+                );
 
-                    WHERE telegram_id =
-                        ${String(telegram_id)}
+            } catch (walletError) {
 
-                    RETURNING *
-                `;
+                console.error(
+                    "Wallet log error:",
+                    walletError
+                );
+            }
 
             return res.status(200).json({
 
@@ -679,54 +505,40 @@ export default async function handler(req, res) {
             });
         }
 
-        /*
-        ================================
-        MINING HISTORY
-        ================================
-        */
+        // =========================
+        // MINING HISTORY
+        // =========================
 
         if (
             req.method === "GET" &&
-            req.url.startsWith(
-                "/api/mining-history"
+            (
+                pathname === "/api/mining-history" ||
+                pathname === "/api/mining-history/"
             )
         ) {
 
-            const url =
-                new URL(
-                    req.url,
-                    "https://afghanicoin.vercel.app"
-                );
-
             const telegramId =
-                url.searchParams.get(
+                requestUrl.searchParams.get(
                     "telegram_id"
                 );
 
             if (!telegramId) {
 
                 return res.status(400).json({
-
                     success: false,
-
                     message:
                         "telegram_id is required"
-
                 });
             }
 
-            const history =
-                await sql`
-                    SELECT *
-                    FROM mining_history
-
-                    WHERE telegram_id =
-                        ${telegramId}
-
-                    ORDER BY created_at DESC
-
-                    LIMIT 100
-                `;
+            const history = await sql`
+                SELECT *
+                FROM mining_history
+                WHERE telegram_id =
+                    ${telegramId}
+                ORDER BY created_at DESC
+                LIMIT 100
+            `;
 
             return res.status(200).json({
 
@@ -737,18 +549,16 @@ export default async function handler(req, res) {
             });
         }
 
-        /*
-        ================================
-        NOT FOUND
-        ================================
-        */
-
         return res.status(404).json({
 
             success: false,
 
             message:
-                "Endpoint not found"
+                "Endpoint not found",
+
+            path: pathname,
+
+            method: req.method
 
         });
 
@@ -771,4 +581,4 @@ export default async function handler(req, res) {
 
         });
     }
-}
+        }
