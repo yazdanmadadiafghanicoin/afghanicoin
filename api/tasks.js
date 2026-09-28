@@ -31,7 +31,7 @@ const TASKS = [
         description: "امروز وارد Afghani Coin شوید",
         reward: 250,
         icon: "🎯",
-        url: "https://afghanicoin.vercel.app/"
+        url: "https://t.me/afghani_coin_bot"
     }
 ];
 
