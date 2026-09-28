@@ -2,7 +2,9 @@ import os
 import json
 import urllib.request
 import urllib.parse
+import urllib.error
 import time
+
 
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
@@ -108,16 +110,31 @@ def create_user(telegram_id):
             )
 
             print(
-                "User API:",
+                "USER API RESULT:",
                 result
             )
 
             return result
 
+    except urllib.error.HTTPError as error:
+
+        try:
+            body = error.read().decode()
+        except Exception:
+            body = ""
+
+        print(
+            "CREATE USER HTTP ERROR:",
+            error.code,
+            body
+        )
+
+        return None
+
     except Exception as error:
 
         print(
-            "Create user error:",
+            "CREATE USER ERROR:",
             error
         )
 
@@ -135,12 +152,12 @@ def register_referral(
 
     try:
 
-        data = {
-            "referrer_telegram_id":
-                str(referrer_id),
+        referrer_id = str(referrer_id).strip()
+        invited_id = str(invited_id).strip()
 
-            "invited_telegram_id":
-                str(invited_id)
+        data = {
+            "referrer_telegram_id": referrer_id,
+            "invited_telegram_id": invited_id
         }
 
         body = json.dumps(
@@ -149,6 +166,33 @@ def register_referral(
 
         url = (
             f"{BACKEND_URL}/api/invite"
+        )
+
+        print(
+            "================================"
+        )
+
+        print(
+            "REFERRAL REQUEST"
+        )
+
+        print(
+            "Referrer:",
+            referrer_id
+        )
+
+        print(
+            "Invited:",
+            invited_id
+        )
+
+        print(
+            "URL:",
+            url
+        )
+
+        print(
+            "================================"
         )
 
         request = urllib.request.Request(
@@ -166,25 +210,69 @@ def register_referral(
             timeout=20
         ) as response:
 
+            response_body = response.read().decode()
+
             result = json.loads(
-                response.read().decode()
+                response_body
             )
 
             print(
-                "Referral API:",
+                "REFERRAL API RESULT:",
                 result
             )
 
             return result
 
+    except urllib.error.HTTPError as error:
+
+        try:
+            error_body = error.read().decode()
+        except Exception:
+            error_body = ""
+
+        print(
+            "================================"
+        )
+
+        print(
+            "REFERRAL HTTP ERROR"
+        )
+
+        print(
+            "Status:",
+            error.code
+        )
+
+        print(
+            "Response:",
+            error_body
+        )
+
+        print(
+            "================================"
+        )
+
+        # تلاش برای برگرداندن JSON خطا
+        try:
+            return json.loads(error_body)
+        except Exception:
+            return {
+                "success": False,
+                "message": f"Referral HTTP error {error.code}",
+                "error_body": error_body
+            }
+
     except Exception as error:
 
         print(
-            "Referral error:",
+            "REFERRAL ERROR:",
             error
         )
 
-        return None
+        return {
+            "success": False,
+            "message": str(error)
+        }
 
 
 # =========================
@@ -200,15 +288,12 @@ def web_app_keyboard():
             [
 
                 {
-
                     "text":
                         "🪙 ورود به Afghani Coin",
 
                     "web_app": {
-
                         "url":
                             WEB_APP_URL
-
                     }
 
                 }
@@ -230,7 +315,37 @@ def start_command(
     referral_code=None
 ):
 
-    # ساخت یا دریافت حساب کاربر
+    telegram_id = str(
+        telegram_id
+    ).strip()
+
+    print(
+        "================================"
+    )
+
+    print(
+        "START COMMAND"
+    )
+
+    print(
+        "Telegram ID:",
+        telegram_id
+    )
+
+    print(
+        "Original referral:",
+        referral_code
+    )
+
+    print(
+        "================================"
+    )
+
+
+    # =========================
+    # CREATE USER
+    # =========================
+
     create_user(
         telegram_id
     )
@@ -249,11 +364,18 @@ def start_command(
             .strip()
         )
 
+        # URL decode
+        referral_code = urllib.parse.unquote(
+            referral_code
+        )
 
-        # لینک‌های دعوت ما به شکل:
-        # ref_123456789
+        print(
+            "Referral code before cleanup:",
+            referral_code
+        )
 
-        if referral_code.startswith(
+        # حذف ref_
+        if referral_code.lower().startswith(
             "ref_"
         ):
 
@@ -261,23 +383,39 @@ def start_command(
                 referral_code[4:]
             )
 
+        referral_code = (
+            referral_code.strip()
+        )
 
-        # اگر کد خالی نبود
-        # و کاربر خودش را دعوت نکرده بود
+        print(
+            "Referral ID after cleanup:",
+            referral_code
+        )
+
+
+        # =========================
+        # VALID REFERRAL
+        # =========================
 
         if (
             referral_code
             and
-            referral_code != str(
-                telegram_id
-            )
+            referral_code != telegram_id
         ):
 
-            referral_result = (
-                register_referral(
-                    referral_code,
-                    telegram_id
-                )
+            referral_result = register_referral(
+                referral_code,
+                telegram_id
+            )
+
+        else:
+
+            print(
+                "REFERRAL NOT PROCESSED:"
+            )
+
+            print(
+                "Empty referral or self referral"
             )
 
 
@@ -308,6 +446,11 @@ def start_command(
 
     if referral_result:
 
+        print(
+            "FINAL REFERRAL RESULT:",
+            referral_result
+        )
+
         if referral_result.get(
             "success"
         ):
@@ -337,7 +480,7 @@ def start_command(
             message_text += (
 
                 "\n\n"
-                "ℹ️ لینک دعوت معتبر نبود."
+                "ℹ️ ثبت دعوت انجام نشد."
 
             )
 
@@ -405,7 +548,7 @@ def handle_update(update):
     # /start
     # =========================
 
-    if text.startswith(
+    if text.lower().startswith(
         "/start"
     ):
 
@@ -417,6 +560,15 @@ def handle_update(update):
 
             referral_code = parts[1]
 
+        print(
+            "START TEXT:",
+            text
+        )
+
+        print(
+            "START PARTS:",
+            parts
+        )
 
         start_command(
 
@@ -480,7 +632,20 @@ def main():
     offset = 0
 
     print(
+        "================================"
+    )
+
+    print(
         "Afghani Coin Bot is running..."
+    )
+
+    print(
+        "Backend:",
+        BACKEND_URL
+    )
+
+    print(
+        "================================"
     )
 
 
@@ -505,6 +670,11 @@ def main():
                     + 1
                 )
 
+                print(
+                    "NEW TELEGRAM UPDATE:",
+                    update
+                )
+
                 handle_update(
                     update
                 )
@@ -513,7 +683,7 @@ def main():
         except Exception as error:
 
             print(
-                "Bot Error:",
+                "BOT ERROR:",
                 error
             )
 
