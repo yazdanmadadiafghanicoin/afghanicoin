@@ -7,7 +7,7 @@ const TASKS = [
         description: "در کانال رسمی Afghani Coin عضو شوید",
         reward: 100,
         icon: "📢",
-        url: "https://t.me/AfghaniCoin"
+        url: "https://t.me/afghani_coin_bot"
     },
     {
         id: "follow_news",
@@ -15,7 +15,7 @@ const TASKS = [
         description: "صفحه رسمی اخبار پروژه را ببینید",
         reward: 150,
         icon: "📰",
-        url: "https://t.me/AfghaniCoin"
+        url: "https://t.me/afghani_coin_bot"
     },
     {
         id: "visit_afc",
@@ -23,7 +23,7 @@ const TASKS = [
         description: "وب‌سایت Afghani Coin را باز کنید",
         reward: 200,
         icon: "🌐",
-        url: "https://afghanicoin.vercel.app/"
+        url: "https://t.me/afghani_coin_bot"
     },
     {
         id: "daily_task",
