@@ -2,16 +2,11 @@ import sql from "./db.js";
 
 export default async function handler(req, res) {
 
-    res.setHeader(
-        "Access-Control-Allow-Origin",
-        "*"
-    );
-
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader(
         "Access-Control-Allow-Methods",
         "GET,OPTIONS"
     );
-
     res.setHeader(
         "Access-Control-Allow-Headers",
         "Content-Type"
@@ -31,11 +26,15 @@ export default async function handler(req, res) {
     try {
 
         const telegramId =
-            req.query?.telegram_id || null;
+            req.query?.telegram_id
+            ? String(req.query.telegram_id)
+            : null;
 
+        // گرفتن 50 نفر اول
         const leaderboard = await sql`
             SELECT
                 id,
+                telegram_id,
                 username,
                 balance,
                 level,
@@ -43,54 +42,90 @@ export default async function handler(req, res) {
             FROM users
             ORDER BY
                 balance DESC,
+                level DESC,
+                power DESC,
                 id ASC
             LIMIT 50
         `;
 
-        const rankedUsers = leaderboard.map(
-            (user, index) => ({
+        const rankedUsers = leaderboard.map((user, index) => {
+
+            let medal = "";
+
+            if (index === 0) {
+                medal = "🥇";
+            } else if (index === 1) {
+                medal = "🥈";
+            } else if (index === 2) {
+                medal = "🥉";
+            }
+
+            return {
                 rank: index + 1,
+                medal: medal,
+
                 username:
-                    user.username || "AFC Miner",
+                    user.username ||
+                    `Miner ${String(user.id).padStart(3, "0")}`,
+
                 balance:
                     Number(user.balance || 0),
+
                 level:
                     Number(user.level || 1),
+
                 power:
                     Number(user.power || 1)
-            })
-        );
+            };
+        });
 
         let myRank = null;
         let myUser = null;
 
+        // پیدا کردن کاربر فعلی
         if (telegramId) {
 
             const users = await sql`
                 SELECT
                     id,
+                    telegram_id,
                     username,
                     balance,
                     level,
                     power
                 FROM users
-                WHERE telegram_id = ${String(telegramId)}
+                WHERE telegram_id = ${telegramId}
                 LIMIT 1
             `;
 
             if (users.length > 0) {
 
-                myUser = users[0];
+                const user = users[0];
 
+                myUser = {
+                    username:
+                        user.username ||
+                        `Miner ${String(user.id).padStart(3, "0")}`,
+
+                    balance:
+                        Number(user.balance || 0),
+
+                    level:
+                        Number(user.level || 1),
+
+                    power:
+                        Number(user.power || 1)
+                };
+
+                // رتبه واقعی
                 const rankResult = await sql`
-                    SELECT COUNT(*) + 1 AS rank
+                    SELECT COUNT(*) AS count
                     FROM users
-                    WHERE balance >
-                        ${Number(myUser.balance || 0)}
+                    WHERE balance > ${Number(user.balance || 0)}
                 `;
 
                 myRank =
-                    Number(rankResult[0].rank);
+                    Number(rankResult[0].count || 0) + 1;
             }
         }
 
@@ -98,32 +133,19 @@ export default async function handler(req, res) {
 
             success: true,
 
+            totalUsers: Number(
+                (await sql`
+                    SELECT COUNT(*) AS count
+                    FROM users
+                `)[0].count
+            ),
+
             leaderboard: rankedUsers,
 
             myRank: myRank,
 
             myUser: myUser
-                ? {
-                    username:
-                        myUser.username ||
-                        "AFC Miner",
 
-                    balance:
-                        Number(
-                            myUser.balance || 0
-                        ),
-
-                    level:
-                        Number(
-                            myUser.level || 1
-                        ),
-
-                    power:
-                        Number(
-                            myUser.power || 1
-                        )
-                }
-                : null
         });
 
     } catch (error) {
@@ -134,9 +156,15 @@ export default async function handler(req, res) {
         );
 
         return res.status(500).json({
+
             success: false,
-            message: "Leaderboard server error",
-            error: error.message
+
+            message:
+                "Leaderboard server error",
+
+            error:
+                error.message
+
         });
     }
 }
